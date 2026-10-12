@@ -1,0 +1,660 @@
+{
+  "stats": {
+    "startTime": "2026-10-12T22:39:43.499Z",
+    "duration": 442514.56899999996,
+    "expected": 108,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "engine": "chromium",
+      "name": "guest pages redirect, API rejects guest and hostile CSRF",
+      "status": "expected",
+      "duration_ms": 2101
+    },
+    {
+      "engine": "chromium",
+      "name": "real login logout, private cookie and noindex CSP",
+      "status": "expected",
+      "duration_ms": 3032
+    },
+    {
+      "engine": "chromium",
+      "name": "editor and sales cannot read owner resources",
+      "status": "expected",
+      "duration_ms": 3097
+    },
+    {
+      "engine": "chromium",
+      "name": "owner creates and deactivates an account with a real audit event",
+      "status": "expected",
+      "duration_ms": 3345
+    },
+    {
+      "engine": "chromium",
+      "name": "MFA enrollment, recovery login and disabling are real",
+      "status": "expected",
+      "duration_ms": 5390
+    },
+    {
+      "engine": "chromium",
+      "name": "password change closes sessions and accepts the new password",
+      "status": "expected",
+      "duration_ms": 4360
+    },
+    {
+      "engine": "chromium",
+      "name": "admin keyboard responsive and axe at 360px",
+      "status": "expected",
+      "duration_ms": 7107
+    },
+    {
+      "engine": "chromium",
+      "name": "admin keyboard responsive and axe at 768px",
+      "status": "expected",
+      "duration_ms": 6286
+    },
+    {
+      "engine": "chromium",
+      "name": "admin keyboard responsive and axe at 1440px",
+      "status": "expected",
+      "duration_ms": 8187
+    },
+    {
+      "engine": "firefox",
+      "name": "guest pages redirect, API rejects guest and hostile CSRF",
+      "status": "expected",
+      "duration_ms": 8683
+    },
+    {
+      "engine": "firefox",
+      "name": "real login logout, private cookie and noindex CSP",
+      "status": "expected",
+      "duration_ms": 3888
+    },
+    {
+      "engine": "firefox",
+      "name": "editor and sales cannot read owner resources",
+      "status": "expected",
+      "duration_ms": 4790
+    },
+    {
+      "engine": "firefox",
+      "name": "owner creates and deactivates an account with a real audit event",
+      "status": "expected",
+      "duration_ms": 4953
+    },
+    {
+      "engine": "firefox",
+      "name": "MFA enrollment, recovery login and disabling are real",
+      "status": "expected",
+      "duration_ms": 6331
+    },
+    {
+      "engine": "firefox",
+      "name": "password change closes sessions and accepts the new password",
+      "status": "expected",
+      "duration_ms": 4189
+    },
+    {
+      "engine": "firefox",
+      "name": "admin keyboard responsive and axe at 360px",
+      "status": "expected",
+      "duration_ms": 10430
+    },
+    {
+      "engine": "firefox",
+      "name": "admin keyboard responsive and axe at 768px",
+      "status": "expected",
+      "duration_ms": 9165
+    },
+    {
+      "engine": "firefox",
+      "name": "admin keyboard responsive and axe at 1440px",
+      "status": "expected",
+      "duration_ms": 15667
+    },
+    {
+      "engine": "webkit",
+      "name": "guest pages redirect, API rejects guest and hostile CSRF",
+      "status": "expected",
+      "duration_ms": 1632
+    },
+    {
+      "engine": "webkit",
+      "name": "real login logout, private cookie and noindex CSP",
+      "status": "expected",
+      "duration_ms": 3539
+    },
+    {
+      "engine": "webkit",
+      "name": "editor and sales cannot read owner resources",
+      "status": "expected",
+      "duration_ms": 4348
+    },
+    {
+      "engine": "webkit",
+      "name": "owner creates and deactivates an account with a real audit event",
+      "status": "expected",
+      "duration_ms": 5240
+    },
+    {
+      "engine": "webkit",
+      "name": "MFA enrollment, recovery login and disabling are real",
+      "status": "expected",
+      "duration_ms": 6386
+    },
+    {
+      "engine": "webkit",
+      "name": "password change closes sessions and accepts the new password",
+      "status": "expected",
+      "duration_ms": 4980
+    },
+    {
+      "engine": "webkit",
+      "name": "admin keyboard responsive and axe at 360px",
+      "status": "expected",
+      "duration_ms": 10005
+    },
+    {
+      "engine": "webkit",
+      "name": "admin keyboard responsive and axe at 768px",
+      "status": "expected",
+      "duration_ms": 8624
+    },
+    {
+      "engine": "webkit",
+      "name": "admin keyboard responsive and axe at 1440px",
+      "status": "expected",
+      "duration_ms": 17316
+    },
+    {
+      "engine": "chromium",
+      "name": "Persian document, local font, preview metadata and no third-party requests",
+      "status": "expected",
+      "duration_ms": 725
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 320px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1057
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 360px with correct card columns",
+      "status": "expected",
+      "duration_ms": 994
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 390px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1333
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 479px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1219
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 480px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1106
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 768px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1636
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 1024px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1309
+    },
+    {
+      "engine": "chromium",
+      "name": "responsive layout at 1440px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1905
+    },
+    {
+      "engine": "chromium",
+      "name": "mobile drawer traps focus, closes with Escape and restores the trigger",
+      "status": "expected",
+      "duration_ms": 2233
+    },
+    {
+      "engine": "chromium",
+      "name": "skip link reaches main, and keyboard focus remains visible",
+      "status": "expected",
+      "duration_ms": 1008
+    },
+    {
+      "engine": "chromium",
+      "name": "RTL tabs, labelled fields and accordion support keyboard interaction",
+      "status": "expected",
+      "duration_ms": 2013
+    },
+    {
+      "engine": "chromium",
+      "name": "reduced motion removes smooth scroll, spinner motion and hover translation",
+      "status": "expected",
+      "duration_ms": 1054
+    },
+    {
+      "engine": "chromium",
+      "name": "200 percent text enlargement reflows without horizontal overflow",
+      "status": "expected",
+      "duration_ms": 1273
+    },
+    {
+      "engine": "chromium",
+      "name": "axe WCAG audit, all component states and drawer at 390px",
+      "status": "expected",
+      "duration_ms": 7701
+    },
+    {
+      "engine": "chromium",
+      "name": "axe WCAG audit, all component states and drawer at 1440px",
+      "status": "expected",
+      "duration_ms": 5803
+    },
+    {
+      "engine": "chromium",
+      "name": "missing route returns an actual 404 with a usable recovery link",
+      "status": "expected",
+      "duration_ms": 1303
+    },
+    {
+      "engine": "firefox",
+      "name": "Persian document, local font, preview metadata and no third-party requests",
+      "status": "expected",
+      "duration_ms": 2140
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 320px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1325
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 360px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1371
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 390px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1521
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 479px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1254
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 480px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1807
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 768px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1576
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 1024px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1785
+    },
+    {
+      "engine": "firefox",
+      "name": "responsive layout at 1440px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1833
+    },
+    {
+      "engine": "firefox",
+      "name": "mobile drawer traps focus, closes with Escape and restores the trigger",
+      "status": "expected",
+      "duration_ms": 2655
+    },
+    {
+      "engine": "firefox",
+      "name": "skip link reaches main, and keyboard focus remains visible",
+      "status": "expected",
+      "duration_ms": 2453
+    },
+    {
+      "engine": "firefox",
+      "name": "RTL tabs, labelled fields and accordion support keyboard interaction",
+      "status": "expected",
+      "duration_ms": 1446
+    },
+    {
+      "engine": "firefox",
+      "name": "reduced motion removes smooth scroll, spinner motion and hover translation",
+      "status": "expected",
+      "duration_ms": 1251
+    },
+    {
+      "engine": "firefox",
+      "name": "200 percent text enlargement reflows without horizontal overflow",
+      "status": "expected",
+      "duration_ms": 1446
+    },
+    {
+      "engine": "firefox",
+      "name": "axe WCAG audit, all component states and drawer at 390px",
+      "status": "expected",
+      "duration_ms": 9231
+    },
+    {
+      "engine": "firefox",
+      "name": "axe WCAG audit, all component states and drawer at 1440px",
+      "status": "expected",
+      "duration_ms": 7871
+    },
+    {
+      "engine": "firefox",
+      "name": "missing route returns an actual 404 with a usable recovery link",
+      "status": "expected",
+      "duration_ms": 1771
+    },
+    {
+      "engine": "webkit",
+      "name": "Persian document, local font, preview metadata and no third-party requests",
+      "status": "expected",
+      "duration_ms": 1815
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 320px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1892
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 360px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1193
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 390px with correct card columns",
+      "status": "expected",
+      "duration_ms": 2015
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 479px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1281
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 480px with correct card columns",
+      "status": "expected",
+      "duration_ms": 2408
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 768px with correct card columns",
+      "status": "expected",
+      "duration_ms": 2888
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 1024px with correct card columns",
+      "status": "expected",
+      "duration_ms": 1594
+    },
+    {
+      "engine": "webkit",
+      "name": "responsive layout at 1440px with correct card columns",
+      "status": "expected",
+      "duration_ms": 3650
+    },
+    {
+      "engine": "webkit",
+      "name": "mobile drawer traps focus, closes with Escape and restores the trigger",
+      "status": "expected",
+      "duration_ms": 3248
+    },
+    {
+      "engine": "webkit",
+      "name": "skip link reaches main, and keyboard focus remains visible",
+      "status": "expected",
+      "duration_ms": 1592
+    },
+    {
+      "engine": "webkit",
+      "name": "RTL tabs, labelled fields and accordion support keyboard interaction",
+      "status": "expected",
+      "duration_ms": 2280
+    },
+    {
+      "engine": "webkit",
+      "name": "reduced motion removes smooth scroll, spinner motion and hover translation",
+      "status": "expected",
+      "duration_ms": 1678
+    },
+    {
+      "engine": "webkit",
+      "name": "200 percent text enlargement reflows without horizontal overflow",
+      "status": "expected",
+      "duration_ms": 1708
+    },
+    {
+      "engine": "webkit",
+      "name": "axe WCAG audit, all component states and drawer at 390px",
+      "status": "expected",
+      "duration_ms": 8921
+    },
+    {
+      "engine": "webkit",
+      "name": "axe WCAG audit, all component states and drawer at 1440px",
+      "status": "expected",
+      "duration_ms": 11865
+    },
+    {
+      "engine": "webkit",
+      "name": "missing route returns an actual 404 with a usable recovery link",
+      "status": "expected",
+      "duration_ms": 1755
+    },
+    {
+      "engine": "chromium",
+      "name": "all PRD public routes render SSR Persian content, one H1 and distinct metadata",
+      "status": "expected",
+      "duration_ms": 505
+    },
+    {
+      "engine": "chromium",
+      "name": "homepage follows PRD order and handles ready vs roadmap product tabs",
+      "status": "expected",
+      "duration_ms": 2376
+    },
+    {
+      "engine": "chromium",
+      "name": "feature pages honor user confirmation and never present an operational AI demo",
+      "status": "expected",
+      "duration_ms": 1376
+    },
+    {
+      "engine": "chromium",
+      "name": "audience journeys have distinct actions and explicit access boundaries",
+      "status": "expected",
+      "duration_ms": 1215
+    },
+    {
+      "engine": "chromium",
+      "name": "draft forms cannot accept data, post requests or show fake success",
+      "status": "expected",
+      "duration_ms": 1198
+    },
+    {
+      "engine": "chromium",
+      "name": "empty content libraries and legal drafts remain honest and separate",
+      "status": "expected",
+      "duration_ms": 1424
+    },
+    {
+      "engine": "chromium",
+      "name": "representative public layouts reflow and pass axe at 360px",
+      "status": "expected",
+      "duration_ms": 6024
+    },
+    {
+      "engine": "chromium",
+      "name": "representative public layouts reflow and pass axe at 768px",
+      "status": "expected",
+      "duration_ms": 5841
+    },
+    {
+      "engine": "chromium",
+      "name": "representative public layouts reflow and pass axe at 1440px",
+      "status": "expected",
+      "duration_ms": 7526
+    },
+    {
+      "engine": "chromium",
+      "name": "public mobile navigation and demo backtracking remain usable",
+      "status": "expected",
+      "duration_ms": 1750
+    },
+    {
+      "engine": "firefox",
+      "name": "all PRD public routes render SSR Persian content, one H1 and distinct metadata",
+      "status": "expected",
+      "duration_ms": 370
+    },
+    {
+      "engine": "firefox",
+      "name": "homepage follows PRD order and handles ready vs roadmap product tabs",
+      "status": "expected",
+      "duration_ms": 1962
+    },
+    {
+      "engine": "firefox",
+      "name": "feature pages honor user confirmation and never present an operational AI demo",
+      "status": "expected",
+      "duration_ms": 2115
+    },
+    {
+      "engine": "firefox",
+      "name": "audience journeys have distinct actions and explicit access boundaries",
+      "status": "expected",
+      "duration_ms": 2169
+    },
+    {
+      "engine": "firefox",
+      "name": "draft forms cannot accept data, post requests or show fake success",
+      "status": "expected",
+      "duration_ms": 3625
+    },
+    {
+      "engine": "firefox",
+      "name": "empty content libraries and legal drafts remain honest and separate",
+      "status": "expected",
+      "duration_ms": 2889
+    },
+    {
+      "engine": "firefox",
+      "name": "representative public layouts reflow and pass axe at 360px",
+      "status": "expected",
+      "duration_ms": 9646
+    },
+    {
+      "engine": "firefox",
+      "name": "representative public layouts reflow and pass axe at 768px",
+      "status": "expected",
+      "duration_ms": 8815
+    },
+    {
+      "engine": "firefox",
+      "name": "representative public layouts reflow and pass axe at 1440px",
+      "status": "expected",
+      "duration_ms": 12478
+    },
+    {
+      "engine": "firefox",
+      "name": "public mobile navigation and demo backtracking remain usable",
+      "status": "expected",
+      "duration_ms": 2333
+    },
+    {
+      "engine": "webkit",
+      "name": "all PRD public routes render SSR Persian content, one H1 and distinct metadata",
+      "status": "expected",
+      "duration_ms": 433
+    },
+    {
+      "engine": "webkit",
+      "name": "homepage follows PRD order and handles ready vs roadmap product tabs",
+      "status": "expected",
+      "duration_ms": 2501
+    },
+    {
+      "engine": "webkit",
+      "name": "feature pages honor user confirmation and never present an operational AI demo",
+      "status": "expected",
+      "duration_ms": 1805
+    },
+    {
+      "engine": "webkit",
+      "name": "audience journeys have distinct actions and explicit access boundaries",
+      "status": "expected",
+      "duration_ms": 1560
+    },
+    {
+      "engine": "webkit",
+      "name": "draft forms cannot accept data, post requests or show fake success",
+      "status": "expected",
+      "duration_ms": 1649
+    },
+    {
+      "engine": "webkit",
+      "name": "empty content libraries and legal drafts remain honest and separate",
+      "status": "expected",
+      "duration_ms": 2145
+    },
+    {
+      "engine": "webkit",
+      "name": "representative public layouts reflow and pass axe at 360px",
+      "status": "expected",
+      "duration_ms": 9474
+    },
+    {
+      "engine": "webkit",
+      "name": "representative public layouts reflow and pass axe at 768px",
+      "status": "expected",
+      "duration_ms": 10901
+    },
+    {
+      "engine": "webkit",
+      "name": "representative public layouts reflow and pass axe at 1440px",
+      "status": "expected",
+      "duration_ms": 17561
+    },
+    {
+      "engine": "webkit",
+      "name": "public mobile navigation and demo backtracking remain usable",
+      "status": "expected",
+      "duration_ms": 3031
+    }
+  ]
+}

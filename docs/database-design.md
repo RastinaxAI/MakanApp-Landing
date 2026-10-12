@@ -129,3 +129,19 @@ organic sessions تا انتخاب روش consent/analytics و taxonomy attribut
 Migration `0001_admin_core`: admins و audit_logs؛ `0002_page_revision_core`: pages و page_revisions. alembic_version جدول کنترل ابزار است. UUID، timestamps UTC، email lowercase/unique، role CHECK، slug unique، row_version مثبت، schedule pair، FKهای RESTRICT و مالکیت revision با FK مرکب در PostgreSQL اجرا و آزموده شدند. مدل‌ها با reflection/autogenerate مقایسه شدند؛ drift صفر است. created_at/updated_at توسط ORM/default DB تنظیم می‌شود؛ به‌روزرسانی مستقیم SQL، updated_at خودکار trigger ندارد.
 
 اشاره‌گرها nullable هستند تا چرخه insert page/revision در یک تراکنش حل شود. حذف ساختاری مخرب/downgrade مسدود است. runtime فقط DML جداول مجاز، audit SELECT/INSERT و alembic_version SELECT دارد و DDL مجاز نیست. هیچ حساب عملیاتی یا محتوای نمونه در DB توسعه seed نشده است. session/challenge/rate-limit در STEP5 و sections/media/settings/features/FAQ در STEP6 migration مستقل خواهند داشت؛ schema این مرحله کامل CMS نیست. گزارش و شواهد در step-4-report است.
+
+## schema واقعی مرحله ۵
+
+Migration جدید `0003_auth_mfa` روی head قبلی `0002_pages` اعمال می‌شود؛ migrationهای قبلی بازنویسی نشده‌اند. مدل و خروجی migration همگام‌اند و `alembic check` معیار drift است.
+
+| جدول | قیود و داده واقعی | index / چرخه عمر |
+|---|---|---|
+| admin_sessions | UUID PK، admin_id FK RESTRICT، token_digest یکتا، csrf_digest، timestamps و absolute/idle/seen/revoked | admin_id+revoked_at، expires_at؛ هیچ token خام ذخیره نمی‌شود |
+| auth_challenges | UUID PK، digest token یکتا، digest CSRF، purpose=login، expires_at/used_at/timestamps | expires_at؛ پنج دقیقه، مصرف یک‌باره |
+| rate_limit_buckets | PK مرکب scope+subject_hmac+window_start، count>=0، expires_at | expires_at؛ UPSERT اتمیک؛ IP/email خام ذخیره نیست |
+| admin_mfa | admin_id PK/FK RESTRICT، secret رمزگذاری‌شده، enabled_at، pending_expires_at، last_used_step، timestamps | یک enrollment برای هر مدیر؛ pending پنج دقیقه و replay guard |
+| admin_recovery_codes | PK مرکب admin_id+code_digest، FK RESTRICT، used_at | هشت کد HMACشده؛ مصرف زیر قفل، regeneration جایگزین همه قبلی‌ها |
+
+Grant DML برای پنج جدول در خود migration صریح است؛ audit همچنان runtime SELECT/INSERT دارد و UPDATE/DELETE ندارد. حذف حساب از UI وجود ندارد. تغییر نقش/active و revoke با audit در یک تراکنش انجام می‌شود. آخرین مالک فعال تحت advisory lock حفاظت می‌شود؛ دو تغییر همزمان فقط یکی مجاز است. نقش migration از runtime و دیتابیس تست از توسعه مستقل است.
+
+فرمان `app.commands.auth_cleanup` در هر transaction یک batch محدود از challenge و bucket منقضی پاک می‌کند؛ live record، حساب، نشست و audit را لمس نمی‌کند. retention نشست/audit تا policy تولید خودکار نشده است. secret MFA خارج DB کلید دارد؛ key backup و DB backup باید هماهنگ بازیابی شوند. هیچ حساب عملیاتی یا محتوا به DB توسعه seed نشده؛ fixtureهای تست فقط DB اختصاصی هستند. مدل‌های CMS و CRM با تأیید مراحل۶–۸ افزوده خواهند شد.

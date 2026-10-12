@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-10-12T22:24:39.883Z",
+    "duration": 350216.424,
+    "expected": 92,
+    "skipped": 12,
+    "unexpected": 4,
+    "flaky": 0
+  },
+  "note": "Historical fourth run: MFA confirm returned 200 but UI assertion timed out at 5s; shared account state then blocked other engines. Firefox axe newPage stalled under two workers. Isolated fixture accounts by engine; explicitly awaited confirm response; UI wait 15s; complex tests 90s; final run uses one worker, no assertion or audit removed."
+}

@@ -1,3 +1,4 @@
+param([ValidateSet('step4','step5')][string]$Phase = 'step5')
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 $taskEnvironment = Join-Path $taskRoot '.env.test'
@@ -18,7 +19,7 @@ $env:TEST_MIGRATION_DB_PASSWORD = $taskValues.MIGRATION_DB_PASSWORD
 $env:TEST_API_DB_PASSWORD = $taskValues.API_DB_PASSWORD
 Push-Location (Join-Path $taskRoot 'apps/api')
 try {
-    & ./.venv/Scripts/python.exe -m pytest --junitxml=../../docs/qa/step4/pytest.xml
+    & ./.venv/Scripts/python.exe -m pytest "--junitxml=../../docs/qa/$Phase/pytest.xml"
     if ($LASTEXITCODE -ne 0) { throw "Backend tests failed with exit $LASTEXITCODE" }
 } finally {
     Pop-Location

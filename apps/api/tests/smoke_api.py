@@ -30,8 +30,23 @@ with httpx.Client(base_url="http://127.0.0.1:8000", timeout=8) as client:
         assert ready.json()["trace_id"] == ready.headers["x-trace-id"]
     schema = client.get("/api/v1/openapi.json")
     assert schema.status_code == 200
-    assert set(schema.json()["paths"]) == {"/api/v1/health/live", "/api/v1/health/ready"}
-    assert client.get("/api/v1/admin/auth/login").status_code == 404
+    assert "/api/v1/admin/auth/login" in schema.json()["paths"]
+    assert client.get("/api/v1/admin/auth/me").status_code == 401
+    assert client.get("/api/v1/admin/accounts").status_code == 401
+    assert client.get("/api/v1/admin/audit-logs").status_code == 401
+    if args.ready_status == 200:
+        challenge = client.get("/api/v1/admin/auth/csrf")
+        assert challenge.status_code == 200 and len(challenge.json()["csrf_token"]) == 64
+        assert "HttpOnly" in challenge.headers["set-cookie"]
+        assert "SameSite=lax" in challenge.headers["set-cookie"]
+        assert (
+            client.post(
+                "/api/v1/admin/auth/login",
+                headers={"Origin": "https://evil.example.com"},
+                json={"email": "invalid@example.com", "password": "invalid"},
+            ).status_code
+            == 403
+        )
     assert client.get("/api/v1/pages/home").status_code == 404
     assert ready.headers["cache-control"] == "no-store"
     print(
@@ -42,6 +57,7 @@ with httpx.Client(base_url="http://127.0.0.1:8000", timeout=8) as client:
                 "openapi": 200,
                 "trace_header": True,
                 "next_phase_routes_absent": True,
+                "admin_guest_rejected": True,
             }
         )
     )

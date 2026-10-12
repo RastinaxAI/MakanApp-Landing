@@ -122,3 +122,9 @@ CI باید PostgreSQL واقعی service داشته باشد. integration DB/vo
 ## پیشرفت پس از درخواست STEP4
 
 کاربر شروع Backend Foundation را درخواست کرد. API مستقل، config/schema/error/logging، engine/session/transaction/repository پایه، دو migration اولیه حساب/audit/page/revision، OpenAPI/health و Compose توسعه/تست PostgreSQL واقعی ساخته و آزموده شدند. startup هیچ schema mutation ندارد؛ job migration و role runtime جدا هستند. شواهد fresh/prior upgrade، rollback، constraints، privileges، قطع/بازیابی DB و persistence در step-4-report ثبت شده است. schema/session/login/CMS/lead/module API در این مرحله اضافه نشده‌اند؛ STEP5 به تأیید بعدی کاربر وابسته است.
+
+## پیشرفت پس از تأیید STEP4 و درخواست STEP5
+
+کاربر STEP4 را تأیید و مرحله Authentication/Admin را درخواست کرد؛ پاسخ مستقیم او «MFA اختیاری برای هر مدیر» است. ورود امن، owner bootstrap/recovery، نشست/CSRF/limiter واقعی، roleها، last-owner guard، audit، MFA و چهار صفحه پنل پایه + login اکنون ساخته شده‌اند. هیچ backend اصلی ماکان تغییر نکرده؛ fixture تست مستقل از دیتابیس توسعه است. شواهد build/Pytest/Playwright/Docker و وضعیت پذیرش در [گزارش STEP5](step-5-report.md) ثبت می‌شوند.
+
+MFA دیگر تصمیم باز نیست. باقی‌مانده‌های زیرساخت تولید، retention/audit policy، TLS واقعی و هشدار ابزار توسعه در مرحله۱۰ پیگیری می‌شوند؛ CMS و CRM به مراحل۶–۸ تعلق دارند. قبل از آغاز STEP6 باید تأیید تازه کاربر دریافت شود. هیچ Push مجاز فرض نشده است.

@@ -1,0 +1,7 @@
+{
+  "status": "aborted-after-fixture-pagination-failure",
+  "completed_tests": 27,
+  "passed": 26,
+  "failed": 1,
+  "note": "Engine-specific fixtures created 21 admins (>20 per page). Creation succeeded, but the test assumed the new account was on page one. Runner stopped deliberately after diagnosis; exact fixture API/DB cleanup ran. Test now navigates the real second page before deactivation. MFA/password/three responsive Chromium tests passed before interruption. This is not a complete acceptance run."
+}

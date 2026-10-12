@@ -3,11 +3,13 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from app.api.v1.routes.admin import router as admin_router
 from app.api.v1.routes.health import router
 from app.core.config import Settings
 from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import RequestContextMiddleware
+from app.core.security import Security
 from app.db.session import build_engine, session_factory
 from app.schemas.common import ErrorResponse
 from app.services.health import expected_heads
@@ -22,16 +24,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         engine = build_engine(config)
         app.state.engine = engine
         app.state.session_factory = session_factory(engine)
+        limiter_engine = build_engine(config.model_copy(update={"db_pool_size": 2}))
+        app.state.limiter_session_factory = session_factory(limiter_engine)
         app.state.migration_heads = expected_heads()
+        app.state.settings = config
+        app.state.security = Security(config)
         try:
             yield
         finally:
             engine.dispose()
+            limiter_engine.dispose()
 
     development = config.app_env in ("development", "test")
     app = FastAPI(
         title="MakanApp Landing API",
-        version="0.4.0",
+        version="0.5.0",
         lifespan=lifespan,
         docs_url="/api/v1/docs" if development else None,
         redoc_url=None,
@@ -41,4 +48,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     install_error_handlers(app)
     app.add_middleware(RequestContextMiddleware)
     app.include_router(router, prefix="/api/v1")
+    app.include_router(admin_router, prefix="/api/v1")
     return app

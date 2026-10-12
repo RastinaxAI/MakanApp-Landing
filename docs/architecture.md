@@ -128,3 +128,15 @@ deploy: build/scan → backup پیش از migration پرخطر → migration job
 FastAPI مستقل با factory/lifespan، config امن، engine sync/session-per-request، transaction و repository پایه ساخته شد. health تحت `/api/v1` و OpenAPI توسعه فعال‌اند. Python3.13.16، FastAPI0.143.0، Pydantic2.14.1، SQLAlchemy2.1.4، Alembic1.20.0، psycopg3.3.6 و uvicorn0.54.0 در pyproject/uv.lock قفل شدند. Docker API چندمرحله‌ای با uid10001 و filesystem read-only Compose، PostgreSQL17.11-alpine و job migration جدا آزموده شدند. network DB internal و بدون host port است؛ API شبکه application جدا برای publish روی127.0.0.1 دارد. role مالک migration و runtime غیر-superuser جدا هستند؛ schema فقط با Alembic تغییر می‌کند.
 
 دو migration اولیه admins/audit و pages/revisions اجرا شدند؛ schema کامل CMS/auth/CRM به مراحل بعد تعلق دارد. ۱۹ تست HTTPX/Pytest، ارتقای fresh/prior، drift صفر، قطع DB و persistence پس از recreate موفق‌اند. وب مرحله۳ تغییر نکرده و build/typecheck/lint آن نیز موفق بود. جزئیات شواهد و محدودیت‌ها در `step-4-report.md` و راه‌اندازی در `backend-runbook.md` است. Compose وب/proxy/HTTPS تولید و CI هنوز ساخته نشده‌اند.
+
+## اجرای مرحله ۵ و تصمیم MFA
+
+کاربر STEP4 را تأیید و STEP5 را درخواست کرد؛ MFA اختیاری برای هر مدیر تصویب شد. ورود opaque session، Argon2id، CSRF، RBAC، audit تراکنشی و MFA واقعی اکنون فعال‌اند. routeهای پنل زیر `/admin` و صفحات عمومی زیر route group `(public)` قرار گرفته‌اند؛ URL عمومی عوض نشده است. Root layout فقط فونت و providers دارد؛ chrome عمومی و مدیریت جدا هستند.
+
+API مستقل با migration `0003_auth_mfa` پنج جدول امنیتی اضافه می‌کند. HTTP routeها schema/cookie را اداره می‌کنند؛ business transactionها در `services/auth.py`، `admin_operations.py` و `mfa.py` هستند. ORM sync داخل endpoint sync اجرا می‌شود. limiter حساس با pool مستقل دو اتصال commit می‌شود تا rollback عملیات، quota را از بین نبرد؛ pool اصلی همچنان محدود است.
+
+SSR پنل و bridge توسعه فقط cookieهای مجاز و headerهای Origin/CSRF/Fetch-Metadata را به API server-side تنظیم‌شده می‌فرستند. مقصد URL از env ثابت است، redirect دنبال نمی‌شود و body mutation تا ۱۶KiB محدود است. bridge مسیرها را allowlist می‌کند و به X-Forwarded-For ورودی اعتماد ندارد. در این توسعه IP فرآیند Next مشترک است؛ proxy تولید و IP واقعی در STEP10 آزموده خواهند شد.
+
+CSP هر پاسخ مدیریت nonce مستقل دارد؛ SSR مدیریت dynamic است، script بدون nonce در آزمون تزریق HTML اجرا نمی‌شود. پنل no-store/noindex است؛ token در storage مرورگر قرار ندارد. logout/تغییر رمز/MFA مسیر خصوصی را با full navigation پاک می‌کنند. cookie Secure در staging/production و HTTPS origin اجباری است؛ TLS واقعی هنوز تحویل مرحله۱۰ است.
+
+ثبت first owner و بازیابی lost-MFA فقط CLI کنسول مجاز، بدون رمز در argv است. AES-256-GCM با کلید مستقل و AAD شناسه حساب برای secret MFA؛ HMAC برای token/CSRF/recovery/rate subject. TOTP شش رقم، ۳۰ثانیه، replay guard و هشت کد بازیابی یک‌بارمصرف دارد. راهنمای policy و rotation در [admin-runbook](admin-runbook.md) است. dashboard شمارش واقعی DB دارد و ماژول‌های CMS/CRM را pending اعلام می‌کند؛ این مرحله هیچ CMS/lead ساختگی ندارد.

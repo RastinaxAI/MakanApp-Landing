@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-10-12T21:36:04.247Z",
+    "duration": 318698.98099999997,
+    "expected": 100,
+    "skipped": 7,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "note": "Historical first browser run: 100 passed, one Windows WebKit SameSite metadata failure, seven serial tests not run; wire header remained Lax."
+}

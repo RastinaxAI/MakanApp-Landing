@@ -172,3 +172,30 @@ OpenAPI واقعی پس از ساخت جایگزین ابهام‌ها می‌ش
 نسخه برنامه API برابر0.4.0 است. اکنون فقط GET `/api/v1/health/live`، GET `/api/v1/health/ready` و OpenAPI/Swagger توسعه وجود دارند. ready در DB قطع/ناموجود/schema قدیمی503 و در head فعلی200 است؛ live مستقل از DB200 می‌ماند. پاسخ خطای واقعی دارای details آرایه، trace_id همسان header تولیدشده server و no-store است. 422/404/405/500/503 و redaction با HTTPX بررسی شدند. OpenAPI واقعی در `docs/qa/step4/openapi.json` snapshot شده است. docs در staging/production404 می‌دهد؛ CORS wildcard یا اعتماد proxy header فعال نیست.
 
 PaginationQuery مشترک با page>=1/page_size<=100 و unknown-field rejection ساخته و تست شده، اما endpoint فهرست/فیلتر CMS هنوز وجود ندارد. هیچ endpoint نمایشی برای site/pages/leads/admin/learn ساخته نشده؛ مسیرهای آن‌ها تا مراحل بعد404 هستند. جدول یا schema پایه حساب مدیر به معنی احراز هویت اجراشده نیست.
+
+## قرارداد فعال مرحله ۵ — نسخه API 0.5.0
+
+این بخش نسبت به طرح endpointهای بالا مرجع وضعیت فعلی است؛ مسیرهای عمومی CMS/آموزش/lead هنوز موجود نیستند. snapshot واقعی OpenAPI در `qa/step5/openapi.json` است. همه مسیرهای زیر `/api/v1/admin` هستند و خروجی‌ها Pydantic response schema دارند. errorهای 401/403/404/409/413/422/429/503 در OpenAPI ثبت‌اند.
+
+| روش / مسیر | schema / خروجی | دسترسی و اثر |
+|---|---|---|
+| GET `/auth/csrf` | csrf_token؛ cookie challenge پیش از ورود یا token مشتق از نشست | محدودیت نرخ، no-store؛ challenge پنج دقیقه |
+| POST `/auth/login` | email/password/mfa_code اختیاری → Profile | challenge+Origin+CSRF؛ cookie پس از commit؛ خطای عمومی 401 |
+| GET `/auth/me` | id/email/role/capabilities/mfa_enabled | نشست معتبر و active |
+| POST `/auth/logout` | 204 | نشست+Origin+CSRF، revoke+audit |
+| GET `/auth/sessions` | SessionInfo[]؛ query admin_id اختیاری | خود یا owner برای حساب دیگر؛ حداکثر۱۰۰ نشست فعال |
+| DELETE `/auth/sessions/{session_id}` | 204 | خود/owner، CSRF؛ هدف غیرمجاز 404؛ current cookie پاک می‌شود |
+| PATCH `/auth/password` | current_password/new_password/mfa_code → 204 | رمز جدید۱۵–۱۲۸؛ reauth؛ revoke تمام نشست‌ها |
+| GET `/accounts` | PaginatedResponse[Account]، page/page_size | owner؛ page_size۱–۱۰۰، پیش‌فرض۲۰؛ ترتیب created_at/id |
+| POST `/accounts` | email/password/role/current_password/mfa_code → Account 201 | owner+reauth؛ تکراری409؛ بدون signup عمومی |
+| PATCH `/accounts/{account_id}` | role/is_active اختیاری+reauth → Account | owner؛ آخرین مالک409؛ revoke و audit تغییر واقعی |
+| GET `/audit-logs` | PaginatedResponse[AuditEvent] | owner؛ id/action/actor_id/entity_id/created_at؛ بدون payload حساس |
+| GET `/dashboard` | metrics عدد واقعی، modules content/leads=pending | active_admins فقط owner؛ pages فقط capability محتوا |
+| POST `/auth/mfa/enroll` | current_password/mfa_code → secret/otpauth_url | مدیر خود؛ رمز دوباره؛ اگر فعال409 |
+| POST `/auth/mfa/confirm` | code شش‌رقمی → recovery_codes | pending معتبر؛ replay/rate guard؛ revoke تمام نشست‌ها |
+| POST `/auth/mfa/disable` | reauth → 204 | رمز+عامل دوم اگر فعال؛ MFA/recovery حذف؛ revoke تمام نشست‌ها |
+| POST `/auth/mfa/recovery-codes` | reauth → recovery_codes | MFA فعال و رمز+عامل دوم؛ قبلی‌ها بی‌اعتبار |
+
+login password۱–۱۲۸ برای سازگاری خطای عمومی؛ رمز جدید۱۵–۱۲۸ است. email normalized trim/lower و حداکثر۲۵۴ است. MFA login اختیاری در schema ولی برای مدیر enabled الزامی است؛ code field می‌تواند TOTP یا recovery باشد. تمام requestها extra fields را رد می‌کنند. body تغییر حداکثر۱۶KiB است. تغییر role/active خود نشست را می‌بندد؛ ورود دوباره لازم است. role reset endpoint ساخته نشده؛ operator CLI recovery مرجع است. account q/filter تا نیاز CMS/CRM اضافه نشده و جعل نمی‌شود.
+
+cookie توسعه non-Secure فقط loopback و cookie تولید `__Host-*` با Secure است؛ HTTPX حالت production را با HTTPS بررسی می‌کند، اما TLS واقعی هنوز مرحله۱۰ است. rate limits و کلیدها در راهنمای مدیر ثبت‌اند. درخواست مستقیم API و bridge توسعه قرارداد یکسان JSON/trace/Retry-After دارند؛ headerهای غیرمجاز forward نمی‌شوند.

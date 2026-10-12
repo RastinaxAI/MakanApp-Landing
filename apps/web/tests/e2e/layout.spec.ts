@@ -63,7 +63,7 @@ for (const width of [320, 360, 390, 479, 480, 768, 1024, 1440]) {
     await expect(page.getByTestId("product-placeholder").first()).toBeVisible();
     if ([390, 768, 1440].includes(width)) {
       const directory = path.resolve(
-        "../../docs/qa/step3",
+        "../../docs/qa/step5",
         testInfo.project.name,
       );
       await mkdir(directory, { recursive: true });
@@ -211,6 +211,7 @@ for (const width of [390, 1440]) {
   test(`axe WCAG audit, all component states and drawer at ${width}px`, async ({
     page,
   }, testInfo) => {
+    test.setTimeout(90000);
     await page.setViewportSize({ width, height: 900 });
     const audit = async () => {
       const result = await new AxeBuilder({ page })
@@ -242,7 +243,7 @@ for (const width of [390, 1440]) {
       window.scrollTo({ top: 0, behavior: "instant" });
     });
     const directory = path.resolve(
-      "../../docs/qa/step3",
+      "../../docs/qa/step5",
       testInfo.project.name,
     );
     await mkdir(directory, { recursive: true });

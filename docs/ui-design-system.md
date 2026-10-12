@@ -114,3 +114,11 @@ WCAG 2.2 AA هدف است؛ targetهای لمسی 44×44px تصمیم طراحی
 اجزای اجرایی: Button/Input/Textarea/Checkbox/Label/Tabs/Accordion/Sheet؛ StatusBadge متنی+آیکون برای سه readiness و MotionSurface برای hover محدود. نمونه‌های صفحه `/design-system` حالت disabled/loading/error/confirmation، فیلد labelدار و پنل focus-trap را ارائه می‌کنند. این نمونه فرم submit ندارد و هیچ lead یا رضایت واقعی ثبت نمی‌کند.
 
 breakpointهای CSS در 480 و 1024 px دقیق‌اند؛ کارت‌ها ۱/۲/۴ ستون و Hero در desktop دو ستون می‌شود. ردیف CTAها در بزرگ‌نمایی متن قابلیت wrap دارد. skip link با tabIndex صفر، outline مشترک سه‌پیکسلی و media query کاهش حرکت برقرار است؛ ترجیح حرکت با useSyncExternalStore هم هنگام hydration و هم هنگام تغییر دستگاه دنبال می‌شود. screenshotهای layout و کامپوننت‌ها در `docs/qa/step2` از browser واقعی تولید می‌شوند و نمونه تصویری تحویل این مرحله‌اند.
+
+## پنل مدیریت مرحله ۵
+
+Layout مستقل RTL با tokenها و primitiveهای موجود؛ desktop sidebar و نمایش grid منو در موبایل، max-width ثابت و flex-wrap برای حساب/نشست. header/footer عمومی در پنل نمایش داده نمی‌شود. ورود و ایجاد حساب از RHF/Zod و labelهای صریح استفاده می‌کنند؛ پیام‌ها فارسی، رمزها دارای autocomplete مناسب و errors با alert/status هستند. اهداف لمسی حداقل۴۴px، skip link مدیریت، focus states و ترجیح reduced-motion از foundation حفظ شده‌اند.
+
+صفحات پنل: login، dashboard، security، accounts و audit. وضعیت خالی از DB واقعی است؛ عدد leads یا نمودار فرضی وجود ندارد. MFA به‌صورت کلید دستی محلی و کدهای بازیابی فقط در پاسخ همان بار نمایش دارد. نقش و دسترسی UI از Profile server است و کنترل نهایی API انجام می‌شود. بعد revoke عملیات خود، navigation کامل داده خصوصی را کنار می‌گذارد. تاریخ‌های client با timeZone تهران تولید می‌شوند تا UTC سرور و مرورگر hydration متفاوت نسازند.
+
+شواهد responsive/keyboard/axe و screenshots این مرحله در `qa/step5` ذخیره‌اند؛ QA قبلی حفظ شده است. این بررسی خودکار، گواهی کامل WCAG یا تست دستگاه واقعی نیست.

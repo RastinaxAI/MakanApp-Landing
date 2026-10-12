@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
+import { PublicShell } from "@/components/layout/public-shell";
 
-export default function NotFound() {
+export function NotFoundContent() {
   return (
     <Container className="grid min-h-[65vh] place-items-center py-16 text-center">
       <div className="max-w-lg">
@@ -23,5 +24,13 @@ export default function NotFound() {
         </Button>
       </div>
     </Container>
+  );
+}
+
+export default function NotFound() {
+  return (
+    <PublicShell>
+      <NotFoundContent />
+    </PublicShell>
   );
 }

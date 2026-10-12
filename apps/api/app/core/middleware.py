@@ -36,6 +36,38 @@ class RequestContextMiddleware:
             await send(message)
 
         try:
+            if scope["path"].startswith("/api/v1/admin/") and scope["method"] in (
+                "POST",
+                "PATCH",
+                "DELETE",
+            ):
+                body = bytearray()
+                while True:
+                    part = await receive()
+                    if part["type"] == "http.disconnect":
+                        return
+                    body.extend(part.get("body", b""))
+                    if len(body) > 16384:
+                        await error_response(
+                            Request(scope),
+                            413,
+                            "PAYLOAD_TOO_LARGE",
+                            "حجم درخواست بیش از حد مجاز است.",
+                        )(scope, receive, send_with_headers)
+                        return
+                    if not part.get("more_body", False):
+                        break
+                original_receive = receive
+                sent_body = False
+
+                async def limited_receive():
+                    nonlocal sent_body
+                    if not sent_body:
+                        sent_body = True
+                        return {"type": "http.request", "body": bytes(body), "more_body": False}
+                    return await original_receive()
+
+                receive = limited_receive
             await self.app(scope, receive, send_with_headers)
         except Exception:
             if headers_sent:

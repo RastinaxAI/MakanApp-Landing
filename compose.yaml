@@ -24,6 +24,8 @@ services:
     command: [alembic, upgrade, head]
     environment:
       APP_ENV: development
+      AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
+      AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Run setup-development.ps1}
       DATABASE_URL: postgresql+psycopg://makan_migrator:${MIGRATION_DB_PASSWORD:?Set migration credential}@db:5432/makan_landing
     networks: [database]
     depends_on:
@@ -33,6 +35,9 @@ services:
     build: {context: ./apps/api}
     environment:
       APP_ENV: development
+      AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
+      AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Run setup-development.ps1}
+      AUTH_ALLOWED_ORIGINS: '${AUTH_ALLOWED_ORIGINS:-["http://127.0.0.1:3000","http://127.0.0.1:3100"]}'
       DATABASE_URL: postgresql+psycopg://makan_api:${API_DB_PASSWORD:?Set runtime credential}@db:5432/makan_landing
     ports: ['127.0.0.1:8000:8000']
     networks: [application, database]

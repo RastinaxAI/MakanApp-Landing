@@ -28,13 +28,18 @@ def administrator():
 
 def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
     with database_factory() as (_, _, engine):
-        assert set(inspect(engine).get_table_names()) == {
+        assert {
+            "admin_sessions",
+            "auth_challenges",
+            "admin_mfa",
+            "admin_recovery_codes",
+            "rate_limit_buckets",
             "alembic_version",
             "admins",
             "audit_logs",
             "pages",
             "page_revisions",
-        }
+        } == set(inspect(engine).get_table_names())
         migrate(engine)
         with engine.connect() as connection:
             assert compare_metadata(MigrationContext.configure(connection), Base.metadata) == []

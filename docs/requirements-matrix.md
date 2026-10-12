@@ -223,3 +223,22 @@
 | R104 | DB توسعه واقعی و پایدار؛ fixtureها فقط DB تست مستقل؛ هیچ Mock API نهایی نداریم | persistence ماژول‌های بعد باید جدا پذیرفته شود |
 
 گزارش STEP4 و فایل‌های QA شواهد این محدوده‌اند؛ جداول اولیه به معنی تکمیل فرم، ورود یا CMS نیستند. STEP5 فقط پس از تأیید بعدی کاربر.
+
+## وضعیت اجرای STEP5 و شواهد پذیرش
+
+تصمیم مستقیم کاربر: MFA اختیاری برای هر مدیر. موارد زیر با API/DB واقعی و آزمون اجرا شده‌اند؛ جزئیات نهایی و محدودیت‌ها در `step-5-report.md` و `qa/step5` هستند.
+
+| نیازمندی | وضعیت فعلی | شاهد / دامنه باقی |
+|---|---|---|
+| R023 | پنل پایه و login/dashboard/security/accounts/audit پیاده شده | RBAC/API/E2E؛ CMS/CRM مسیرهای فعال ندارند و مراحل۶–۸ باقی است |
+| R044 | Argon2id، opaque session/HMAC، cookie، expiry، rotation/logout/revoke | Pytest و مرورگر واقعی؛ Secure حالت HTTPS HTTPX؛ TLS واقعی مرحله۱۰ |
+| R045 | owner/editor/sales سمت server، active، آخرین owner همزمان، audit تراکنشی | unauthorized403، deactivate401، audit-failure rollback503؛ audit CMS بعداً |
+| R046 | MFA اختیاری TOTP/AES-GCM/replay/recovery/CLI recovery واقعی | RFC vectors، lifecycle API و E2E؛ هیچ secret plaintext در DB/log |
+| R047 | Origin/CSRF پیش‌ورود و mutation، limiter اتمیک، CSP nonce، بدون storage token | 403/429، race limiter، body413، parser-XSS مرورگر؛ proxy تولید مرحله۱۰ |
+| R064–067 | پنج جدول امنیتی با migration، grant runtime و index | PostgreSQL واقعی، fresh/prior upgrade، alembic check؛ ماژول‌های بعد مستقل |
+| R068 | قرارداد typed auth/admin، pagination bounded، OpenAPI | schemas request/response و snapshot واقعی؛ filter ماژول‌ها بعداً |
+| R072 | خطاهای auth/CSRF/rate/حجم به همان envelope اضافه شد | 401/403/409/413/422/429/503، trace/Retry-After، redaction |
+| R079، R087–090 | پنل dynamic/no-store/noindex، responsive RTL، keyboard و axe | گزارش QA مرحله۵؛ WCAG دستی کامل/دستگاه واقعی و SEO/Lighthouse تولید باقی |
+| R091–099 | image API و migration مرحله۵ با Docker توسعه آزموده | Compose تولید وب/proxy/HTTPS/CI/backup و scans نهایی مرحله۱۰ |
+
+هیچ requirement مربوط به CMS، آموزش یا فرم Lead با این مرحله complete اعلام نشده است. ریسک باز `braces` ابزارهای توسعه در گزارش و dependency-audit ثبت شده؛ تأیید امنیت Production صادر نشده است. گزارش‌های تاریخی مراحل۲–۴ تغییر نمی‌کنند.

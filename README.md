@@ -1,6 +1,6 @@
 # وب‌سایت ماکان
 
-وضعیت فعلی: STEP 4، زیرساخت مستقل FastAPI/PostgreSQL/Alembic کنار صفحات عمومی مرحله۳. ورود مدیر، CMS، CRM و فرم ذخیره‌سازی هنوز ساخته نشده‌اند. وب برای بررسی پیش از انتشار با noindex و robots مسدود است؛ انتشار Production محسوب نمی‌شود.
+وضعیت فعلی: STEP 5، ورود امن مدیر، MFA اختیاری و پنل پایه متصل به FastAPI/PostgreSQL واقعی، کنار صفحات عمومی مرحله۳. CMS، CRM و فرم ذخیره‌سازی هنوز ساخته نشده‌اند. وب برای بررسی پیش از انتشار با noindex و robots مسدود است؛ انتشار Production محسوب نمی‌شود.
 
 ## اجرا
 
@@ -48,7 +48,15 @@ docker compose --env-file .env.test -f compose.test.yaml up -d --wait
 docker compose --env-file .env.test -f compose.test.yaml down
 ```
 
-DB تست مستقل است؛ تست‌ها SQLite یا API ساختگی ندارند. جزئیات پذیرش مرحله۴ در [گزارش STEP4](docs/step-4-report.md) ثبت می‌شود. APIهای ورود/CMS/فرم تا مراحل بعد وجود ندارند؛ قبل از STEP5 تأیید کاربر لازم است.
+DB تست مستقل است؛ تست‌ها SQLite یا API ساختگی ندارند. جزئیات پذیرش مرحله۴ در [گزارش STEP4](docs/step-4-report.md) ثبت می‌شود. ورود و پنل مرحله۵ طبق [راهنمای مدیر](docs/admin-runbook.md) اجرا می‌شوند؛ حساب پیش‌فرض وجود ندارد. CMS و فرم به مراحل بعد تعلق دارند.
+
+پس از migration، اولین مالک واقعی را با ایمیل خود بسازید؛ رمز بدون نمایش پرسیده می‌شود:
+
+```powershell
+docker compose exec -it api python -m app.commands.admin bootstrap --email YOUR_REAL_EMAIL
+```
+
+مسیر ورود `/admin/login`، امنیت/MFA در `/admin/security` و حساب‌ها/audit مخصوص مالک هستند. کلیدها، recovery و محدودیت‌ها در راهنمای مدیر آمده‌اند.
 
 ## بررسی کیفیت
 
@@ -57,17 +65,17 @@ npm run lint
 npm run typecheck
 npm run build
 npx playwright install chromium firefox webkit
-npm run test:e2e
+./scripts/test-web-admin.ps1
 ```
 
-Playwright سرور تولید مجزا روی پورت 3100 راه می‌اندازد؛ قبل آن build لازم است. ۲۷ سناریو برای هر موتور اجرا می‌شوند: RTL، فونت محلی، عرض‌های 320/360/390/479/480/768/1024/1440، منو و focus trap، skip link، tab/accordion/checkbox، reduced motion، بزرگ‌کردن متن، axe، 404، همه مسیرهای سند، یکتایی metadata، لینک‌ها، ترتیب Home، وضعیت AI و فرم غیرفعال. جای test واقعی API در مراحل بعد حفظ شده است.
+Playwright سرور تولید مجزا روی پورت 3100 راه می‌اندازد؛ قبل آن build لازم است. ۲۷ سناریوی عمومی و ۹ سناریوی پنل برای هر موتور اجرا می‌شوند: RTL، فونت محلی، عرض‌های 320/360/390/479/480/768/1024/1440، منو و focus trap، skip link، tab/accordion/checkbox، reduced motion، بزرگ‌کردن متن، axe، 404، همه مسیرهای سند، یکتایی metadata، لینک‌ها، ترتیب Home، وضعیت AI و فرم غیرفعال. ورود/خروج، RBAC، حساب واقعی، MFA/بازیابی، تغییر رمز و CSP نیز بررسی می‌شوند. DB تست فعال لازم است؛ اسکریپت پنل API واقعی روی۸۱۰۰ و DB اختصاصی موقت می‌سازد و cleanup محدود به همان اجراست. خروجی‌های QA این مرحله در `docs/qa/step5` هستند؛ QA قبلی حفظ شده است.
 
 اگر دانلود Chromium از سرویس رسمی در دسترس نیست و Edge نصب شده، در PowerShell:
 
 ```powershell
 $env:PLAYWRIGHT_CHROMIUM_CHANNEL='msedge'
 npx playwright install firefox webkit
-npm run test:e2e
+./scripts/test-web-admin.ps1
 ```
 
 این متغیر فقط پروژه chromium را روی Edge اجرا می‌کند؛ Firefox و WebKit همچنان نسخه‌های مدیریت‌شده Playwright هستند. حذف متغیر برای بازگشت به Chromium bundled: `Remove-Item Env:PLAYWRIGHT_CHROMIUM_CHANNEL`. نسخه مرورگر و محدودیت دانلود باید در گزارش تست ثبت شود.
@@ -89,4 +97,4 @@ npm run test:e2e
 
 فونت: Vazirmatn / [منبع رسمی](https://github.com/rastikerdar/vazirmatn)، بسته Fontsource 5.3.0، مجوز SIL OFL 1.1 همراه فایل نگهداری شده است. هیچ تصویر ساختگی محصول، آمار مشتری یا لوگوی جدید به‌عنوان دارایی رسمی معرفی نشده است. رنگ‌ها پیشنهادی و برند متنی موقت‌اند.
 
-سند مبنا و برنامه کامل در [گزارش تحلیل](docs/analysis-report.md)، [سیستم طراحی](docs/ui-design-system.md) و [برنامه اجرا](docs/implementation-plan.md) قرار دارند. گزارش‌های قبلی در `docs/step-2-report.md` و `docs/step-3-report.md` حفظ شده‌اند. منشأ و محدودیت copy در `docs/content-review-step3.md` است. STEP4 به درخواست کاربر اجرا شده؛ قبل از STEP5 تأیید بعدی لازم است. Push فقط با مجوز صریح.
+سند مبنا و برنامه کامل در [گزارش تحلیل](docs/analysis-report.md)، [سیستم طراحی](docs/ui-design-system.md) و [برنامه اجرا](docs/implementation-plan.md) قرار دارند. گزارش‌های قبلی در `docs/step-2-report.md` و `docs/step-3-report.md` حفظ شده‌اند. منشأ و محدودیت copy در `docs/content-review-step3.md` است. [گزارش STEP5](docs/step-5-report.md) شواهد و ریسک باز dev dependency را ثبت می‌کند؛ audit وابستگی‌های runtime وب صفر finding دارد، اما ابزارهای توسعه به‌علت braces دارای ۹ هشدار high از یک advisory هستند. انتشار Production تأیید نشده است. STEP6 به تأیید بعدی کاربر وابسته است. Push فقط با مجوز صریح.

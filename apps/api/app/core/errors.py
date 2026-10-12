@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException
 
+from app.core.problems import ApiProblem
 from app.schemas.common import ErrorBody, ErrorDetail, ErrorResponse
 
 
@@ -19,6 +20,13 @@ def error_response(
 
 
 def install_error_handlers(app: FastAPI) -> None:
+    @app.exception_handler(ApiProblem)
+    async def problem(request: Request, exc: ApiProblem) -> JSONResponse:
+        response = error_response(request, exc.status, exc.code, exc.message)
+        if exc.retry_after is not None:
+            response.headers["Retry-After"] = str(exc.retry_after)
+        return response
+
     @app.exception_handler(RequestValidationError)
     async def validation_error(request: Request, exc: RequestValidationError) -> JSONResponse:
         details = []

@@ -75,7 +75,13 @@ async def test_liveness_and_readiness_with_real_refused_connection():
 @pytest.mark.anyio
 async def test_documentation_is_disabled_outside_development(environment):
     async with api_client(
-        create_app(Settings(database_url=UNAVAILABLE_DB, app_env=environment))
+        create_app(
+            Settings(
+                database_url=UNAVAILABLE_DB,
+                app_env=environment,
+                auth_allowed_origins=["https://testserver"],
+            )
+        )
     ) as client:
         for path in ("/api/v1/docs", "/api/v1/openapi.json", "/docs", "/openapi.json"):
             assert (await client.get(path)).status_code == 404
@@ -85,7 +91,9 @@ async def test_documentation_is_disabled_outside_development(environment):
 async def test_openapi_contract_and_error_metadata():
     async with api_client(create_app(Settings(database_url=UNAVAILABLE_DB))) as client:
         schema = (await client.get("/api/v1/openapi.json")).json()
-        assert set(schema["paths"]) == {"/api/v1/health/live", "/api/v1/health/ready"}
+        assert {"/api/v1/health/live", "/api/v1/health/ready", "/api/v1/admin/auth/login"}.issubset(
+            schema["paths"]
+        )
         assert "ErrorResponse" in schema["components"]["schemas"]
         assert (await client.get("/api/v1/docs")).status_code == 200
         for method, path, status in (

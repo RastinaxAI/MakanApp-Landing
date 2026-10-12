@@ -1,6 +1,6 @@
 [project]
 name = "makan-landing-api"
-version = "0.4.0"
+version = "0.5.0"
 description = "Independent marketing website API for MakanApp"
 requires-python = ">=3.13,<3.14"
 dependencies = [
@@ -11,6 +11,9 @@ dependencies = [
   "alembic==1.20.0",
   "psycopg[binary]==3.3.6",
   "uvicorn==0.54.0",
+  "argon2-cffi==25.1.0",
+  "email-validator==2.3.0",
+  "cryptography==50.0.2",
 ]
 
 [dependency-groups]

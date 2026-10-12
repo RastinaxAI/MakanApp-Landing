@@ -1,0 +1,19 @@
+{
+  "api_image": "sha256:e93144eda44e07be2d2440e82b4576ef59e79217477865e6ef90781a2bfeb53d",
+  "healthy": true,
+  "uid": "10001:10001",
+  "readonly_rootfs": true,
+  "drop_all_caps": true,
+  "migration_head": "0003_auth_mfa",
+  "alembic_check": "No new upgrade operations detected.",
+  "host_smoke": {
+    "live": 200,
+    "ready": 200,
+    "guest": 401,
+    "hostile_origin": 403,
+    "cookie_flags": true
+  },
+  "development_admins": 0,
+  "database_host_port": null,
+  "production_deployment": false
+}
