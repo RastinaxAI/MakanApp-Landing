@@ -206,3 +206,20 @@
 | R087، R090، R098 | layout و آزمون‌های عمومی روی سه موتور مرورگر توسعه یافته‌اند | نتیجه دقیق در step-3-report؛ screen reader و دستگاه فیزیکی/تمام دامنه نهایی باقی‌اند |
 
 افزودن صفحات UI به معنی موفقیت API/CMS/فرم ذخیره‌شده نیست. این تحویل، مرحله۳ توسعه است و قبل از رفع وابستگی‌های تصویر/حقوقی/فرم/SEO برای انتشار عمومی پذیرفته نمی‌شود.
+
+## پیشرفت STEP4 — Backend Foundation
+
+| نیازمندی | وضعیت اجرا/شاهد | پذیرش باقی‌مانده |
+|---|---|---|
+| R001، R075 | API/DB مستقل؛ بدون اتصال Backend اصلی یا schema داده آموزشی | بررسی همین مرز در ماژول‌های آینده ادامه دارد |
+| R064، R103 | Python3.13.16 و lock دقیق؛ PostgreSQL17.11 واقعی؛ دو migration و تست fresh/prior موفق | تثبیت زیرساخت نهایی/CI در STEP10 |
+| R065، R066 | admins/audit/pages/revisions با PK/FK/CHECK/index/UTC؛ drift صفر | سایر جدول‌های schema در STEP5–8؛ CMS هنوز وجود ندارد |
+| R068 | `/api/v1`، Error/Health schema، OpenAPI و PaginationQuery bounded | list/filter/REST ماژول‌ها در مراحل بعد |
+| R072 | خطای عمومی و request log JSON با trace و redaction؛ 422/404/405/500/503 تست شده | 403/429 پس از auth/limiter و تست ماژول‌ها |
+| R073 | docs فقط development/test؛ staging/prod404؛ CORS باز نداریم | same-origin proxy و مجوز endpointهای مدیریتی در STEP5/10 |
+| R074 | repository بدون commit، transaction commit/rollback روی DB واقعی آزموده شد | انتشار/فرم، concurrency و stale edit در STEP6/8 |
+| R091، R092، R094 | API Docker multi-stage/non-root، DB خصوصی و persistent، migration job جدا و advisory lock؛ Compose smoke موفق | وب/proxy/prod/HTTPS، backup/restore، deploy concurrency و image scan در STEP10 |
+| R097، R099 | ۱۹ Pytest/HTTPX؛ DB قطع503/live200، بازیابی و حفظ schema پس از recreate | Auth/CMS/learn/CRM، upload و backup/restore در مراحل مربوط |
+| R104 | DB توسعه واقعی و پایدار؛ fixtureها فقط DB تست مستقل؛ هیچ Mock API نهایی نداریم | persistence ماژول‌های بعد باید جدا پذیرفته شود |
+
+گزارش STEP4 و فایل‌های QA شواهد این محدوده‌اند؛ جداول اولیه به معنی تکمیل فرم، ورود یا CMS نیستند. STEP5 فقط پس از تأیید بعدی کاربر.

@@ -1,0 +1,5 @@
+{
+  "tests": "19",
+  "failures": "1",
+  "note": "Historical first run: detached ORM fixture access; schema preservation assertion fixed by capturing immutable email before session close."
+}

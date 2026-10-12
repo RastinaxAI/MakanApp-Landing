@@ -13,3 +13,9 @@ playwright-report/
 __pycache__/
 .DS_Store
 .preview/
+.tools/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+.coverage
+htmlcov/

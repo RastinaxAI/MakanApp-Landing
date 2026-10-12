@@ -1,6 +1,6 @@
 # قرارداد پیشنهادی API لندینگ
 
-نسخه قرارداد: 0.1 برای بررسی؛ endpointها هنوز ساخته نشده‌اند. Prefix: `/api/v1`. مرجع: R025–078. API متعلق به لندینگ است و قرارداد Backend اصلی ماکان را تغییر نمی‌دهد.
+نسخه قرارداد مقصد: 0.1؛ مسیرهای سلامت و OpenAPI در STEP4 واقعی شده‌اند و سایر endpointهای این سند برنامه مراحل بعد هستند. Prefix: `/api/v1`. مرجع: R025–078. API متعلق به لندینگ است و قرارداد Backend اصلی ماکان را تغییر نمی‌دهد.
 
 ## قرارداد مشترک
 
@@ -166,3 +166,9 @@ POST `/events`: event_name از hero_demo_click/navigation_cta_click/feature_tab
 ## معیار پذیرش قرارداد
 
 OpenAPI واقعی پس از ساخت جایگزین ابهام‌ها می‌شود و type generation باید با این تصمیم‌ها تطبیق یابد. HTTPX integration با PostgreSQL: validation، success، draft، schedule boundary، role matrix، CSRF، rate، duplicate concurrency، XSS، upload MIME/size، rollback audit و sanitized output. Playwright فراخوانی همین API واقعی را بررسی می‌کند؛ fixture موفقیت یا Mock API به معنی acceptance نهایی نیست.
+
+## قرارداد اجراشده STEP4
+
+نسخه برنامه API برابر0.4.0 است. اکنون فقط GET `/api/v1/health/live`، GET `/api/v1/health/ready` و OpenAPI/Swagger توسعه وجود دارند. ready در DB قطع/ناموجود/schema قدیمی503 و در head فعلی200 است؛ live مستقل از DB200 می‌ماند. پاسخ خطای واقعی دارای details آرایه، trace_id همسان header تولیدشده server و no-store است. 422/404/405/500/503 و redaction با HTTPX بررسی شدند. OpenAPI واقعی در `docs/qa/step4/openapi.json` snapshot شده است. docs در staging/production404 می‌دهد؛ CORS wildcard یا اعتماد proxy header فعال نیست.
+
+PaginationQuery مشترک با page>=1/page_size<=100 و unknown-field rejection ساخته و تست شده، اما endpoint فهرست/فیلتر CMS هنوز وجود ندارد. هیچ endpoint نمایشی برای site/pages/leads/admin/learn ساخته نشده؛ مسیرهای آن‌ها تا مراحل بعد404 هستند. جدول یا schema پایه حساب مدیر به معنی احراز هویت اجراشده نیست.

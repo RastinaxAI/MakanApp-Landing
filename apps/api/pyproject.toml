@@ -1,0 +1,36 @@
+[project]
+name = "makan-landing-api"
+version = "0.4.0"
+description = "Independent marketing website API for MakanApp"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+  "fastapi==0.143.0",
+  "pydantic==2.14.1",
+  "pydantic-settings==2.15.0",
+  "sqlalchemy==2.1.4",
+  "alembic==1.20.0",
+  "psycopg[binary]==3.3.6",
+  "uvicorn==0.54.0",
+]
+
+[dependency-groups]
+dev = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.17.0"]
+
+[build-system]
+requires = ["hatchling==1.29.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["integration: requires dedicated real PostgreSQL test databases"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

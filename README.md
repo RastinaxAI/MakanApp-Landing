@@ -1,6 +1,6 @@
 # وب‌سایت ماکان
 
-وضعیت فعلی: STEP 3، صفحات عمومی و معرفی محصول روی پایه تأییدشده STEP2. Backend، CMS، CRM و فرم ذخیره‌سازی هنوز ساخته نشده‌اند. این خروجی برای بررسی پیش از انتشار است و با noindex و robots مسدود محافظت می‌شود؛ انتشار Production محسوب نمی‌شود.
+وضعیت فعلی: STEP 4، زیرساخت مستقل FastAPI/PostgreSQL/Alembic کنار صفحات عمومی مرحله۳. ورود مدیر، CMS، CRM و فرم ذخیره‌سازی هنوز ساخته نشده‌اند. وب برای بررسی پیش از انتشار با noindex و robots مسدود است؛ انتشار Production محسوب نمی‌شود.
 
 ## اجرا
 
@@ -24,7 +24,31 @@ npm run build
 npm start
 ```
 
-start از server مستقل تولیدشده Next و فایل‌های static/public محلی استفاده می‌کند. به‌صورت پیش‌فرض فقط روی loopback اجرا می‌شود. پورت دلخواه: `npm start -- --port 3200` یا `npm run dev -- --port 3200`. Docker و Reverse Proxy تولید در STEP 10 تکمیل خواهند شد؛ این مرحله آزمون Docker ندارد.
+start از server مستقل تولیدشده Next و فایل‌های static/public محلی استفاده می‌کند. به‌صورت پیش‌فرض فقط روی loopback اجرا می‌شود. پورت دلخواه: `npm start -- --port 3200` یا `npm run dev -- --port 3200`. Docker و Reverse Proxy تولید در STEP 10 تکمیل خواهند شد؛ Compose توسعه Backend در STEP4 ساخته و آزموده شده است.
+
+## Backend مستقل
+
+راهنمای کامل نصب Python/uv، migration، مجوزها و تست در [راهنمای Backend](docs/backend-runbook.md). از ریشه با Docker Desktop فعال:
+
+```powershell
+./scripts/setup-development.ps1
+docker compose build api migrate
+docker compose up -d --wait db
+docker compose run --rm migrate
+docker compose up -d --wait api
+```
+
+API: `http://127.0.0.1:8000/api/v1/docs`؛ سلامت: `/api/v1/health/live` و `/api/v1/health/ready`. PostgreSQL توسعه پورت میزبان ندارد؛ schema فقط با Alembic ساخته می‌شود. داده در volume حفظ می‌شود و توقف با `docker compose down` داده را حذف نمی‌کند. `.env` و `.env.test` خصوصی را در Git قرار ندهید.
+
+Python3.13.16، uv0.13.0 و وابستگی‌های دقیق در `apps/api/pyproject.toml` / `uv.lock` ثبت‌اند. پس از `uv sync --frozen` در apps/api، تست واقعی از ریشه:
+
+```powershell
+docker compose --env-file .env.test -f compose.test.yaml up -d --wait
+./scripts/test-backend.ps1
+docker compose --env-file .env.test -f compose.test.yaml down
+```
+
+DB تست مستقل است؛ تست‌ها SQLite یا API ساختگی ندارند. جزئیات پذیرش مرحله۴ در [گزارش STEP4](docs/step-4-report.md) ثبت می‌شود. APIهای ورود/CMS/فرم تا مراحل بعد وجود ندارند؛ قبل از STEP5 تأیید کاربر لازم است.
 
 ## بررسی کیفیت
 
@@ -65,4 +89,4 @@ npm run test:e2e
 
 فونت: Vazirmatn / [منبع رسمی](https://github.com/rastikerdar/vazirmatn)، بسته Fontsource 5.3.0، مجوز SIL OFL 1.1 همراه فایل نگهداری شده است. هیچ تصویر ساختگی محصول، آمار مشتری یا لوگوی جدید به‌عنوان دارایی رسمی معرفی نشده است. رنگ‌ها پیشنهادی و برند متنی موقت‌اند.
 
-سند مبنا و برنامه کامل در [گزارش تحلیل](docs/analysis-report.md)، [سیستم طراحی](docs/ui-design-system.md) و [برنامه اجرا](docs/implementation-plan.md) قرار دارند. گزارش قبلی در `docs/step-2-report.md` و نتیجه این مرحله در `docs/step-3-report.md` ثبت می‌شود. منشأ و محدودیت copy در `docs/content-review-step3.md` است. STEP2 قبلاً تأیید شده؛ قبل از STEP4 تأیید کاربر لازم است. Push فقط با مجوز صریح.
+سند مبنا و برنامه کامل در [گزارش تحلیل](docs/analysis-report.md)، [سیستم طراحی](docs/ui-design-system.md) و [برنامه اجرا](docs/implementation-plan.md) قرار دارند. گزارش‌های قبلی در `docs/step-2-report.md` و `docs/step-3-report.md` حفظ شده‌اند. منشأ و محدودیت copy در `docs/content-review-step3.md` است. STEP4 به درخواست کاربر اجرا شده؛ قبل از STEP5 تأیید بعدی لازم است. Push فقط با مجوز صریح.

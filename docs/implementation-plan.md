@@ -118,3 +118,7 @@ CI باید PostgreSQL واقعی service داشته باشد. integration DB/vo
 ## پیشرفت پس از تأیید STEP2 و درخواست STEP3
 
 کاربر STEP2 را تأیید و شروع STEP3 را درخواست کرد؛ در پاسخ تکمیلی، پیام‌رسان/مدرسه/گزارش را آماده معرفی عمومی دانست. صفحه اصلی و ۱۸ مسیر عمومی دیگر با copy PRD، صفحات چهار مخاطب و AI roadmap ساخته شده‌اند. `/blog` و `/learn` فقط shell انتشار واقعی‌اند و محتوای فرضی ندارند. فرم‌ها تا STEP8 غیرفعال، متن حقوقی پیش‌نویس و تصاویر/راه تماس رسمی هنوز نیازمند دارایی واقعی‌اند. شواهد build/test و وضعیت پذیرش در `step-3-report.md` ثبت می‌شود؛ STEP4 به تأیید بعدی کاربر وابسته است.
+
+## پیشرفت پس از درخواست STEP4
+
+کاربر شروع Backend Foundation را درخواست کرد. API مستقل، config/schema/error/logging، engine/session/transaction/repository پایه، دو migration اولیه حساب/audit/page/revision، OpenAPI/health و Compose توسعه/تست PostgreSQL واقعی ساخته و آزموده شدند. startup هیچ schema mutation ندارد؛ job migration و role runtime جدا هستند. شواهد fresh/prior upgrade، rollback، constraints، privileges، قطع/بازیابی DB و persistence در step-4-report ثبت شده است. schema/session/login/CMS/lead/module API در این مرحله اضافه نشده‌اند؛ STEP5 به تأیید بعدی کاربر وابسته است.

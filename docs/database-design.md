@@ -1,6 +1,6 @@
 # طراحی پایگاه داده PostgreSQL
 
-وضعیت: طرح پیشنهادی؛ migration یا جدول واقعی هنوز ایجاد نشده است. مرجع: R025–078 و بخش‌های ۹ و ۱۲ الف سند.
+وضعیت: طرح کامل مقصد؛ چهار جدول اصلی آن در STEP4 با migration واقعی ساخته شده‌اند. سایر جدول‌ها به مراحل مربوط تعلق دارند؛ جزئیات اجرای فعلی در انتهای سند است. مرجع: R025–078 و بخش‌های ۹ و ۱۲ الف سند.
 
 ## قواعد سراسری
 
@@ -123,3 +123,9 @@ organic sessions تا انتخاب روش consent/analytics و taxonomy attribut
 ویرایش پنل با row_version/If-Match؛ mismatch برابر 409، جلوگیری از overwrite همزمان. publish/reorder/status تغییر، history و audit در یک تراکنش. CHECKهای cross-table مانند «video دارای افزونه» یا «آخرین owner فعال» با service lock و trigger/deferred constraint مناسب در migration پیاده می‌شوند؛ test concurrency الزامی است.
 
 ترتیب migration: auth/security → pages/features/audiences/FAQ/settings/media → blog → learn → lead/contact/history/idempotency → analytics. هر مرحله upgrade روی DB تازه و DB دارای داده قبلی؛ مدل و migration drift check. `create_all`/drop-recreate در production ممنوع. تست constraints باید با PostgreSQL همان major انجام شود. Backup قبل migration پرخطر و restore در database جدا؛ downgrade تخریب‌گر خودکار مجاز نیست. SQL index دقیق جست‌وجوی فارسی پس از EXPLAIN داده واقعی تعیین می‌شود؛ برای MVP normalized ILIKE محدود، در صورت نیاز pg_trgm با migration صریح.
+
+## schema واقعی STEP4
+
+Migration `0001_admin_core`: admins و audit_logs؛ `0002_page_revision_core`: pages و page_revisions. alembic_version جدول کنترل ابزار است. UUID، timestamps UTC، email lowercase/unique، role CHECK، slug unique، row_version مثبت، schedule pair، FKهای RESTRICT و مالکیت revision با FK مرکب در PostgreSQL اجرا و آزموده شدند. مدل‌ها با reflection/autogenerate مقایسه شدند؛ drift صفر است. created_at/updated_at توسط ORM/default DB تنظیم می‌شود؛ به‌روزرسانی مستقیم SQL، updated_at خودکار trigger ندارد.
+
+اشاره‌گرها nullable هستند تا چرخه insert page/revision در یک تراکنش حل شود. حذف ساختاری مخرب/downgrade مسدود است. runtime فقط DML جداول مجاز، audit SELECT/INSERT و alembic_version SELECT دارد و DDL مجاز نیست. هیچ حساب عملیاتی یا محتوای نمونه در DB توسعه seed نشده است. session/challenge/rate-limit در STEP5 و sections/media/settings/features/FAQ در STEP6 migration مستقل خواهند داشت؛ schema این مرحله کامل CMS نیست. گزارش و شواهد در step-4-report است.

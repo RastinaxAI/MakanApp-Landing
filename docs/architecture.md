@@ -52,7 +52,7 @@ MakanWebsite/
 └── README.md
 ```
 
-در مرحله فعلی فقط docs ایجاد شده است. نام‌های compose و infrastructure مطابق تصمیم تکمیلی کاربر است؛ تفاوت نام با نمونه PRD تفاوت عملکردی ندارد.
+این ساختار طرح اولیه مرحله تحلیل است؛ پیشرفت پیاده‌سازی در یادداشت انتهای سند ثبت می‌شود. نام‌های compose و infrastructure مطابق تصمیم تکمیلی کاربر است؛ تفاوت نام با نمونه PRD تفاوت عملکردی ندارد.
 
 ## فناوری و سیاست نسخه
 
@@ -122,3 +122,9 @@ deploy: build/scan → backup پیش از migration پرخطر → migration job
 | SSR no-store | صحت انتشار اولویت؛ static assets cached | load test نیاز cache و invalidation تست‌شده نشان دهد |
 | CMS آماده خارجی | پنل اختصاصی مطابق درخواست | تغییر دامنه با تصمیم صریح کاربر |
 | MFA | تصمیم STEP 5 و آماده‌سازی مدل | توان عملیاتی recovery و policy مشخص شود |
+
+## پیشرفت STEP4 — ۱۳ اکتبر ۲۰۲۶
+
+FastAPI مستقل با factory/lifespan، config امن، engine sync/session-per-request، transaction و repository پایه ساخته شد. health تحت `/api/v1` و OpenAPI توسعه فعال‌اند. Python3.13.16، FastAPI0.143.0، Pydantic2.14.1، SQLAlchemy2.1.4، Alembic1.20.0، psycopg3.3.6 و uvicorn0.54.0 در pyproject/uv.lock قفل شدند. Docker API چندمرحله‌ای با uid10001 و filesystem read-only Compose، PostgreSQL17.11-alpine و job migration جدا آزموده شدند. network DB internal و بدون host port است؛ API شبکه application جدا برای publish روی127.0.0.1 دارد. role مالک migration و runtime غیر-superuser جدا هستند؛ schema فقط با Alembic تغییر می‌کند.
+
+دو migration اولیه admins/audit و pages/revisions اجرا شدند؛ schema کامل CMS/auth/CRM به مراحل بعد تعلق دارد. ۱۹ تست HTTPX/Pytest، ارتقای fresh/prior، drift صفر، قطع DB و persistence پس از recreate موفق‌اند. وب مرحله۳ تغییر نکرده و build/typecheck/lint آن نیز موفق بود. جزئیات شواهد و محدودیت‌ها در `step-4-report.md` و راه‌اندازی در `backend-runbook.md` است. Compose وب/proxy/HTTPS تولید و CI هنوز ساخته نشده‌اند.
