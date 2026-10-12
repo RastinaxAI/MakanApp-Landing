@@ -1,0 +1,47 @@
+{
+  "phase": "STEP 3",
+  "generated_at_utc": "2026-10-12T20:25:07.6703134Z",
+  "stats": {
+    "startTime": "2026-10-12T20:19:51.541Z",
+    "duration": 224671.714,
+    "expected": 81,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "project_counts": [
+    {
+      "project": "chromium",
+      "tests": 27,
+      "expected": 27
+    },
+    {
+      "project": "firefox",
+      "tests": 27,
+      "expected": 27
+    },
+    {
+      "project": "webkit",
+      "tests": 27,
+      "expected": 27
+    }
+  ],
+  "axe_audit_count": 81,
+  "axe_violation_count": 0,
+  "public_routes": 19,
+  "node": "24.21.0",
+  "browsers": {
+    "chromium": "Microsoft Edge 155.0.4283.45 (msedge)",
+    "firefox": "157.0",
+    "webkit": "27.2 (Playwright; not physical Safari)"
+  },
+  "build_id": "4IyoCeGvJqnAStUu3bJBy",
+  "lock_sha256": "ABCF9339FFBCFC604C3CC1BBA45C140D2DDB6F49AA26F12CE7285663ECB1AA62",
+  "approved_public_features": [
+    "messenger",
+    "school",
+    "reports"
+  ],
+  "ai_status": "roadmap",
+  "production_deployed": false
+}

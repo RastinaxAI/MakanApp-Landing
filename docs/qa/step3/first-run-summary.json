@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-10-12T20:13:04.325Z",
+    "duration": 248557.482,
+    "expected": 69,
+    "skipped": 0,
+    "unexpected": 12,
+    "flaky": 0
+  },
+  "note": "Historical first run before product visual width correction."
+}

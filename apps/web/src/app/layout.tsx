@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { UiProviders } from "@/components/layout/ui-providers";
+import { siteConfig } from "@/lib/site-config";
 import "@/styles/globals.css";
 
 const vazirmatn = localFont({
@@ -15,8 +16,9 @@ const vazirmatn = localFont({
 });
 
 export const metadata: Metadata = {
-  title: { default: "ماکان | پیش‌نمایش طراحی", template: "%s | ماکان" },
-  description: "پیش‌نمایش سیستم طراحی فارسی و راست‌چین وب‌سایت ماکان؛ مرحله دوم توسعه.",
+  title: { default: "ماکان | ارتباط و مدیریت آموزش", template: "%s | ماکان" },
+  description:
+    "ماکان؛ پیام‌رسان، مدیریت کلاس، تکلیف، آزمون و گزارش‌های آموزشی در یک فضای یکپارچه برای مدرسه و خانواده.",
   robots: { index: false, follow: false },
 };
 
@@ -25,9 +27,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="fa" dir="rtl" className={vazirmatn.variable}>
       <body>
         <UiProviders>
-          <a className="skip-link" href="#main-content" tabIndex={0}>رفتن به محتوای اصلی</a>
-          <SiteHeader />
-          <main id="main-content" tabIndex={-1}>{children}</main>
+          <a className="skip-link" href="#main-content" tabIndex={0}>
+            رفتن به محتوای اصلی
+          </a>
+          <SiteHeader appUrl={siteConfig.appUrl} />
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
           <SiteFooter />
         </UiProviders>
       </body>

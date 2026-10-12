@@ -1,27 +1,106 @@
 import Link from "next/link";
-import { ArrowUpLeft } from "lucide-react";
 import { Brand } from "@/components/layout/brand";
+import { siteConfig } from "@/lib/site-config";
+
+const groups = [
+  {
+    title: "ماکان",
+    items: [
+      { label: "امکانات محصول", href: "/features" },
+      { label: "برای مدارس", href: "/solutions/schools" },
+      { label: "درباره ما", href: "/about" },
+    ],
+  },
+  {
+    title: "همراه شما",
+    items: [
+      { label: "آموزش ماکان", href: "/learn" },
+      { label: "وبلاگ", href: "/blog" },
+      { label: "پرسش‌های متداول", href: "/faq" },
+      { label: "تماس با ما", href: "/contact" },
+    ],
+  },
+] as const;
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-card">
-      <div className="site-container grid gap-8 py-10 tablet:grid-cols-2 desktop:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="site-container grid gap-8 py-12 tablet:grid-cols-2 desktop:grid-cols-[1.4fr_1fr_1fr_1.25fr]">
         <div>
           <Brand />
-          <p className="mt-4 max-w-sm text-sm text-muted-foreground">ارتباط و مدیریت آموزش، در یک فضای یکپارچه.</p>
-          <p className="mt-2 text-sm text-muted-foreground">این نسخه برای بررسی طراحی آماده شده است.</p>
+          <p className="mt-5 max-w-xs text-sm text-muted-foreground">
+            ارتباط و مدیریت آموزش، در یک فضای یکپارچه؛ برای مدرسه، معلم، خانواده
+            و دانش‌آموز.
+          </p>
         </div>
-        <nav aria-label="لینک‌های طراحی" className="flex flex-col items-start gap-2">
-          <h2 className="mb-1 text-base font-semibold">بررسی طراحی</h2>
-          <Link className="quiet-link inline-flex min-h-11 items-center gap-2 text-sm" href="/design-system">راهنمای کامپوننت‌ها <ArrowUpLeft size={16} aria-hidden="true" /></Link>
-          <Link className="quiet-link inline-flex min-h-11 items-center text-sm" href="/design-system#accessibility">اصول دسترس‌پذیری</Link>
-        </nav>
-        <div className="rounded-xl bg-background p-5">
-          <p className="text-sm font-medium">هویت بصری در انتظار تأیید</p>
-          <p className="mt-2 text-sm text-muted-foreground">رنگ‌ها پیشنهادی‌اند. لوگو، تصاویر و راه‌های ارتباطی رسمی پس از دریافت اضافه می‌شوند.</p>
+        {groups.map((group) => (
+          <nav
+            key={group.title}
+            aria-label={group.title}
+            className="flex flex-col items-start"
+          >
+            <h2 className="mb-3 text-base font-semibold">{group.title}</h2>
+            {group.items.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="quiet-link inline-flex min-h-11 items-center rounded-lg text-sm"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        ))}
+        <div className="rounded-2xl bg-background p-5">
+          <h2 className="text-base font-semibold">برای مدرسه شما</h2>
+          <p className="mt-3 text-sm text-muted-foreground">
+            مسیر هماهنگی دمو و راه‌اندازی ماکان را ببینید.
+          </p>
+          <Link
+            href="/demo"
+            className="mt-3 inline-flex min-h-11 items-center rounded-lg text-sm font-medium text-primary-hover"
+          >
+            درخواست دمو
+          </Link>
+          {siteConfig.phone && (
+            <a
+              href={`tel:${siteConfig.phone.replace(/[ ()-]/g, "")}`}
+              dir="ltr"
+              className="block rounded-lg py-2 text-sm text-primary-hover"
+            >
+              {siteConfig.phone}
+            </a>
+          )}
+          {siteConfig.email && (
+            <a
+              href={`mailto:${siteConfig.email}`}
+              dir="ltr"
+              className="block break-all rounded-lg py-2 text-sm text-primary-hover"
+            >
+              {siteConfig.email}
+            </a>
+          )}
         </div>
       </div>
-      <div className="border-t border-border"><div className="site-container flex flex-wrap justify-between gap-2 py-4 text-xs text-muted-foreground"><span>ماکان · پیش‌نمایش مرحله طراحی</span><span dir="ltr">MakanApp / UI Foundation</span></div></div>
+      <div className="border-t border-border">
+        <div className="site-container flex flex-wrap items-center justify-between gap-3 py-5 text-sm text-muted-foreground">
+          <span>ماکان · ارتباط و مدیریت آموزش</span>
+          <nav aria-label="اطلاعات حقوقی" className="flex flex-wrap gap-5">
+            <Link
+              href="/privacy"
+              className="quiet-link inline-flex min-h-11 items-center rounded-lg"
+            >
+              حریم خصوصی
+            </Link>
+            <Link
+              href="/terms"
+              className="quiet-link inline-flex min-h-11 items-center rounded-lg"
+            >
+              شرایط استفاده
+            </Link>
+          </nav>
+        </div>
+      </div>
     </footer>
   );
 }
