@@ -1,0 +1,124 @@
+# معماری پیشنهادی لندینگ ماکان
+
+وضعیت: طراحی برای بررسی، اجرا نشده — ۱۲ اکتبر ۲۰۲۶. مبنا: سند ۱.۱، به‌ویژه بخش‌های ۸، ۱۰، ۱۱، ۱۳ و تکمیل‌های صریح پرامپت.
+
+## تصمیم اصلی و مرز سامانه
+
+یک monorepo با دو برنامه مستقل: Next.js برای وب عمومی و UI پنل؛ FastAPI برای قوانین کسب‌وکار، CMS، auth، رسانه و CRM محدود. PostgreSQL مالک تمام داده‌های همین وب‌سایت است. تنها ارتباط MVP با ماکان، لینک ورود مصوب است؛ هیچ call عملیاتی، دیتابیس SQL Server، SSO یا حساب کاربران ماکان به این سایت متصل نمی‌شود. حساب مدیر سایت مستقل است.
+
+این اندازه پروژه به microserviceهای متعدد نیاز ندارد. جداسازی ماژول در FastAPI هزینه deployment را پایین نگه می‌دارد و استخراج سرویس بعدی را ممکن می‌کند. وبلاگ و مرکز آموزش URL، schema و نیازهای جدا دارند؛ فقط editor، sanitization، SEO و media مشترک می‌شوند.
+
+## جریان درخواست
+
+```text
+مرورگر ── HTTPS ── Caddy
+                    ├── /api/*       → FastAPI → PostgreSQL خصوصی
+                    ├── /media/*     → فقط دارایی منتشرشده FastAPI/storage
+                    └── /*           → Next.js
+                                         └── SSR → FastAPI داخلی
+API مدیریت ── storage volume مستقل از DB
+کاربر پس از کلیک پلیر ── iframe رسمی آپارات
+```
+
+Caddy انتخاب پیشنهادی به‌جای Nginx است؛ دلیل: پیکربندی ساده‌تر TLS خودکار و کاهش کار عملیاتی برای MVP. دامنه، DNS، پورت‌های 80/443 و دسترسی صدور گواهی هنوز تعیین نشده‌اند. استفاده از TLS/HSTS فقط پس از تست دامنه واقعی مجاز است. انتخاب Caddy تصمیم تکمیلی است، نه الزام خاص سند.
+
+## ساختار پیشنهادی
+
+ریشه فعلی `MakanWebsite` خود ریشه پروژه خواهد بود؛ پوشه اضافی `makan-landing` سودی ندارد.
+
+```text
+MakanWebsite/
+├── apps/
+│   ├── web/
+│   │   ├── src/app/(public)/...
+│   │   ├── src/app/admin/...
+│   │   ├── src/components/{ui,layout,sections,forms}/
+│   │   ├── src/features/{cms,learn,blog,leads,auth}/
+│   │   ├── src/{hooks,lib,types,styles}/
+│   │   ├── public/{fonts,images}/
+│   │   └── tests/{unit,e2e}/
+│   └── api/
+│       ├── app/api/v1/routes/
+│       ├── app/{core,models,schemas,services,repositories,db}/
+│       ├── app/commands/
+│       ├── alembic/versions/
+│       └── tests/{unit,integration}/
+├── infrastructure/{caddy,docker}/
+├── docs/
+├── .github/workflows/
+├── compose.yaml
+├── compose.production.yaml
+├── .env.example
+└── README.md
+```
+
+در مرحله فعلی فقط docs ایجاد شده است. نام‌های compose و infrastructure مطابق تصمیم تکمیلی کاربر است؛ تفاوت نام با نمونه PRD تفاوت عملکردی ندارد.
+
+## فناوری و سیاست نسخه
+
+| جزء | خط نسخه پیشنهادی | دلیل/روش تثبیت |
+|---|---|---|
+| Node | 24 LTS | runtime Docker و CI یکسان؛ Node محلی 26.8.1 مبنای تولید نیست |
+| Next/React | Next 16.x / React و ReactDOM 19.x سازگار | App Router؛ دقیقاً peerDependency نسخه Next انتخاب‌شده رعایت شود |
+| TypeScript | 5.x با strict | typecheck مستقل و noUncheckedIndexedAccess پیشنهادی |
+| Tailwind | 4.x + PostCSS سازگار | tokens مرکزی و CSS logical properties؛ شناسایی مرورگر قدیمی پیش از UI |
+| UI | shadcn/ui، Lucide، Motion | کامپوننت‌های shadcn در مخزن مالکیت دارند؛ lock رجیستری/وابستگی، فقط motion ضروری |
+| فرم | React Hook Form 7.x / Zod 4.x / resolver سازگار | سازگاری واقعی با lock و آزمون فرم، نه فرض نظری |
+| Python | 3.13.x | runtime کنترل‌شده؛ Python محلی 3.14.6 جایگزین تست این runtime نیست |
+| API | FastAPI stable 0.x، Pydantic 2.x، SQLAlchemy 2.x، Alembic 1.x | شماره minor FastAPI در bootstrap از release رسمی resolve و قفل می‌شود |
+| DB/driver | PostgreSQL 17.x / psycopg 3.x | خط پشتیبانی‌شده با patch امنیتی جاری؛ SQLAlchemy sync و session-per-request |
+| پراکسی | Caddy 2.x | TLS و routing؛ patch و image digest در مرحله زیرساخت قفل شود |
+| تست | Pytest، HTTPX، Playwright، ESLint | lock دقیق در bootstrap و مرورگرهای Playwright هم‌نسخه image |
+
+این جدول انتخاب major است، نه ادعای آزمون سازگاری. patchهای دقیق، hashes، lockfile و digestها بعد از اجازه bootstrap و نصب ثبت می‌شوند. `latest` شناور برای build تولید پذیرفته نیست. build، lint و typecheck سه gate مستقل‌اند؛ در Next 16 build اجرای lint را تضمین نمی‌کند. [مستند رسمی نصب Next](https://nextjs.org/docs/app/getting-started/installation) و [ارتقا به نسخه ۱۶](https://nextjs.org/docs/app/guides/upgrading/version-16).
+
+Tailwind 4 مرورگر مدرن می‌خواهد؛ مبنای پشتیبانی پیشنهادی Chrome/Edge 111+، Firefox 128+ و Safari 16.4+ است، طبق [سازگاری رسمی Tailwind](https://tailwindcss.com/docs/compatibility). نیاز به مرورگر قدیمی باید قبل STEP 2 تعیین شود. Node 24 LTS و PostgreSQL 17 پشتیبانی‌شده با منابع رسمی بررسی شدند: [Node releases](https://nodejs.org/en/about/previous-releases)، [PostgreSQL versioning](https://www.postgresql.org/support/versioning/). منابع Python و FastAPI: [Python 3.13](https://www.python.org/downloads/release/python-3130/)، [FastAPI releases](https://fastapi.tiangolo.com/release-notes/).
+
+## مرز لایه‌ها و داده
+
+Route مسئول HTTP/schema/dependency است. Service مالک تراکنش، انتشار، نقش‌ها، dedupe و audit است. Repository فقط query/storage را انجام می‌دهد؛ مدل SQLAlchemy قرارداد API نیست. وابستگی database session برای هر درخواست مستقل؛ transaction یک‌بار در service commit می‌شود. endpointهای sync با ORM sync از blocking event loop جلوگیری می‌کنند؛ async فقط برای IO واقعاً async. استفاده از SQLite به‌جای PostgreSQL در acceptance ممنوع است.
+
+Pydantic schema ورودی و خروجی جدا؛ public projection هیچ email مدیر، lead، audit، draft یا secret را serialize نمی‌کند. OpenAPI مبنای typeهای تولیدشده فرانت می‌شود؛ check drift در CI. monorepo به معنی import مستقیم مدل Python در وب نیست.
+
+SSR پنل تنها cookie نشست لازم را به API داخلی مورد اعتماد forward می‌کند؛ authorization نهایی همان FastAPI است. URL مقصد ثابت از env و headerهای allowlisted، بدون forward عمومی Authorization/Cookie به سرویس ثالث. تصاویر private پنل از مسیر authenticated مستقیم و بدون optimizer/cache عمومی Next نمایش داده می‌شوند؛ فقط تصاویر public در next/image قرار می‌گیرند.
+
+## رندر، CMS و انتشار زمان‌بندی‌شده
+
+وب عمومی با Server Components و SSR؛ client component فقط فرم، menu، tabs، filter و پلیر. در MVP خواندن محتوای CMS، sitemap و تنظیمات عمومی `no-store` است تا draft، لغو انتشار و موعد schedule بدون race cache دیده شوند. فایل‌های fingerprinted، فونت و تصاویر منتشرشده cache پایدار دارند؛ محتوای ثابت بی‌ارتباط با CMS می‌تواند static باشد. ISR فقط بعد از افزودن invalidation امن و تست حذف انتشار بررسی می‌شود.
+
+ویرایش draft، نسخه منتشرشده جاری را تغییر نمی‌دهد. نسخه content revision immutable پس از publish؛ schedule به revision مشخص اشاره دارد. predicate مشترک API/sitemap/related/series: entity فعال، نسخه منتشرشده یا schedule سررسیده، زمان <= اکنون UTC، indexability متناسب. بدون worker، زمان‌بندی در read فعال می‌شود؛ job نگهداری برای cleanup لازم است ولی شرط انتشار نیست. لغو انتشار باید خروجی عمومی را فوراً 404 کند. preview فقط مدیر مجاز، no-store/noindex و بدون URL عمومی دارای token.
+
+sections دارای type و schema نسخه‌دار هستند، نه page builder با HTML/JS دلخواه. rich text به HTML محدود تبدیل و سمت سرور با allowlist sanitize می‌شود. raw HTML به iframe دسترسی نمی‌دهد؛ پلیر آپارات component اختصاصی با ID تأییدشده است. امتیاز «آماده» برای قابلیت‌ها تنها با evidence/copy review مجاز خواهد بود.
+
+## احراز هویت و نقش
+
+نشست opaque تصادفی با digest در PostgreSQL؛ Argon2id برای رمز؛ rotation پس از ورود؛ انقضای idle/absolute و revoke. cookie تولید `__Host-makan_session`، Secure، HttpOnly، SameSite=Lax، Path=/ و بدون Domain. session و CSRF در localStorage ذخیره نمی‌شوند. login نیز Origin و anti-CSRF پیش‌ورود دارد؛ سایر mutations از synchronizer token و Origin معتبر استفاده می‌کنند. SameSite به‌تنهایی کافی فرض نمی‌شود. مبنا: [OWASP CSRF](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)، [OWASP Session](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html).
+
+سه role پیشنهادی: owner برای حساب‌ها/تنظیمات/همه محتوا؛ editor برای CMS/media؛ sales برای lead/contact/یادداشت. authorization در FastAPI اجباری؛ مخفی‌کردن دکمه امنیت نیست. owner از command یک‌بار و secret محیط امن ساخته می‌شود؛ endpoint signup عمومی نداریم. MFA مشروط سند، در STEP 5 امکان TOTP و recovery بررسی و تصمیم مستند می‌شود. ورود ناموفق پیام کلی دارد و throttle بر IP hash و email hash. audit بدون رمز، cookie، body تماس یا شماره کامل.
+
+## فرم، rate limit و مشاهده‌پذیری
+
+Idempotency-Key تصادفی با payload digest، رزرو تراکنشی و reference غیرقابل‌حدس. همان key/body نتیجه قبلی؛ key متفاوت با submission token همان فرم به رکورد قبلی متصل می‌شود؛ anti-duplicate شماره/مدرسه در بازه پیشنهادی ۱۰ دقیقه فقط محافظ کسب‌وکار است، نه unique همیشگی موبایل. details در قرارداد API آمده است.
+
+بدون Redis: rate buckets اتمیک PostgreSQL با HMAC IP/identifier، expiry کوتاه و cleanup. چند worker یک سقف دارند؛ در خرابی DB پاسخ موفق فرم داده نمی‌شود. trusted proxy صریح؛ X-Forwarded-For دلخواه کاربر قابل اعتماد نیست. honeypot قبل ثبت و success جعلی ممنوع؛ CAPTCHA فقط اگر نیاز واقعی به provider تأییدشده ایجاد شد.
+
+لاگ JSON با trace_id، route template، status، duration و کد خطا؛ redaction داده فرم و auth. liveness بدون DB، readiness با DB و migration head. instrumentation هشت event سند با allowlist properties و aggregation؛ organic KPI وابسته به منبع attribution/search console مصوب. بازدید آموزش با تعریف qualified view و کنترل bot/dedupe، نه شمارنده جعلی. notification پیش‌فرض فقط نمایش در پنل؛ ایمیل/SMS صرفاً بعد از provider واقعی و durable retry اضافه می‌شود.
+
+## زیرساخت، امنیت و استقرار
+
+dev: Compose محلی، HTTP روی loopback، DB فقط شبکه خصوصی، hot reload؛ prod: image چندمرحله‌ای، non-root برای web/API، read-only filesystem جز volume مشخص، healthchecks، restart، env validation و resource limits. فقط proxy منتشرشونده؛ شبکه DB از شبکه دسترسی بیرونی جدا. API تنها writer upload؛ فایل draft خصوصی و منتشرشده از مسیر کنترل‌شده؛ thumbnail/alt شامل نسخه immutable. media و DB هر دو باید backup شوند.
+
+CSP باید scripts/fonts/styles محلی و frame-src رسمی آپارات را محدود کند؛ iframe اختیاری click-to-load و بدون autoplay. SVG/HTML upload فعال پذیرفته نمی‌شود. در SSR هیچ URL دلخواه CMS fetch نمی‌شود؛ برای metadata آپارات، دستی پیش‌فرض و API بیرونی تا تأیید اعتبار/SSRF ممنوع است.
+
+deploy: build/scan → backup پیش از migration پرخطر → migration job واحد با lock → health/smoke در staging → انتشار کنترل‌شده production. rollback image و migration backward-compatible؛ downgrade مخرب اتوماتیک ممنوع. backup رمزگذاری و restore در DB جدا با checksum رسانه و سنجش رکوردها. RPO/RTO و محل نگهداری باید توسط مالک عملیات تعیین شوند. دامنه/hosting/secrets موجود نیست؛ هیچ deployment یا Push در این مرحله انجام نمی‌شود.
+
+## ریسک‌ها و دلایل جایگزین
+
+| موضوع | تصمیم فعلی | تغییر فقط در صورت |
+|---|---|---|
+| صف/Redis | نداریم؛ DB نرخ و schedule read-time | حجم بالا یا اعلان پس‌زمینه واقعی با نیاز عملیاتی |
+| Object Storage | interface قابل تعویض + volume پایدار MVP | چند replica/چند میزبان یا نیاز CDN/storage خارجی |
+| جست‌وجو | normalize فارسی + query PostgreSQL محدود | حجم/کیفیت جست‌وجو نیاز تخصصی ثابت شود |
+| SSR no-store | صحت انتشار اولویت؛ static assets cached | load test نیاز cache و invalidation تست‌شده نشان دهد |
+| CMS آماده خارجی | پنل اختصاصی مطابق درخواست | تغییر دامنه با تصمیم صریح کاربر |
+| MFA | تصمیم STEP 5 و آماده‌سازی مدل | توان عملیاتی recovery و policy مشخص شود |
