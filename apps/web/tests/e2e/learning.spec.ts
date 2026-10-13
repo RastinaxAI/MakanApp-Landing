@@ -279,7 +279,7 @@ test("Aparat video UI stores manual metadata and loads only on click with respon
     "src",
     "https://www.aparat.com/video/video/embed/videohash/abc12/vt/frame",
   );
-  expect(requests).toHaveLength(1);
+  await expect.poll(() => requests.length).toBe(1);
   expect(requests[0]).not.toContain("autoplay");
   for (const width of [360, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
@@ -478,7 +478,7 @@ for (const width of [360, 768, 1440])
     });
     expect(category.status()).toBe(201);
     await page.setViewportSize({ width, height: 900 });
-    const directory = path.resolve("../../docs/qa/step9", info.project.name);
+    const directory = path.resolve("../../docs/qa/step10", info.project.name);
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["library", "/learn"],
@@ -543,7 +543,7 @@ for (const width of [360, 768, 1440])
     const blog = await fixture(page, `detail-blog-${suffix}`, "blog", {
       cover_media_id: media,
     });
-    const directory = path.resolve("../../docs/qa/step9", info.project.name);
+    const directory = path.resolve("../../docs/qa/step10", info.project.name);
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["article-detail", `/learn/articles/${a.slug}?series=${series.slug}`],

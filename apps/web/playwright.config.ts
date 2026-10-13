@@ -6,6 +6,9 @@ export default defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   workers: 2,
+  timeout: 90_000,
+  // Functional UI assertions allow shared development/CI hosts to finish navigation.
+  expect: { timeout: 15_000 },
   reporter: [["list"], ["html", { open: "never" }], ["json", { outputFile: "test-results/results.json" }]],
   use: {
     baseURL: "http://127.0.0.1:3100",

@@ -1,0 +1,226 @@
+[
+  {
+    "route": "/",
+    "run": 1,
+    "scores": {
+      "performance": 77,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/",
+    "run": 2,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/",
+    "run": 3,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/features",
+    "run": 1,
+    "scores": {
+      "performance": 99,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/features",
+    "run": 2,
+    "scores": {
+      "performance": 99,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/features",
+    "run": 3,
+    "scores": {
+      "performance": 97,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/solutions/schools",
+    "run": 1,
+    "scores": {
+      "performance": 0,
+      "accessibility": 0,
+      "best-practices": 0,
+      "seo": 0
+    },
+    "runtimeError": {
+      "code": "NO_FCP",
+      "message": "The page did not paint any content. Please ensure you keep the browser window in the foreground during the load and try again. (NO_FCP)",
+      "errorStack": "LighthouseError: NO_FCP\n    at Timeout.<anonymous> (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/gather/driver/wait-for-condition.js:85:14)\n    at listOnTimeout (node:internal/timers:685:17)\n    at process.processTimers (node:internal/timers:618:7)",
+      "artifactKey": "PageLoadError"
+    }
+  },
+  {
+    "route": "/solutions/schools",
+    "run": 2,
+    "scores": {
+      "performance": 0,
+      "accessibility": 0,
+      "best-practices": 0,
+      "seo": 0
+    },
+    "runtimeError": {
+      "code": "ERRORED_DOCUMENT_REQUEST",
+      "message": "Lighthouse was unable to reliably load the page you requested. Make sure you are testing the correct URL and that the server is properly responding to all requests. (Status code: 500)",
+      "errorStack": "LighthouseError: ERRORED_DOCUMENT_REQUEST\n    at getNetworkError (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/lib/navigation-error.js:61:14)\n    at getPageLoadError (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/lib/navigation-error.js:165:24)\n    at _computeNavigationResult (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/gather/navigation-runner.js:148:7)\n    at async gatherFn (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/gather/navigation-runner.js:300:23)\n    at async Runner.gather (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/runner.js:232:25)\n    at async navigationGather (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/gather/navigation-runner.js:306:21)\n    at async navigation (file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/node_modules/lighthouse/core/index.js:58:24)\n    at async file:///C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/scripts/lighthouse-production.mjs:21:22",
+      "artifactKey": "PageLoadError"
+    }
+  },
+  {
+    "route": "/solutions/schools",
+    "run": 3,
+    "scores": {
+      "performance": 95,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/demo",
+    "run": 1,
+    "scores": {
+      "performance": 53,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/demo",
+    "run": 2,
+    "scores": {
+      "performance": 93,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/demo",
+    "run": 3,
+    "scores": {
+      "performance": 85,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/articles/seo-article",
+    "run": 1,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/articles/seo-article",
+    "run": 2,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/articles/seo-article",
+    "run": 3,
+    "scores": {
+      "performance": 92,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/videos/seo-video",
+    "run": 1,
+    "scores": {
+      "performance": 97,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/videos/seo-video",
+    "run": 2,
+    "scores": {
+      "performance": 78,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/videos/seo-video",
+    "run": 3,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  }
+]

@@ -13,6 +13,7 @@ param(
     [switch]$LighthouseOnly,
     [switch]$Step9Acceptance,
     [switch]$PublicOnly,
+    [switch]$FoundationChecks,
     [ValidateSet('all','chromium','firefox','webkit')][string]$BrowserProject = 'all',
     [switch]$FailFast
 )
@@ -59,6 +60,7 @@ try {
         if ($CrmLayoutOnly) {$taskBrowserArguments+=@('leads-layout.spec.ts')}
         if ($SeoOnly) {$taskBrowserArguments+=@('seo.spec.ts')}
         if ($PublicOnly) {$taskBrowserArguments+=@('public-pages.spec.ts')}
+        if ($FoundationChecks) {$taskBrowserArguments+=@('layout.spec.ts','leads-layout.spec.ts','--grep','missing route|reduced motion|200 percent|CRM list')}
         if ($Step9Acceptance) {$taskBrowserArguments+=@('leads.spec.ts','public-pages.spec.ts','admin.spec.ts','learning.spec.ts','learning-category.spec.ts')}
         if ($LighthouseOnly) {$taskBrowserArguments=@('../../scripts/lighthouse-step9.mjs')}
         if ($BrowserProject -ne 'all') {$taskBrowserArguments+=@("--project=$BrowserProject")}

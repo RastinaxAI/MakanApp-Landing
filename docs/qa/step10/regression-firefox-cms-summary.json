@@ -1,0 +1,131 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T16:10:42.080Z",
+    "duration": 159737.58,
+    "expected": 9,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "CMS home, feature and audience editors publish their own data and preserve prior versions",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 34047,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS UI creates, previews privately, publishes and restores an immutable revision",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 14192,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS schedule, validation, rich text sanitization and stale writes use real API",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7630,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS media upload stays private until publication and protects referenced files",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9080,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS categorized FAQ editing reaches public SSR and owner settings enforce roles",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7357,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS owner saves official contact settings and public rendering reads the database",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4612,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 360px",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 18968,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 768px",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15386,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 1440px",
+      "file": "cms.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17848,
+          "retry": 0
+        }
+      ]
+    }
+  ],
+  "axe_audits": 15,
+  "axe_violations": 0
+}

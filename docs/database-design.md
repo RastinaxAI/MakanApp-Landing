@@ -193,3 +193,6 @@ Indexهای status/created، kind/created، fingerprint/created، retention جز
 migration افزایشی `0007_analytics` فقط جدول analytics_events و مجوزهای محدود آن را می‌افزاید. هیچ جدول موجودی بازسازی یا داده‌ای seed نمی‌شود. PK=UUID رویداد؛ day، HMAC نشست، نام رویداد، route template، channel، error_kind و metric_name/value/revision و created_at. Constraint نام/channel/digest/metric pair/مقدار و Index day/name و day/session_digest، با grant UPDATE فقط روی دو ستون عددی metric. UPDATE/DELETE تاریخچه CRM و audit همچنان ممنوع است.
 
 ماندگاری، report ordering، de-duplication و purge با نقش runtime روی PostgreSQL واقعی آزمون می‌شوند. آمار به admin/lead یا حساب محصول join نمی‌شود؛ شناسه و متن شخصی ذخیره ندارد. تفاصيل و سیاست batch/backup در [قرارداد](step-9-contract.md) و [راهنمای عملیاتی](seo-performance-runbook.md).
+# الحاق مرحله۱۰
+
+جدول تازه یا migration مخرب ایجاد نشده؛ head برابر `0007_analytics` باقی می‌ماند. worker از index/ستون‌های انقضای موجود auth/learning/leads/analytics با batch محدود استفاده می‌کند. lockهای migration/maintenance/operator مستقل‌اند. بازیابی dump فقط در namespace خالی، سپس migration رو به جلو و ابطال session/challenge/PII منقضی قبل از exposure انجام می‌شود. [راهنمای backup/restore](backup-restore-runbook.md).

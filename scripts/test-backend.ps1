@@ -1,4 +1,4 @@
-param([ValidateSet('step6', 'step7', 'step8', 'step9')][string]$Phase = 'step9')
+param([ValidateSet('step6', 'step7', 'step8', 'step9', 'step10')][string]$Phase = 'step10')
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 $taskEnvironment = Join-Path $taskRoot '.env.test'

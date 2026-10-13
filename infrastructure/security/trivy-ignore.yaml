@@ -1,0 +1,9 @@
+vulnerabilities:
+  - id: CVE-2023-45853
+    purls:
+      - "pkg:deb/debian/zlib1g@1.2.13.dfsg-1"
+    statement: >-
+      Debian bookworm zlib1g does not build contrib/minizip. The vulnerable
+      MiniZip binary is absent. See security-tracker.debian.org/tracker/CVE-2023-45853.
+      Re-evaluate on base-image change; do not apply to minizip or pyminizip.
+    expired_at: 2026-11-13

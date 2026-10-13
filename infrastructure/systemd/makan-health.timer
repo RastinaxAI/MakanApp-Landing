@@ -1,0 +1,10 @@
+[Unit]
+Description=Check Makan landing every fifteen minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Unit=makan-health.service
+
+[Install]
+WantedBy=timers.target

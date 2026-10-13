@@ -34,6 +34,10 @@ def auth_context(database_factory):
             auth_login_ip_limit=1000,
             auth_login_account_limit=200,
             auth_challenge_limit=1000,
+            # Functional integration fixtures are not latency benchmarks.
+            # Keep production's 3s defaults; allow shared CI/development hosts 10s.
+            db_pool_timeout=10,
+            db_statement_timeout_ms=10000,
         )
         security = Security(config)
         password = secrets.token_urlsafe(24)

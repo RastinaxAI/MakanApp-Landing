@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:3100/admin/preview/2c6e425e-e252-441d-a537-a7f0362f7919",
+  "timestamp": "2026-10-13T15:56:51.264Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": []
+}

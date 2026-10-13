@@ -15,6 +15,7 @@ from app.core.errors import install_error_handlers
 from app.core.logging import configure_logging
 from app.core.middleware import RequestContextMiddleware
 from app.core.security import Security
+from app.core.trusted_proxy import TrustedProxyMiddleware
 from app.db.session import build_engine, session_factory
 from app.schemas.common import ErrorResponse
 from app.services.health import expected_heads
@@ -43,7 +44,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     development = config.app_env in ("development", "test")
     app = FastAPI(
         title="MakanApp Landing API",
-        version="0.9.0",
+        version="0.10.0",
         lifespan=lifespan,
         docs_url="/api/v1/docs" if development else None,
         redoc_url=None,
@@ -52,6 +53,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     install_error_handlers(app)
     app.add_middleware(RequestContextMiddleware)
+    app.add_middleware(TrustedProxyMiddleware, settings=config)
     app.include_router(router, prefix="/api/v1")
     app.include_router(admin_router, prefix="/api/v1")
     app.include_router(cms_router, prefix="/api/v1")

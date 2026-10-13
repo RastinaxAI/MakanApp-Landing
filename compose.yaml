@@ -62,9 +62,27 @@ services:
     volumes: [media_data:/srv/media]
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
+  web:
+    profiles: [website]
+    build: {context: ., dockerfile: apps/web/Dockerfile}
+    image: makan-landing-dev-web:0.10.0
+    environment:
+      API_INTERNAL_URL: http://api:8000
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: '1'
+    ports: ['127.0.0.1:3100:3000']
+    networks: [application]
+    depends_on: {api: {condition: service_healthy}}
+    read_only: true
+    tmpfs: [/tmp]
+    volumes: [web_cache:/srv/makan/apps/web/.next/cache]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
 volumes:
   postgres_data:
   media_data:
+  web_cache:
 networks:
   application:
   database:

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     db_statement_timeout_ms: int = Field(default=3000, ge=100, le=30000)
     auth_secret: SecretStr
     auth_mfa_key: SecretStr
+    proxy_shared_secret: SecretStr | None = None
     auth_allowed_origins: list[str] = ["http://127.0.0.1:3000", "http://127.0.0.1:3100"]
     auth_session_seconds: int = Field(default=28800, ge=300, le=86400)
     auth_idle_seconds: int = Field(default=1800, ge=60, le=3600)
@@ -50,6 +51,15 @@ class Settings(BaseSettings):
     def secure_auth_configuration(self):
         if self.auth_secret.get_secret_value() == self.auth_mfa_key.get_secret_value():
             raise ValueError("Authentication and MFA encryption keys must differ")
+        if self.proxy_shared_secret is not None:
+            self.require_key(self.proxy_shared_secret)
+            if self.proxy_shared_secret.get_secret_value() in (
+                self.auth_secret.get_secret_value(),
+                self.auth_mfa_key.get_secret_value(),
+            ):
+                raise ValueError("Proxy authentication needs an independent key")
+        elif self.app_env in ("staging", "production"):
+            raise ValueError("An independent proxy authentication key is required")
         if not self.auth_allowed_origins:
             raise ValueError("At least one exact origin is required")
         for origin in self.auth_allowed_origins:

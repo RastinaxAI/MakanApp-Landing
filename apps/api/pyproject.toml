@@ -1,6 +1,6 @@
 [project]
 name = "makan-landing-api"
-version = "0.9.0"
+version = "0.10.0"
 description = "Independent marketing website API for MakanApp"
 requires-python = ">=3.13,<3.14"
 dependencies = [

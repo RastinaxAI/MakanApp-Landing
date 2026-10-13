@@ -37,7 +37,13 @@ class RequestContextMiddleware:
 
         try:
             if scope["path"].startswith(
-                ("/api/v1/admin/", "/api/v1/learn/views/", "/api/v1/leads/", "/api/v1/contact")
+                (
+                    "/api/v1/admin/",
+                    "/api/v1/learn/views/",
+                    "/api/v1/leads/",
+                    "/api/v1/contact",
+                    "/api/v1/analytics/",
+                )
             ) and scope["method"] in (
                 "POST",
                 "PATCH",
@@ -45,6 +51,8 @@ class RequestContextMiddleware:
             ):
                 body = bytearray()
                 limit = 16384
+                if scope["path"] == "/api/v1/analytics/events":
+                    limit = 2048
                 if scope["path"] == "/api/v1/admin/media":
                     limit = 5 * 1024 * 1024 + 65536
                 elif scope["path"].startswith(

@@ -9,6 +9,9 @@ playwright-report/
 .env
 .env.*
 !.env.example
+!.env.production.example
+.backups/
+.ops/
 .venv/
 __pycache__/
 .DS_Store

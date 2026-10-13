@@ -1,0 +1,5 @@
+FROM postgres:17.11-alpine@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
+# Named volumes inherit the official image's postgres-owned PGDATA directory.
+# Starting directly as postgres removes the unused root-to-user launcher.
+RUN rm -f /usr/local/bin/gosu
+USER postgres:postgres

@@ -1,0 +1,36 @@
+{
+  "trivy": {
+    "version": "v0.75.0",
+    "assets": [
+      {
+        "name": "trivy_0.75.0_checksums.txt",
+        "url": "https://github.com/aquasecurity/trivy/releases/download/v0.75.0/trivy_0.75.0_checksums.txt"
+      },
+      {
+        "name": "trivy_0.75.0_checksums.txt.sigstore.json",
+        "url": "https://github.com/aquasecurity/trivy/releases/download/v0.75.0/trivy_0.75.0_checksums.txt.sigstore.json"
+      }
+    ],
+    "source": "https://github.com/aquasecurity/trivy/releases/tag/v0.75.0",
+    "binary_sha256": "3b4fcf6fec53c4c73c325cfd518c7264100695b19e6c59c6a777e4a67dc9f0e6",
+    "archive_sha256": "4e43bd71a30f51aee39525f60f2b47043af77eb8df8fe082aae4372b69c6660f",
+    "asset": "trivy_0.75.0_windows-64bit.zip"
+  },
+  "actionlint": {
+    "version": "v1.7.12",
+    "assets": [
+      {
+        "name": "actionlint_1.7.12_checksums.txt",
+        "url": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_checksums.txt"
+      },
+      {
+        "name": "actionlint_1.7.12_windows_amd64.zip",
+        "url": "https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_windows_amd64.zip"
+      }
+    ],
+    "source": "https://github.com/rhysd/actionlint/releases/tag/v1.7.12",
+    "binary_sha256": "54ca21be3de4c7cfa26914aa8b61bd76bf573ef3caac5f80d110558cdf241718",
+    "archive_sha256": "6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9",
+    "asset": "actionlint_1.7.12_windows_amd64.zip"
+  }
+}

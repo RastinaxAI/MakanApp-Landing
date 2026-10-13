@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily encrypted Makan landing backup
+
+[Timer]
+OnCalendar=*-*-* 02:00:00 Asia/Tehran
+Persistent=true
+RandomizedDelaySec=300
+Unit=makan-backup.service
+
+[Install]
+WantedBy=timers.target

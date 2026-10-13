@@ -176,3 +176,6 @@ flowchart LR
   Guard --> DB
   DB --> Panel["آمار owner / sales"]
 ```
+# الحاق مرحله۱۰
+
+Compose تولید مستقل با Caddy/TLS و API مستقیم، Next standalone، PostgreSQL خصوصی و worker نگهداری اضافه شد. دو شبکه داخلی application/database و شبکه خروجی edge فقط برای Caddy وجود دارند. runtime secrets در محیط سرویس و role migration جدا از API هستند. [راهنمای استقرار](production-runbook.md)، [قرارداد](step-10-contract.md) و [backup](backup-restore-runbook.md) مرجع عملیات هستند. Backend اصلی ماکان دست‌نخورده است.

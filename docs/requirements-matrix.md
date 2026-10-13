@@ -311,3 +311,19 @@ Blog/learn فقط صفحه معرفی خالیِ صادقانه دارند؛ ف�
 | R084 | جمع‌آوری RUM پس از رضایت و p75 با ordering و sample count | نتیجه میدانی واقعی هنوز قابل ادعا نیست؛ نمونه آزمایشگاه جای آن را نمی‌گیرد |
 | R085 | ابزار Lighthouse13.5.0 و سه دور برای هر شش مسیر | نتایج نهایی در گزارش QA؛ آزمون محلی HTTP/fixture با HTTPS staging تفکیک می‌شود |
 | R086 | مسیر blog/learn مستقل و canonical و انتشار انسانی | متن رسمی آموزش/وبلاگ هنوز از کاربر دریافت نشده؛ داده fixture فقط در DB تست |
+# وضعیت مرحله۱۰ — زیرساخت و پذیرش
+
+| شناسه | پیاده‌سازی | معیار پذیرش/شرط |
+|---|---|---|
+| R091 | Dockerfileهای multi-stage API/web/Caddy، Compose توسعه/تولید مستقل | build واقعی، up/health و آزمون snapshot/restore |
+| R092 | شبکه خصوصی، non-root برنامه، readonly/cap_drop، volume و secrets جدا | inspect واقعی؛ DB/API/web port عمومی ندارند |
+| R093 | TLS/HSTS/CSP nonce، proxy IP احرازشده | HTTPS localhost آزمون واقعی؛ ACME دامنه عمومی وابسته به مقصد |
+| R094 | migration مالک جدا، lock، backup AES-GCM، restore تازه، rollback راهنما | داده/یادداشت/hash رسانه و ابطال نشست بازیابی‌شده |
+| R095 | CI pin شده lint/type/build/API/browser/dependency/image | actionlint محلی؛ اجرای GitHub پس از Push مجاز و runner |
+| R096 | راهنمای staging و انتشار | دامنه و سرور اعلام نشده؛ استقرار عمومی باز است |
+| R097 | Pytest/HTTPX با PostgreSQL واقعی | نتیجه junit و تست عملیات مستقل |
+| R098 | مرورگر سه موتور/عرض‌ها، CSP/HTTPS، Lighthouse | گزارش واقعی اجرای نهایی، بدون ادعای داده میدانی |
+| R099 | مانور backup/restore مستقل | archive احرازشده، منع overwrite namespace، مقایسه داده و فایل |
+| R036/R076 | IP ضدجعل و cleanup دوره‌ای retention مصوب | quota واقعی و PII منقضی؛ backup retention پیشنهادی۷روز جداست |
+
+این الحاق وضعیت تاریخی مراحل پیشین را جایگزین نمی‌کند. تصمیم‌های اجرایی و پذیرش وابسته در [گزارش مرحله۱۰](step-10-report.md) جمع‌بندی می‌شوند. MVP محلی با داده فرضی منتشر نمی‌شود؛ fixture فقط محیط آزمون مستقل است.

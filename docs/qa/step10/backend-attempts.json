@@ -1,0 +1,13 @@
+{
+  "latest_attempt": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "1",
+    "skipped": "0",
+    "tests": "186",
+    "time": "403.753",
+    "timestamp": "2026-10-13T17:38:30.879820+03:30",
+    "hostname": "DESKTOP-N6SKD3R"
+  },
+  "failure": "CSRF request got 503 during concurrent Go image build; requires isolated rerun"
+}

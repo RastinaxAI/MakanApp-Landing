@@ -1,0 +1,41 @@
+{
+  "critical_gate_passed": true,
+  "images": {
+    "api": {
+      "CRITICAL": 0,
+      "HIGH": 44,
+      "MEDIUM": 58,
+      "LOW": 61,
+      "high_with_fix": 0,
+      "image_id": "sha256:f743ee6374be947cad4e8979a287bba5e5a4e8f32df7231472cb73fd4ee0092e",
+      "artifact": "trivy-api-trixie.json"
+    },
+    "web": {
+      "CRITICAL": 0,
+      "HIGH": 43,
+      "MEDIUM": 58,
+      "LOW": 60,
+      "high_with_fix": 0,
+      "image_id": "sha256:fe7b298e7bca0f8a14cb1348bf3468ab4ff5083943afee0caa016a9e910c261b",
+      "artifact": "trivy-web-trixie.json"
+    },
+    "caddy": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "high_with_fix": 0,
+      "image_id": "sha256:e3bd3dacf9ca69856083edb2528ec5c7e75e30ba4462eb29aedcb85a9e0461e2",
+      "artifact": "trivy-caddy-final.json"
+    },
+    "db": {
+      "CRITICAL": 0,
+      "HIGH": 0,
+      "MEDIUM": 1,
+      "LOW": 0,
+      "high_with_fix": 0,
+      "image_id": "sha256:3e538b529398f3c4c443d16a0c1a774457217b2ff0ca9cc9a6783ebf1ae2607e",
+      "artifact": "trivy-db-final.json"
+    }
+  }
+}

@@ -1,0 +1,218 @@
+[
+  {
+    "route": "/",
+    "run": 1,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/",
+    "run": 2,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/",
+    "run": 3,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/features",
+    "run": 1,
+    "scores": {
+      "performance": 86,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/features",
+    "run": 2,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/features",
+    "run": 3,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/solutions/schools",
+    "run": 1,
+    "scores": {
+      "performance": 96,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/solutions/schools",
+    "run": 2,
+    "scores": {
+      "performance": 99,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/solutions/schools",
+    "run": 3,
+    "scores": {
+      "performance": 90,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/demo",
+    "run": 1,
+    "scores": {
+      "performance": 96,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/demo",
+    "run": 2,
+    "scores": {
+      "performance": 94,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/demo",
+    "run": 3,
+    "scores": {
+      "performance": 95,
+      "accessibility": 100,
+      "best-practices": 96,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/articles/seo-article",
+    "run": 1,
+    "scores": {
+      "performance": 97,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/articles/seo-article",
+    "run": 2,
+    "scores": {
+      "performance": 97,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/articles/seo-article",
+    "run": 3,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/videos/seo-video",
+    "run": 1,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/videos/seo-video",
+    "run": 2,
+    "scores": {
+      "performance": 98,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  },
+  {
+    "route": "/learn/videos/seo-video",
+    "run": 3,
+    "scores": {
+      "performance": 25,
+      "accessibility": 100,
+      "best-practices": 100,
+      "seo": 100
+    },
+    "runtimeError": null,
+    "cls": 0
+  }
+]

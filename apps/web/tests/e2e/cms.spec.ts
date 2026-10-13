@@ -423,7 +423,7 @@ test("CMS media upload stays private until publication and protects referenced f
   await page
     .getByRole("button", { name: "بارگذاری تصویر", exact: true })
     .click();
-  await expect(page.getByRole("status")).toContainText("فضای خصوصی");
+  await expect(page.getByRole("status")).toContainText("فضای خصوصی", { timeout: 40_000 });
   const mediaList = await (
     await page.request.get("/api/v1/admin/media?page_size=100")
   ).json();
@@ -628,7 +628,7 @@ for (const width of [360, 768, 1440])
         contentType: "application/json",
       });
       expect(audit.violations, route).toEqual([]);
-      const directory = path.resolve("../../docs/qa/step9", info.project.name);
+      const directory = path.resolve("../../docs/qa/step10", info.project.name);
       await mkdir(directory, { recursive: true });
       await page.screenshot({
         path: path.join(

@@ -1,0 +1,11 @@
+{
+  "chromium_early_attempt": {
+    "startTime": "2026-10-13T14:01:56.904Z",
+    "duration": 200629.33599999998,
+    "expected": 9,
+    "skipped": 25,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "limitation": "Concurrent image build; API 503 and CRM assertion failure; this is not a passing gate."
+}

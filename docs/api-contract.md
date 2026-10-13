@@ -261,3 +261,6 @@ AdminContent شامل revisionها/row_version و publication_state مشتق ا�
 ## الحاق مرحله۹ — SEO و Performance
 
 API0.9.0 شش endpoint SEO و analytics می‌افزاید؛ مسیرهای قبلی auth/CMS/learning/CRM حفظ شده‌اند. schemaهای strict، Origin، rate مشترک و پاسخ‌های استاندارد برقرارند. [قرارداد کامل مرحله۹](step-9-contract.md) نام هشت رویداد، payload، metric ordering، manifest و مجوز metrics را تعریف می‌کند. API محصول اصلی ماکان تغییری ندارد.
+# الحاق مرحله۱۰
+
+نسخه۰.۱۰.۰ و [قرارداد عملیاتی](step-10-contract.md): ready/live وب، edge احرازشده برای IP، محدودیت اندازه واقعی analytics و worker نگهداری. در Production `/api/v1/*` مستقیم پشت Caddy به FastAPI می‌رسد؛ BFF توسعه حفظ شده است. هیچ API برای Backend اصلی محصول اضافه نشده است.

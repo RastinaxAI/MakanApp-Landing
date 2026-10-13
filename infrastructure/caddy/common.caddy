@@ -1,0 +1,44 @@
+(application) {
+  encode zstd gzip
+  header {
+    -Server
+    Strict-Transport-Security "max-age=31536000"
+    X-Content-Type-Options nosniff
+    Referrer-Policy same-origin
+    X-Frame-Options DENY
+    Permissions-Policy "camera=(), microphone=(), geolocation=(), autoplay=(), fullscreen=(self \"https://www.aparat.com\")"
+  }
+  request_body {
+    max_size 6MB
+  }
+  handle /api/v1/* {
+    reverse_proxy api:8000 {
+      header_up X-Makan-Proxy-Key {env.PROXY_SHARED_SECRET}
+      header_up X-Makan-Client-IP {http.request.remote.host}
+      transport http {
+        dial_timeout 3s
+        response_header_timeout 30s
+      }
+    }
+  }
+  handle {
+    reverse_proxy web:3000 {
+      transport http {
+        dial_timeout 3s
+        response_header_timeout 20s
+      }
+    }
+  }
+}
+
+http://:8081 {
+  @ready path /health/ready
+  handle @ready {
+    reverse_proxy web:3000
+  }
+  respond 404
+}
+
+http://{$SITE_DOMAIN}:8080 {
+  redir {$PUBLIC_ORIGIN}{uri} 308
+}

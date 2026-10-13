@@ -101,7 +101,7 @@ async function bridge(request: Request, context: Context) {
       body,
       cache: "no-store",
       redirect: "manual",
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.timeout(path === "admin/media" && request.method === "POST" ? 30000 : 12000),
     });
     const out = new Headers({
       "Cache-Control": "no-store",

@@ -1,0 +1,12 @@
+[Unit]
+Description=Makan landing encrypted backup
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=makan-operator
+WorkingDirectory=/opt/makan-landing
+UMask=0077
+ExecStart=/opt/makan-landing/apps/api/.venv/bin/python scripts/production.py --env-file /etc/makan-landing/production.env backup --output /var/backups/makan-landing
+NoNewPrivileges=true

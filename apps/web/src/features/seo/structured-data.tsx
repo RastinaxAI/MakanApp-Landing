@@ -3,14 +3,16 @@ import type { CmsContent } from "@/features/cms/types";
 import type { FaqItem } from "@/features/marketing/faq-list";
 import type { LearningDetail } from "@/features/learning/types";
 import { hrefFor } from "@/features/learning/types";
+import { headers } from "next/headers";
 
-export function JsonLd({
+export async function JsonLd({
   data,
 }: {
   data: Record<string, unknown> | Record<string, unknown>[];
 }) {
   return (
     <script
+      nonce={(await headers()).get("x-nonce") || undefined}
       type="application/ld+json"
       dangerouslySetInnerHTML={{
         __html: JSON.stringify(data).replace(/</g, "\\u003c"),

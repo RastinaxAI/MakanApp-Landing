@@ -137,3 +137,17 @@ apps/api/.venv/Scripts/python.exe scripts/test-leads-docker.py --phase step9
 ```
 
 مرورگرها و test PostgreSQL مستقل لازم‌اند؛ Node24 LTS و build تولید پیش‌نیازند. نتایج آزمون و محدودیت‌های انتشار در گزارش مرحله۹ ثبت می‌شوند. STEP10 و Push تا مجوز تازه کاربر آغاز نمی‌شوند.
+# مرحله۱۰ — اجرای Docker و عملیات
+
+پشته مستقل تولید و ابزارهای واقعی backup/restore ساخته و در محیط مستقل Docker/HTTPS آزموده شده‌اند. [گزارش و محدودیت‌های پذیرش](docs/step-10-report.md)، [استقرار](docs/production-runbook.md)، [backup/restore](docs/backup-restore-runbook.md)، [امنیت](docs/security-runbook.md) و [قرارداد مرحله۱۰](docs/step-10-contract.md) را پیش از انتشار بخوانید. دامنه/سرور هنوز اعلام نشده و انتشار عمومی انجام نشده است؛ Push مجاز نیست.
+
+```powershell
+apps/api/.venv/Scripts/python.exe scripts/production.py --env-file .preview/local-production.env init --local-test
+apps/api/.venv/Scripts/python.exe scripts/production.py --env-file .preview/local-production.env build
+apps/api/.venv/Scripts/python.exe scripts/test-production.py --env-file .preview/local-production.env --keep
+apps/api/.venv/Scripts/python.exe scripts/test-production-browser.py --env-file .preview/local-production.env
+pwsh -NoProfile -File scripts/test-backend.ps1 -Phase step10
+docker compose --profile website up -d --build --wait web
+```
+
+آخرین دستور وب Docker توسعه را روی لوپ‌بک۳۱۰۰ اجرا می‌کند؛ قبل از آزمون‌های E2E آن سرویس را متوقف کنید. نمونه Linux، ساخت حساب واقعی مدیر با prompt امن و چرخه انتشار در runbook آمده است. هیچ credential ثابت یا seed آموزشی آزمون به محیط واقعی وارد نمی‌شود.

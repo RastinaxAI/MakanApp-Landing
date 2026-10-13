@@ -67,6 +67,8 @@ try:
         seo_indexing_enabled=os.environ.get("E2E_SEO_FIXTURES") == "1",
         analytics_enabled=os.environ.get("E2E_SEO_FIXTURES") == "1",
         analytics_event_limit=1000,
+        db_pool_timeout=10,
+        db_statement_timeout_ms=10000,
         media_root=Path("../../.preview/e2e-media") / name,
     )
     security = Security(settings)
@@ -96,6 +98,9 @@ try:
 
             owner_id = session.scalar(select(Admin.id).where(Admin.email == "owner@example.com"))
             seed(session, settings, owner_id)
+    # Bulk fixture loading needs current planner statistics just like a restore.
+    with engine.connect().execution_options(isolation_level="AUTOCOMMIT") as connection:
+        connection.exec_driver_sql("ANALYZE")
     uvicorn.run(
         create_app(settings), host="127.0.0.1", port=8100, log_config=None, access_log=False
     )

@@ -128,7 +128,7 @@ test("real metadata produces matching safe JSON-LD and no player request before 
   );
   expect(thirdParty).toEqual([]);
   await expect(page.locator("iframe")).toHaveCount(0);
-  const dir = path.resolve("../../docs/qa/step9");
+  const dir = path.resolve("../../docs/qa/step10");
   await mkdir(dir, { recursive: true });
   for (const width of [360, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });

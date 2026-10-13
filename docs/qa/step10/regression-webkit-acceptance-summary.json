@@ -1,0 +1,469 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T16:14:57.250Z",
+    "duration": 359236.92699999997,
+    "expected": 35,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "guest pages redirect, API rejects guest and hostile CSRF",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3453,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real login logout, private cookie and noindex CSP",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5385,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "editor and sales cannot read owner resources",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5260,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "owner creates and deactivates an account with a real audit event",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6884,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "MFA enrollment, recovery login and disabling are real",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7064,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "password change closes sessions and accepts the new password",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4972,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "admin keyboard responsive and axe at 360px",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11724,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "admin keyboard responsive and axe at 768px",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9485,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "admin keyboard responsive and axe at 1440px",
+      "file": "admin.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 16926,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real demo saves consent source, sales manages assignment notes outcome and owner sees actual contract",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13774,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "contact validates fields consent, persists email and editor cannot read request or notes",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9916,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "lost response after real commit retries safely and 422 429 failures preserve inputs",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9114,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "forms and CRM are responsive accessible and keyboard consent is independent of submission",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 33706,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "published series-only taxonomy has a usable filtered category page",
+      "file": "learning-category.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3656,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "learning article UI creates rich text, taxonomy, inline images, preview and a real public article",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15419,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "Aparat video UI stores manual metadata and loads only on click with responsive fallback",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 20103,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "mixed series UI orders articles and videos and protects unpublished members",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11726,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "blog publication is independent and draft routes remain private",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5922,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "learning home selection displays zero to three real published cards",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7531,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "learning management and library are accessible at 360px",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11428,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "learning management and library are accessible at 768px",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13688,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "learning management and library are accessible at 1440px",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 18335,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "published learning details remain accessible at 360px",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9678,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "published learning details remain accessible at 768px",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15009,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "published learning details remain accessible at 1440px",
+      "file": "learning.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 17751,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "all PRD public routes render SSR Persian content, one H1 and distinct metadata",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3234,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "homepage follows PRD order and handles ready vs roadmap product tabs",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3193,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "feature pages honor user confirmation and never present an operational AI demo",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2221,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "audience journeys have distinct actions and explicit access boundaries",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 1962,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real forms require consent and never show success before saving",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 2812,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "empty content libraries and legal drafts remain honest and separate",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3522,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "representative public layouts reflow and pass axe at 360px",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 9690,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "representative public layouts reflow and pass axe at 768px",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 11047,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "representative public layouts reflow and pass axe at 1440px",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 19617,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "public mobile navigation and demo backtracking remain usable",
+      "file": "public-pages.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 3888,
+          "retry": 0
+        }
+      ]
+    }
+  ],
+  "axe_audits": 61,
+  "axe_violations": 0
+}
