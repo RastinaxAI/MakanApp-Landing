@@ -63,7 +63,7 @@ for (const width of [320, 360, 390, 479, 480, 768, 1024, 1440]) {
     await expect(page.getByTestId("product-placeholder").first()).toBeVisible();
     if ([390, 768, 1440].includes(width)) {
       const directory = path.resolve(
-        "../../docs/qa/step7",
+        "../../docs/qa/step8",
         testInfo.project.name,
       );
       await mkdir(directory, { recursive: true });
@@ -243,7 +243,7 @@ for (const width of [390, 1440]) {
       window.scrollTo({ top: 0, behavior: "instant" });
     });
     const directory = path.resolve(
-      "../../docs/qa/step7",
+      "../../docs/qa/step8",
       testInfo.project.name,
     );
     await mkdir(directory, { recursive: true });

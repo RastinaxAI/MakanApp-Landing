@@ -1,0 +1,64 @@
+npm warn exec The following package was not found and will be installed: node@24.21.0
+[WebServer] (node:15312) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:24740) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 [chromium] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop (23.5s)
+(node:14604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  2 [firefox] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop (16.6s)
+Testing stopped early after 1 maximum allowed failures.
+
+
+  1) [firefox] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /\/admin$/
+    Received string:  "http://127.0.0.1:3100/admin/login"
+    Timeout: 5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        5 × locator resolved to <html lang="fa" dir="rtl" class="ZXmN4G_variable">…</html>
+          - unexpected value "http://127.0.0.1:3100/admin/login"
+        - waiting for "http://127.0.0.1:3100/admin" navigation to finish...
+        - navigated to "http://127.0.0.1:3100/admin"
+
+
+      36 |     .fill(process.env.E2E_ADMIN_PASSWORD!);
+      37 |   await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
+    > 38 |   await expect(page).toHaveURL(/\/admin$/);
+         |                      ^
+      39 |   const directory = path.resolve("../../docs/qa/step8", info.project.name);
+      40 |   await mkdir(directory, { recursive: true });
+      41 |   for (const width of [360, 768, 1440]) {
+        at C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\apps\web\tests\e2e\leads-layout.spec.ts:38:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-firefox\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-firefox\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-firefox\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-firefox\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [firefox] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop
+  1 did not run
+  1 passed (1.5m)
+  1 error was not a part of any test, see above for details
+Exception: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-web-admin.ps1:60
+Line |
+  60 |  … CODE -ne 0){throw 'Browser tests failed. Use Node 24 LTS and install  …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Browser tests failed. Use Node 24 LTS and install the selected Playwright browsers.

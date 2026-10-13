@@ -61,12 +61,21 @@ export default async function DashboardPage() {
           </Link>
         </section>
       )}
-      <section className="mt-6 rounded-2xl border border-border p-6">
-        <h2 className="text-xl font-semibold">بخش‌های در دست توسعه</h2>
-        <p className="mt-3 leading-8 text-muted-foreground">
-          ثبت درخواست‌های مشاوره هنوز فعال نیست.
-        </p>
-      </section>
+      {profile.capabilities.includes("leads") && (
+        <section className="mt-6 rounded-2xl border border-border p-6">
+          <h2 className="text-xl font-semibold">درخواست‌ها و پیگیری</h2>
+          <p className="mt-3 leading-8 text-muted-foreground">
+            درخواست‌های دمو و پیام‌های تماس را بررسی و نتیجه پیگیری را ثبت کنید.
+          </p>
+          <Link
+            href="/admin/leads"
+            prefetch={false}
+            className="mt-4 inline-flex min-h-11 items-center text-primary-hover"
+          >
+            مدیریت درخواست‌ها
+          </Link>
+        </section>
+      )}
     </>
   );
 }

@@ -1,0 +1,71 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\apps\api
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1
+collected 116 items
+
+tests\integration\test_auth.py ......................                    [ 18%]
+tests\integration\test_cms.py ................                           [ 32%]
+tests\integration\test_leads.py .....................                    [ 50%]
+tests\integration\test_learning.py .......                               [ 56%]
+tests\integration\test_learning_categories.py .                          [ 57%]
+tests\integration\test_learning_limits.py ...                            [ 60%]
+tests\integration\test_postgres.py F.....                                [ 65%]
+tests\unit\test_foundation.py .............                              [ 76%]
+tests\unit\test_learning_safety.py .................                     [ 91%]
+tests\unit\test_security.py ..........                                   [100%]
+
+================================== FAILURES ===================================
+_____________ test_fresh_upgrade_is_idempotent_and_matches_models _____________
+
+database_factory = <function database_factory.<locals>.provision at 0x000001E98A616FC0>
+
+    def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
+        with database_factory() as (_, _, engine):
+>           assert {
+                "admin_sessions",
+                "auth_challenges",
+                "admin_mfa",
+                "admin_recovery_codes",
+                "rate_limit_buckets",
+                "alembic_version",
+                "admins",
+                "audit_logs",
+                "pages",
+                "page_revisions",
+                "faq_categories",
+                "media_assets",
+                "page_sections",
+                "revision_media_refs",
+                "site_settings",
+                "setting_media_refs",
+                "learning_categories",
+                "learning_tags",
+                "learning_revision_categories",
+                "learning_revision_tags",
+                "learning_revision_relations",
+                "learning_series_items",
+                "learning_views",
+                "learning_stats",
+            } == set(inspect(engine).get_table_names())
+E           AssertionError: assert {'admin_mfa',...it_logs', ...} == {'admin_mfa',...it_logs', ...}
+E
+E             Extra items in the right set:
+E             'lead_status_history'
+E             'lead_receipts'
+E             'leads'
+E             'lead_notes'
+E             Use -v to get more diff
+
+tests\integration\test_postgres.py:31: AssertionError
+- generated xml file: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\docs\qa\step8\pytest.xml -
+=========================== short test summary info ===========================
+FAILED tests/integration/test_postgres.py::test_fresh_upgrade_is_idempotent_and_matches_models
+================== 1 failed, 115 passed in 142.46s (0:02:22) ==================
+Exception: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-backend.ps1:23
+Line |
+  23 |  … TCODE -ne 0) { throw "Backend tests failed with exit $LASTEXITCODE" }
+     |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Backend tests failed with exit 1

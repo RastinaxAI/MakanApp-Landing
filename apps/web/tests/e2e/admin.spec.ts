@@ -316,7 +316,7 @@ for (const width of [360, 768, 1440])
       expect(audit.violations, route).toEqual([]);
       if ([360, 1440].includes(width)) {
         const directory = path.resolve(
-          "../../docs/qa/step7",
+          "../../docs/qa/step8",
           testInfo.project.name,
         );
         await mkdir(directory, { recursive: true });

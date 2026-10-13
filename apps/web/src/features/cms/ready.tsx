@@ -8,9 +8,11 @@ const serverReady = () => false;
 export function CmsReady({
   children,
   disabled = false,
+  legend = "فرم مدیریت وب‌سایت",
 }: {
   children: ReactNode;
   disabled?: boolean;
+  legend?: string;
 }) {
   const ready = useSyncExternalStore(subscribe, clientReady, serverReady);
   // SSR controls must not accept edits before React can receive their input events.
@@ -19,7 +21,7 @@ export function CmsReady({
       disabled={!ready || disabled}
       className="m-0 min-w-0 border-0 p-0"
     >
-      <legend className="sr-only">فرم مدیریت وب‌سایت</legend>
+      <legend className="sr-only">{legend}</legend>
       {children}
     </fieldset>
   );

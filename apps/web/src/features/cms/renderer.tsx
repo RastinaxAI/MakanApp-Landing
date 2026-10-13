@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { Fragment, type ReactNode } from "react";
 import { ArrowLeft, Check, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/layout/container";

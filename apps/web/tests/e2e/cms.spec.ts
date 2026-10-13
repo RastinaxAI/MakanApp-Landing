@@ -628,7 +628,7 @@ for (const width of [360, 768, 1440])
         contentType: "application/json",
       });
       expect(audit.violations, route).toEqual([]);
-      const directory = path.resolve("../../docs/qa/step7", info.project.name);
+      const directory = path.resolve("../../docs/qa/step8", info.project.name);
       await mkdir(directory, { recursive: true });
       await page.screenshot({
         path: path.join(

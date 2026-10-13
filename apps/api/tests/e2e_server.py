@@ -57,6 +57,9 @@ try:
         auth_login_ip_limit=1000,
         auth_login_account_limit=200,
         auth_challenge_limit=1000,
+        forms_token_limit=1000,
+        forms_submit_limit=1000,
+        forms_contact_limit=100,
         media_root=Path("../../.preview/e2e-media") / name,
     )
     security = Security(settings)

@@ -31,6 +31,9 @@ export function AdminShell({
   const items = [
     { href: "/admin", label: "داشبورد", icon: LayoutDashboard },
     { href: "/admin/security", label: "امنیت حساب", icon: ShieldCheck },
+    ...(profile.capabilities.includes("leads")
+      ? [{ href: "/admin/leads", label: "درخواست‌ها و پیگیری", icon: Users }]
+      : []),
     ...(profile.capabilities.includes("content")
       ? [
           { href: "/admin/content", label: "محتوای سایت", icon: FileText },

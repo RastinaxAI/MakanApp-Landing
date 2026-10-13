@@ -106,3 +106,19 @@ npx playwright install firefox webkit
 ## مرکز آموزش و وبلاگ مرحله۷
 
 API به0.7.0 و schema به0005_learning رسید. پس از migration، /admin/learn و /admin/learn/taxonomy برای مالک/ویرایشگر فعال‌اند. article/video/blog/series انتشار نسخه‌ای واقعی دارند؛ مسیرهای /learn و /blog از PostgreSQL خوانده می‌شوند. ویدیو فقط با مشخصات دستی تاییدشده و پلیر رسمی آپارات پخش می‌شود؛ هیچ ویدیوی فرضی یا حساب آموزشی seed نمی‌شود. [راهنمای آموزش](docs/learning-runbook.md)، [تصمیم‌ها](docs/step-7-decisions.md) و [گزارش مرحله](docs/step-7-report.md) مرجعند. برای intro قدیمی کاملاً دست‌نخورده، فرمان python -m app.commands.refresh_learning_intro نسخه تازه بدون حذف تاریخچه می‌سازد؛ ویرایش مدیر را تغییر نمی‌دهد. مرحله۸ به تایید بعدی کاربر وابسته است. Production و Push تایید نشده‌اند.
+# فرم‌ها و CRM مرحله۸
+
+API نسخه0.8.0 و schema `0006_leads`؛ فرم‌های `/demo` و `/contact` پس از رضایت در PostgreSQL ثبت می‌شوند. `/admin/leads` برای owner/sales شامل جست‌وجو، فیلتر، مسئول، وضعیت، نتیجه قرارداد، یادداشت و تاریخچه است. editor به اطلاعات فرم دسترسی ندارد. اطلاعات شخصی ۱۸۰ روز پس از آخرین پیگیری حذف می‌شوند؛ زمان‌بندی روزانه purge و سیاست backup پیش از Production در مرحله۱۰ لازم‌اند. ایمیل/SMS و وعده زمان پاسخ فعال نیستند. [راهنمای CRM](docs/crm-runbook.md) مرجع ثبت، retry، خطا، حریم خصوصی و نگهداری است.
+
+```powershell
+docker compose --profile tools build api migrate
+docker compose --profile tools run --rm migrate
+docker compose up -d --no-build --wait api
+docker compose exec -T api python -m app.commands.refresh_form_copy
+docker compose exec -T api python -m app.commands.leads_cleanup --batch-size 1000
+pwsh -NoProfile -File scripts/test-backend.ps1 -Phase step8
+pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step8Acceptance
+apps/api/.venv/Scripts/python.exe scripts/test-leads-docker.py
+```
+
+آزمون‌ها از Compose تست و دیتابیس/حساب مجزای موقت استفاده می‌کنند؛ داده آموزشی یا درخواست فرضی در دیتابیس اصلی seed نمی‌شود. قبل از آزمون مرورگر production build لازم است. روند مرحله۹ نیازمند تأیید بعدی کاربر است؛ انتشار Production و Push در این مرحله انجام نمی‌شوند.

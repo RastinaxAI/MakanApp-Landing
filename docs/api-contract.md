@@ -243,3 +243,18 @@ AdminContent شامل revisionها/row_version و publication_state مشتق ا�
 - GET /learn/views/{id}/ticket و POST /learn/views/{id}: ticket امضاشده، Origin مجاز، حداقل۲۰ثانیه و حداکثر۱۰دقیقه، کنترل bot، حذف تکرار روزانه و throttle مشترک. خروجی ticket یا counted واقعی؛ مجموع views در projection عمومی. view برای مجموعه پذیرفته نمی‌شود.
 
 تمام پاسخ‌های عمومی schema مستقل OpenAPI دارند. مقدار payload.toc و ابعاد inline image محاسباتی‌اند؛ در ورودی ذخیره toc ارسال نشود. body_html/transcript_html تا۶۴هزار کاراکتر، درخواست مدیریتی۲۵۶KiB، view۱۶KiB، تصویر همان۵MiB است. iframe/embed_url ورودی مجاز نیست؛ aparat_id لینک HTTPS یا ID را به شناسه normalize می‌کند. منابع/CTA HTTPS یا مسیر داخلی امن. ناسازگاری domain/reference و metadata ناقص422، slug duplicate/stale409، If-Match مفقود428 و throttle429 با Retry-After.
+# افزوده مرحله ۸ — فرم‌ها و CRM
+
+| روش | مسیر `/api/v1` | مجوز و نتیجه |
+| --- | --- | --- |
+| GET | `/forms/token?kind=demo\|contact` | عمومی، token/consent_version/consent_text/retention_days/expires_in |
+| POST | `/leads/demo` | عمومی با Origin معتبر؛ نام، phone، school_name، city/job_title/student_count_range/message اختیاری |
+| POST | `/contact` | عمومی با Origin معتبر؛ full_name/contact_method/contact_value/subject/message |
+| GET | `/admin/leads` | owner/sales؛ q/kind/status/source/assigned_to/date_from/date_to/include_purged/page/page_size |
+| GET | `/admin/leads/assignees` | owner/sales؛ فقط حساب‌های فعال owner/sales |
+| GET | `/admin/leads/metrics` | owner/sales؛ آمار واقعی cohort و source، بدون PII |
+| GET/PATCH | `/admin/leads/{uuid}` | owner/sales؛ PATCH نیازمند CSRF و If-Match؛ status/outcome/assigned_to |
+| GET/POST | `/admin/leads/{uuid}/notes` | owner/sales؛ GET صفحه‌بندی، POST متن ساده body و If-Match/CSRF |
+| GET | `/admin/leads/{uuid}/history` | owner/sales؛ صفحه‌بندی تغییرات بدون متن خصوصی |
+
+هر POST عمومی همچنین consent=true، consent_version=`2026-10-13-v1`، form_token، idempotency_key UUIDv4، source allowlist و website خالی دارد. پاسخ 201 `{reference_id,status:"received"}` فقط پس از commit، retry معتبر همان مرجع. کلید مشترک با body متفاوت 409؛ duplicate همسان در ۲۴ ساعت با کلید تازه یک رکورد. خطاهای یکپارچه 403/409/413/422/429/503 و Retry-After؛ مدیر فاقد مجوز403، مهمان401، نسخه غایب428. زمان‌های فیلتر نیازمند timezone؛ پایان بازه غیرشامل. فهرست و تاریخچه دارای PaginationMeta استاندارد هستند. مسیر عمومی lookup رکورد وجود ندارد. OpenAPI از schema واقعی تولید می‌شود؛ قرارداد کامل در [راهنمای CRM](crm-runbook.md).

@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from app.api.v1.routes.admin import router as admin_router
 from app.api.v1.routes.cms import router as cms_router
 from app.api.v1.routes.health import router
+from app.api.v1.routes.leads import router as leads_router
 from app.api.v1.routes.learning import router as learning_router
 from app.core.config import Settings
 from app.core.errors import install_error_handlers
@@ -40,7 +41,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     development = config.app_env in ("development", "test")
     app = FastAPI(
         title="MakanApp Landing API",
-        version="0.7.0",
+        version="0.8.0",
         lifespan=lifespan,
         docs_url="/api/v1/docs" if development else None,
         redoc_url=None,
@@ -53,4 +54,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(admin_router, prefix="/api/v1")
     app.include_router(cms_router, prefix="/api/v1")
     app.include_router(learning_router, prefix="/api/v1")
+    app.include_router(leads_router, prefix="/api/v1")
     return app

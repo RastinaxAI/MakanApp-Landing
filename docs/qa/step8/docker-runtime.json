@@ -1,0 +1,17 @@
+{
+  "schema": "0006_leads",
+  "postgres": "17.11",
+  "admin_count": 0,
+  "lead_count": 0,
+  "media_count": 0,
+  "content_count": 26,
+  "revision_count": 29,
+  "history_update_allowed": false,
+  "history_delete_allowed": false,
+  "receipt_row_lock_privilege": true,
+  "version": "0.8.0",
+  "openapi_paths": 111,
+  "consent_version": "2026-10-13-v1",
+  "retention_days": 180,
+  "form_token_available": true
+}

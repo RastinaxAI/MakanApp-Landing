@@ -470,7 +470,7 @@ for (const width of [360, 768, 1440])
   }, info) => {
     await login(page);
     await page.setViewportSize({ width, height: 900 });
-    const directory = path.resolve("../../docs/qa/step7", info.project.name);
+    const directory = path.resolve("../../docs/qa/step8", info.project.name);
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["library", "/learn"],
@@ -531,7 +531,7 @@ for (const width of [360, 768, 1440])
     const blog = await fixture(page, `detail-blog-${suffix}`, "blog", {
       cover_media_id: media,
     });
-    const directory = path.resolve("../../docs/qa/step7", info.project.name);
+    const directory = path.resolve("../../docs/qa/step8", info.project.name);
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["article-detail", `/learn/articles/${a.slug}?series=${series.slug}`],

@@ -36,9 +36,9 @@ class RequestContextMiddleware:
             await send(message)
 
         try:
-            if scope["path"].startswith(("/api/v1/admin/", "/api/v1/learn/views/")) and scope[
-                "method"
-            ] in (
+            if scope["path"].startswith(
+                ("/api/v1/admin/", "/api/v1/learn/views/", "/api/v1/leads/", "/api/v1/contact")
+            ) and scope["method"] in (
                 "POST",
                 "PATCH",
                 "DELETE",

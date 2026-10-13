@@ -1,0 +1,3 @@
+
+> @makan/web@0.2.0 lint
+> eslint . --max-warnings 0

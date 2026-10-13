@@ -1,0 +1,47 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T06:23:44.569Z",
+    "duration": 91873.89,
+    "expected": 1,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "CRM list handles long names native filters and reflows at mobile tablet desktop",
+      "file": "leads-layout.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 23453,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CRM list handles long names native filters and reflows at mobile tablet desktop",
+      "file": "leads-layout.spec.ts",
+      "project": "firefox",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 16628,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "CRM list handles long names native filters and reflows at mobile tablet desktop",
+      "file": "leads-layout.spec.ts",
+      "project": "webkit",
+      "status": "skipped",
+      "results": []
+    }
+  ],
+  "axe_audits": 0,
+  "axe_violations": 0
+}

@@ -1,0 +1,27 @@
+{
+  "database_fixture": true,
+  "account_fixture_only": true,
+  "lead_concurrency_reference_and_committed_row": true,
+  "migration_head": "0006_leads",
+  "uid": "10001",
+  "readonly_root": true,
+  "caps_dropped": true,
+  "private_before_publish": true,
+  "sha256_before": "891d5edd7590e82f4e9ab8e06be7403e927ad94331daade232575159fa89a0ad",
+  "dimensions": [
+    48,
+    32
+  ],
+  "learning_article_video_series_survive_restart": true,
+  "learning_article_video_series_survive_recreate": true,
+  "media_and_content_survive_container_recreate": true,
+  "media_and_content_survive_restart": true,
+  "session_survives_restart": true,
+  "mime": "image/webp",
+  "sha256_after": "891d5edd7590e82f4e9ab8e06be7403e927ad94331daade232575159fa89a0ad",
+  "status": "failed",
+  "lead_notes_history_outcome_survive_restart_recreate": true,
+  "container_user": "10001:10001",
+  "fixture_cleanup": true,
+  "failure_stage": "CLI purge: receipt row lock needs UPDATE privilege"
+}

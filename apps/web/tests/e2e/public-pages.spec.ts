@@ -111,10 +111,10 @@ test("homepage follows PRD order and handles ready vs roadmap product tabs", asy
     .getByRole("link", { name: "درخواست دموی ماکان", exact: true })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page).toHaveURL(/\/demo(?:\?source=home)?$/);
   await expect(
-    page.getByText("ثبت درخواست فعلاً فعال نیست.", { exact: true }),
-  ).toBeVisible();
+    page.getByRole("button", { name: "ثبت درخواست دمو", exact: true }),
+  ).toBeEnabled();
 });
 
 test("feature pages honor user confirmation and never present an operational AI demo", async ({
@@ -127,7 +127,7 @@ test("feature pages honor user confirmation and never present an operational AI 
       page
         .getByRole("link", { name: "درخواست دموی ماکان", exact: true })
         .first(),
-    ).toHaveAttribute("href", "/demo");
+    ).toHaveAttribute("href", "/demo?source=features");
   }
   await page.goto("/features/ai");
   await expect(page.getByText("در نقشه راه", { exact: true })).toBeVisible();
@@ -146,7 +146,7 @@ test("audience journeys have distinct actions and explicit access boundaries", a
   await page.goto("/solutions/schools");
   await expect(
     page.getByRole("link", { name: "درخواست دمو برای مدرسه من" }).first(),
-  ).toHaveAttribute("href", "/demo");
+  ).toHaveAttribute("href", "/demo?source=solutions");
   await page.goto("/solutions/teachers");
   await expect(
     page.getByRole("link", { name: "آشنایی با امکانات آموزشی" }).first(),
@@ -162,7 +162,7 @@ test("audience journeys have distinct actions and explicit access boundaries", a
   ).toHaveAttribute("href", "/features/school");
 });
 
-test("draft forms cannot accept data, post requests or show fake success", async ({
+test("real forms require consent and never show success before saving", async ({
   page,
 }) => {
   const submissions: string[] = [];
@@ -172,14 +172,16 @@ test("draft forms cannot accept data, post requests or show fake success", async
   for (const route of ["/demo", "/contact"]) {
     await page.goto(route);
     await expect(
-      page.getByText("ثبت درخواست فعلاً فعال نیست.", { exact: true }),
-    ).toBeVisible();
-    for (const field of await page
-      .locator("fieldset input, fieldset textarea, fieldset select")
-      .all())
-      await expect(field).toBeDisabled();
-    await expect(page.locator("fieldset button")).toBeDisabled();
-    await expect(page.locator("form")).toHaveCount(0);
+      page.getByRole("button", {
+        name: route === "/demo" ? "ثبت درخواست دمو" : "ارسال پیام",
+        exact: true,
+      }),
+    ).toBeEnabled();
+    await expect(page.locator("form")).toHaveCount(1);
+    await expect(page.getByRole("checkbox")).not.toBeChecked();
+    await page.locator('form button[type="submit"]').click();
+    await expect(page.getByRole("alert").first()).toBeVisible();
+    await expect(page.getByText("درخواست شما ثبت شد.")).toHaveCount(0);
     expect(await page.evaluate(() => localStorage.length)).toBe(0);
   }
   expect(submissions).toEqual([]);
@@ -249,7 +251,7 @@ for (const width of [360, 768, 1440]) {
         [360, 1440].includes(width)
       ) {
         const directory = path.resolve(
-          "../../docs/qa/step7",
+          "../../docs/qa/step8",
           testInfo.project.name,
         );
         await mkdir(directory, { recursive: true });

@@ -1,0 +1,51 @@
+npm warn exec The following package was not found and will be installed: node@24.21.0
+[WebServer] (node:13760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 3 tests using 1 worker
+
+(node:25012) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  x  1 [chromium] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop (6.7s)
+Testing stopped early after 1 maximum allowed failures.
+
+
+  1) [chromium] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop
+
+    Error: expect(received).toBeLessThanOrEqual(expected)
+
+    Expected: <= 361
+    Received:    549
+
+      45 |     expect(
+      46 |       await page.evaluate(() => document.documentElement.scrollWidth),
+    > 47 |     ).toBeLessThanOrEqual(width + 1);
+         |       ^
+      48 |     await page.getByLabel("نوع درخواست", { exact: true }).selectOption("demo");
+      49 |     await page
+      50 |       .getByRole("button", { name: "اعمال فیلتر", exact: true })
+        at C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\apps\web\tests\e2e\leads-layout.spec.ts:47:7
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-chromium\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\leads-layout-CRM-list-hand-c733d-ws-at-mobile-tablet-desktop-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › tests\e2e\leads-layout.spec.ts:7:5 › CRM list handles long names native filters and reflows at mobile tablet desktop
+  2 did not run
+  1 error was not a part of any test, see above for details
+Exception: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-web-admin.ps1:58
+Line |
+  58 |  … CODE -ne 0){throw 'Browser tests failed. Use Node 24 LTS and install  …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Browser tests failed. Use Node 24 LTS and install the selected Playwright browsers.

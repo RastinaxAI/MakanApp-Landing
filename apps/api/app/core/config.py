@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     auth_login_account_limit: int = Field(default=5, ge=1, le=200)
     auth_challenge_limit: int = Field(default=30, ge=1, le=1000)
     media_root: Path = Path(".media")
+    forms_token_limit: int = Field(default=40, ge=1, le=1000)
+    forms_submit_limit: int = Field(default=20, ge=1, le=1000)
+    forms_contact_limit: int = Field(default=5, ge=1, le=100)
 
     @field_validator("auth_secret", "auth_mfa_key")
     @classmethod

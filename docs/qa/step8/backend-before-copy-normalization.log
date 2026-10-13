@@ -1,0 +1,55 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\apps\api
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1
+collected 130 items
+
+tests\integration\test_auth.py ......................                    [ 16%]
+tests\integration\test_cms.py ................                           [ 29%]
+tests\integration\test_form_policy.py F.                                 [ 30%]
+tests\integration\test_leads.py .....................                    [ 46%]
+tests\integration\test_learning.py .......                               [ 52%]
+tests\integration\test_learning_categories.py .                          [ 53%]
+tests\integration\test_learning_limits.py ...                            [ 55%]
+tests\integration\test_postgres.py ......                                [ 60%]
+tests\unit\test_foundation.py .............                              [ 70%]
+tests\unit\test_leads_validation.py ............                         [ 79%]
+tests\unit\test_learning_safety.py .................                     [ 92%]
+tests\unit\test_security.py ..........                                   [100%]
+
+================================== FAILURES ===================================
+_ test_policy_copy_refresh_preserves_immutable_old_revision_and_human_changes _
+
+auth_context = (Settings(app_env='development', database_url=SecretStr('**********'), db_pool_size=5, db_pool_timeout=3, db_connect_t...18f2'), 'editor': UUID('3e958e7d-542e-4d58-8794-b5376f2b168f'), 'sales': UUID('85637e78-e61c-4aea-98b4-c567ec7de8a5')})
+
+    def test_policy_copy_refresh_preserves_immutable_old_revision_and_human_changes(auth_context):
+        _, engine, _, _ = auth_context
+        upgrades = json.loads(
+            (Path(__file__).parents[2] / "app/data/form-copy-upgrade.json").read_text(encoding="utf-8")
+        )
+        with Session(engine) as session, session.begin():
+            for item in upgrades:
+                data = ContentInput(**item["old"])
+                page = Page(slug="page:" + data.slug, page_type="page")
+                session.add(page)
+                session.flush()
+                revision = create_revision(session, page, data, None)
+                page.published_revision_id = revision.id
+            session.flush()
+>           assert form_copy.refresh_form_copy(session) == 2
+E           assert 0 == 2
+E            +  where 0 = <function refresh_form_copy at 0x000002C6ADB55E40>(<sqlalchemy.orm.session.Session object at 0x000002C6ADD50450>)
+E            +    where <function refresh_form_copy at 0x000002C6ADB55E40> = form_copy.refresh_form_copy
+
+tests\integration\test_form_policy.py:34: AssertionError
+- generated xml file: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\docs\qa\step8\pytest.xml -
+=========================== short test summary info ===========================
+FAILED tests/integration/test_form_policy.py::test_policy_copy_refresh_preserves_immutable_old_revision_and_human_changes
+================== 1 failed, 129 passed in 148.45s (0:02:28) ==================
+Exception: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-backend.ps1:23
+Line |
+  23 |  … TCODE -ne 0) { throw "Backend tests failed with exit $LASTEXITCODE" }
+     |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Backend tests failed with exit 1

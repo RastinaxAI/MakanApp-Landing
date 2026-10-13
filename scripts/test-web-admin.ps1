@@ -5,6 +5,10 @@ param(
     [switch]$LearnOnly,
     [switch]$AdminAndLearnOnly,
     [switch]$FinalAcceptance,
+    [switch]$LeadsOnly,
+    [switch]$Step8Acceptance,
+    [switch]$CrmLayoutOnly,
+    [ValidateSet('all','chromium','firefox','webkit')][string]$BrowserProject = 'all',
     [switch]$FailFast
 )
 $ErrorActionPreference='Stop'
@@ -42,6 +46,10 @@ try {
         if ($LearnOnly) {$taskBrowserArguments+=@('learning.spec.ts','learning-category.spec.ts')}
         if ($AdminAndLearnOnly) {$taskBrowserArguments+=@('admin.spec.ts','learning.spec.ts')}
         if ($FinalAcceptance) {$taskBrowserArguments+=@('admin.spec.ts','learning.spec.ts','learning-category.spec.ts','public-pages.spec.ts','layout.spec.ts','--grep','admin\.spec\.ts|learning(?:-category)?\.spec\.ts|public-pages\.spec\.ts|missing route')}
+        if ($LeadsOnly) {$taskBrowserArguments+=@('leads.spec.ts')}
+        if ($Step8Acceptance) {$taskBrowserArguments+=@('leads.spec.ts','public-pages.spec.ts','admin.spec.ts')}
+        if ($CrmLayoutOnly) {$taskBrowserArguments+=@('leads-layout.spec.ts')}
+        if ($BrowserProject -ne 'all') {$taskBrowserArguments+=@("--project=$BrowserProject")}
         if ($FailFast) {$taskBrowserArguments+=@('--max-failures=1')}
         if ((& node --version) -match '^v24\.') {
             & node @taskBrowserArguments

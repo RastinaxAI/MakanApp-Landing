@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
 import { PageHero } from "@/components/marketing/page-hero";

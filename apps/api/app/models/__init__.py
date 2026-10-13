@@ -15,6 +15,7 @@ from app.models.cms import (
     SiteSetting,
 )
 from app.models.content import Page, PageRevision
+from app.models.leads import Lead, LeadHistory, LeadNote, LeadReceipt
 from app.models.learning import (
     LearningCategory,
     LearningStats,
@@ -27,6 +28,10 @@ from app.models.learning import (
 )
 
 __all__ = [
+    "Lead",
+    "LeadHistory",
+    "LeadNote",
+    "LeadReceipt",
     "Admin",
     "AuditLog",
     "Page",

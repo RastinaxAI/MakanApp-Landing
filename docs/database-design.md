@@ -178,3 +178,13 @@ Runtime روی جداول CMS فقط DML لازم دارد؛ audit همان SELE
 | learning_stats | PK/FK content_id، qualified_views>=0؛ upsert اتمیک |
 
 metadata رسانه از RevisionMediaRef موجود استفاده می‌کند. referenced taxonomy/media حذف نمی‌شوند؛ بایگانی سابقه انتشار را حفظ می‌کند. migrator جدول و index را ایجاد می‌کند و runtime فقط CRUD این جدول‌ها را دارد؛ اختیار DDL و UPDATE/DELETE audit ندارد. مدل و migration با compare_metadata روی PostgreSQL واقعی بررسی می‌شوند. جزئیات در [تصمیم‌ها](step-7-decisions.md).
+# افزوده مرحله ۸ — migration `0006_leads`
+
+| جدول | کلید/رابطه | داده و محدودیت |
+| --- | --- | --- |
+| leads | UUID PK؛ reference_id یکتا؛ assigned_to→admins RESTRICT | demo/contact، روش phone/email، نام/تماس، جزئیات JSONB اعتبارسنجی‌شده، consent version/time، source، status/outcome، version، fingerprint HMAC، last_activity/purged |
+| lead_receipts | HMAC کلید PK؛ lead_id→leads RESTRICT | body HMAC و expires_at؛ رسید ۲۴ ساعته، بدون body خام |
+| lead_notes | UUID PK؛ lead/actor FK | متن خصوصی ساده، زمان؛ در purge حذف می‌شود |
+| lead_status_history | UUID PK؛ lead/actor FK | تغییرات نوع‌دار status/outcome/assignee و زمان؛ فاقد نام/شماره/پیام |
+
+Indexهای status/created، kind/created، fingerprint/created، retention جزئی `purged_at IS NULL`، receipt expiry و lead/time تاریخچه/یادداشت. constraint وضعیت/نوع/تماس، demo فقط phone، closed نتیجه غیرNULL معتبر، won فقط demo، version>=1 و PII الزامی مگر پس از purge. نوشتن فرم و رسید/تاریخچه/audit در یک تراکنش؛ advisory lock برای race. پاک‌سازی اطلاعات شخصی UPDATE+حذف notes/receipts، بدون حذف آمار یا migration مخرب. مدل/مهاجرت با PostgreSQL واقعی و compare_metadata بررسی می‌شود. تنظیم سرویس اصلی ماکان مستقل باقی است.

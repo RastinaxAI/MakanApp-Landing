@@ -53,6 +53,10 @@ def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
             "learning_series_items",
             "learning_views",
             "learning_stats",
+            "leads",
+            "lead_receipts",
+            "lead_notes",
+            "lead_status_history",
         } == set(inspect(engine).get_table_names())
         migrate(engine)
         with engine.connect() as connection:

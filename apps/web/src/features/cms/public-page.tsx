@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
-import { RequestFormPreview } from "@/features/marketing/request-form-preview";
+import { RequestForm } from "@/features/leads/request-form";
 import { ContactChannels } from "@/components/marketing/contact-channels";
 import { FeatureCard } from "@/features/marketing/feature-card";
 import { AudienceCard } from "@/features/marketing/audience-card";
@@ -53,7 +53,9 @@ export async function PublicPage({
         : null;
   return (
     <>
-      <CmsRenderer content={content} />
+      <div id={slug === "privacy" ? "requests-policy" : undefined}>
+        <CmsRenderer content={content} />
+      </div>
       {extra && (
         <section className="section-space">
           <Container>
@@ -73,7 +75,7 @@ export async function PublicPage({
       {["demo", "contact"].includes(slug) && (
         <section className="section-space">
           <Container className="grid items-start gap-8 desktop:grid-cols-[1.35fr_1fr]">
-            <RequestFormPreview kind={slug as "demo" | "contact"} />
+            <RequestForm kind={slug as "demo" | "contact"} />
             <ContactChannels />
           </Container>
         </section>

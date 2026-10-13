@@ -1,0 +1,11 @@
+{
+  "url": "http://127.0.0.1:3100/features/school",
+  "timestamp": "2026-10-13T05:52:01.668Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": [],
+  "passed_checks": 20,
+  "incomplete_checks": 1
+}

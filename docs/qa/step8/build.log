@@ -1,0 +1,63 @@
+npm warn exec The following package was not found and will be installed: node@24.21.0
+▲ Next.js 16.4.0 (Turbopack)
+✓ Running next.config.ts took 329ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 7.2s
+  Running TypeScript ...
+  Finished TypeScript in 5.8s ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/3) ...
+✓ Generating static pages using 3 workers (3/3) in 1067ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ƒ /[slug]
+├ ƒ /about
+├ ƒ /admin
+├ ƒ /admin/accounts
+├ ƒ /admin/audit
+├ ƒ /admin/content
+├ ƒ /admin/content/[id]
+├ ƒ /admin/content/[id]/revisions
+├ ƒ /admin/faq-categories
+├ ƒ /admin/leads
+├ ƒ /admin/leads/[id]
+├ ƒ /admin/learn
+├ ƒ /admin/learn/[id]
+├ ƒ /admin/learn/new
+├ ƒ /admin/learn/preview/[id]
+├ ƒ /admin/learn/taxonomy
+├ ƒ /admin/login
+├ ƒ /admin/media
+├ ƒ /admin/preview/[id]
+├ ƒ /admin/security
+├ ƒ /admin/settings
+├ ƒ /api/v1/[...path]
+├ ƒ /blog
+├ ƒ /blog/[slug]
+├ ƒ /contact
+├ ƒ /demo
+├ ƒ /design-system
+├ ƒ /faq
+├ ƒ /features
+├ ƒ /features/[slug]
+├ ƒ /learn
+├ ƒ /learn/articles/[slug]
+├ ƒ /learn/categories/[slug]
+├ ƒ /learn/series
+├ ƒ /learn/series/[slug]
+├ ƒ /learn/videos/[slug]
+├ ƒ /privacy
+├ ○ /robots.txt
+├ ƒ /solutions
+├ ƒ /solutions/[slug]
+└ ƒ /terms
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

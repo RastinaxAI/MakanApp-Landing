@@ -1,0 +1,122 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T05:43:39.881Z",
+    "duration": 62562.117,
+    "expected": 3,
+    "skipped": 8,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "real demo saves consent source, sales manages assignment notes outcome and owner sees actual contract",
+      "file": "leads.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13869,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "contact validates fields consent, persists email and editor cannot read request or notes",
+      "file": "leads.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6697,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "lost response after real commit retries safely and 422 429 failures preserve inputs",
+      "file": "leads.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 6538,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "forms and CRM are responsive accessible and keyboard consent is independent of submission",
+      "file": "leads.spec.ts",
+      "project": "chromium",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 19022,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real demo saves consent source, sales manages assignment notes outcome and owner sees actual contract",
+      "file": "leads.spec.ts",
+      "project": "firefox",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "contact validates fields consent, persists email and editor cannot read request or notes",
+      "file": "leads.spec.ts",
+      "project": "firefox",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "lost response after real commit retries safely and 422 429 failures preserve inputs",
+      "file": "leads.spec.ts",
+      "project": "firefox",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "forms and CRM are responsive accessible and keyboard consent is independent of submission",
+      "file": "leads.spec.ts",
+      "project": "firefox",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "real demo saves consent source, sales manages assignment notes outcome and owner sees actual contract",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "contact validates fields consent, persists email and editor cannot read request or notes",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "lost response after real commit retries safely and 422 429 failures preserve inputs",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "skipped",
+      "results": []
+    },
+    {
+      "title": "forms and CRM are responsive accessible and keyboard consent is independent of submission",
+      "file": "leads.spec.ts",
+      "project": "webkit",
+      "status": "skipped",
+      "results": []
+    }
+  ],
+  "axe_audits": 0,
+  "axe_violations": 0
+}

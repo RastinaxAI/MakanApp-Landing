@@ -280,3 +280,18 @@ Blog/learn فقط صفحه معرفی خالیِ صادقانه دارند؛ ف�
 | R063 | Metadata پایه/canonical/OG وجود دارد؛ sitemap/Structured Data/VideoObject کامل و Lighthouse مرحله۹، تکمیل آن ادعا نمی‌شود |
 
 نتیجه نهایی و عدد تست‌ها در [گزارش مرحله۷](step-7-report.md) و docs/qa/step7 ثبت می‌شود. پذیرش پخش واقعی ویدیوی رسمی آپارات، انتشار عمومی و Production باز است. STEP8 آغاز نشده است.
+# وضعیت افزوده مرحله۸ — فرم و CRM
+
+| شناسه | وضعیت مرحله۸ | پذیرش/وابستگی باقی‌مانده |
+| --- | --- | --- |
+| R025–027 | فرم‌های RHF/Zod و Pydantic، رضایت مصوب نسخه‌دار، دمو و تماس واقعی | فیلدهای سند، phone/email، خطای فارسی و مشاهده در پنل با PostgreSQL |
+| R028–030 | تراکنش، رسید HMAC، advisory lock، duplicate guard و مرجع تصادفی | آزمون commit failure، هم‌زمانی same/different key، 409 body و retry ثابت؛ lookup عمومی PII وجود ندارد |
+| R031–032 | loading، خطای422/429/شبکه، حفظ ورودی، success واقعی | مرورگر واقعی؛ وعده زمان/رایگان/اعلان بدون provider وجود ندارد |
+| R033–034/R048/R070 | CRM فقط owner/sales؛ status/outcome/assignee/notes/history، جست‌وجو/فیلتر/صفحه‌بندی | محرومیت editor/guest، CSRF/If-Match، مسئول فعال، قرارداد فقط outcome won دمو |
+| R035 | شرط provider فعال نشده؛ ذخیره مستقل | صف durable و retry اعلان فقط هنگام ارائه provider واقعی لازم است |
+| R036 | limiter مشترک PostgreSQL، contact pattern، honeypot و body limit | 429 واقعی بین appهای مستقل؛ تفکیک IP پشت BFF با trusted proxy در مرحله۱۰ |
+| R076 | سیاست ۱۸۰ روز مصوب، purge PII/notes/receipts/کلید ضداسپم، حفظ آمار بی‌نام | runtime CLI واقعی و مرز زمان آزمون؛ job روزانه/backup/restore/حذف زودهنگام پیش از Production در مرحله۱۰ |
+| R077 | آمار درخواست/qualified فعلی/قرارداد/source با cohort زمان ایجاد | conversion/رویداد فرم/ارگانیک در مرحله۹؛ source ورودی allowlist و لینک داخلی است |
+| R089/R090/R097–100/R104 | فرم واقعی strict TS، رابط responsive و tests PostgreSQL/مرورگر/Docker | آمار دقیق و شواهد QA در گزارش مرحله۸؛ WCAG کامل/Production/Lighthouse همچنان پذیرش جدا دارند |
+
+این جدول وضعیت جدید است و ردیف‌های تاریخی مرحله۳ درباره «فرم غیرفعال» صرفاً سابقه‌اند. نتیجه نهایی تست‌ها از QA مرحله۸ خوانده شود؛ اجراهای متوقف یا skip موفق شمرده نشده‌اند.
