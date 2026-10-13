@@ -1,0 +1,11 @@
+{
+  "url": "http://127.0.0.1:3100/admin/accounts",
+  "timestamp": "2026-10-13T04:36:54.301Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": [],
+  "passed_checks": 27,
+  "incomplete_checks": 0
+}

@@ -16,6 +16,7 @@ import {
 } from "@/lib/public-api";
 import { CmsRenderer, asFeatures, asAudiences, asFaqs } from "./renderer";
 import type { CmsContent } from "./types";
+import { FeaturedLearning } from "@/features/learning/public";
 
 export async function PublicPage({
   slug,
@@ -32,12 +33,15 @@ export async function PublicPage({
       getFaqs(),
     ]);
     return (
-      <CmsRenderer
-        content={content}
-        features={asFeatures(features.items)}
-        audiences={asAudiences(audiences.items)}
-        faqs={asFaqs(faqs.items)}
-      />
+      <>
+        <CmsRenderer
+          content={content}
+          features={asFeatures(features.items)}
+          audiences={asAudiences(audiences.items)}
+          faqs={asFaqs(faqs.items)}
+          learning={<FeaturedLearning />}
+        />
+      </>
     );
   }
   if (content.kind !== "page") notFound();

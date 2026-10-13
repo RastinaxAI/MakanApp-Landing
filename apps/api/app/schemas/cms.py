@@ -5,12 +5,13 @@ from uuid import UUID
 from pydantic import EmailStr, Field, TypeAdapter, field_validator, model_validator
 
 from app.schemas.common import PaginationQuery, StrictSchema
+from app.schemas.learning import LearningPayload
 from app.services.html_safety import clean_html, safe_link
 
 Short = Annotated[str, Field(max_length=180)]
 Text = Annotated[str, Field(max_length=4000)]
 Slug = Annotated[str, Field(min_length=1, max_length=160, pattern=r"^[\w]+(?:-[\w]+)*$")]
-Kind = Literal["home", "page", "feature", "audience", "faq"]
+Kind = Literal["home", "page", "feature", "audience", "faq", "article", "video", "blog", "series"]
 
 
 class Block(StrictSchema):
@@ -122,7 +123,8 @@ class FaqPayload(StrictSchema):
 
 
 Payload = Annotated[
-    LandingPayload | FeaturePayload | AudiencePayload | FaqPayload, Field(discriminator="kind")
+    LandingPayload | FeaturePayload | AudiencePayload | FaqPayload | LearningPayload,
+    Field(discriminator="kind"),
 ]
 payload_adapter = TypeAdapter(Payload)
 

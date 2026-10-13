@@ -1,0 +1,11 @@
+{
+  "url": "http://127.0.0.1:3100/learn/articles/detail-article-firefox-360?series=detail-series-firefox-360",
+  "timestamp": "2026-10-13T04:39:23.280Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": [],
+  "passed_checks": 24,
+  "incomplete_checks": 0
+}

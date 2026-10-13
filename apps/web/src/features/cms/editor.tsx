@@ -231,12 +231,12 @@ export function ContentEditor({
           >
             انتشار نسخه ذخیره‌شده
           </Button>
-          <Link
+          <a
             href={`/admin/preview/${current.id}?revision=${current.revision_id}`}
             className="inline-flex min-h-11 items-center rounded-lg border border-input px-4 text-primary-hover"
           >
             پیش‌نمایش خصوصی
-          </Link>
+          </a>
           <Link
             href={`/admin/content/${current.id}/revisions`}
             className="inline-flex min-h-11 items-center rounded-lg border border-input px-4 text-primary-hover"

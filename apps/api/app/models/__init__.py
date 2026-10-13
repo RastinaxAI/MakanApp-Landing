@@ -15,6 +15,16 @@ from app.models.cms import (
     SiteSetting,
 )
 from app.models.content import Page, PageRevision
+from app.models.learning import (
+    LearningCategory,
+    LearningStats,
+    LearningTag,
+    LearningView,
+    RevisionCategory,
+    RevisionRelation,
+    RevisionTag,
+    SeriesItem,
+)
 
 __all__ = [
     "Admin",
@@ -32,4 +42,12 @@ __all__ = [
     "RevisionMediaRef",
     "SiteSetting",
     "SettingMediaRef",
+    "LearningCategory",
+    "LearningTag",
+    "RevisionCategory",
+    "RevisionTag",
+    "RevisionRelation",
+    "SeriesItem",
+    "LearningView",
+    "LearningStats",
 ]

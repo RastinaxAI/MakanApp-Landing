@@ -249,7 +249,7 @@ for (const width of [360, 768, 1440]) {
         [360, 1440].includes(width)
       ) {
         const directory = path.resolve(
-          "../../docs/qa/step6",
+          "../../docs/qa/step7",
           testInfo.project.name,
         );
         await mkdir(directory, { recursive: true });

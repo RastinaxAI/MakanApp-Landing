@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-13T04:47:41.520075+00:00",
+  "backend": {
+    "tests": 95,
+    "integration": 55,
+    "unit": 40,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 157.757
+  },
+  "final_browser": {
+    "tests": 96,
+    "projects": [
+      "chromium/msedge",
+      "firefox",
+      "webkit"
+    ],
+    "failures": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "axe_audits": 183,
+    "axe_violations": 0,
+    "duration_ms": 861582.245
+  },
+  "png_count": 189,
+  "openapi_paths": 102,
+  "docker": {
+    "database_fixture": true,
+    "account_fixture_only": true,
+    "migration_head": "0005_learning",
+    "uid": "10001",
+    "readonly_root": true,
+    "caps_dropped": true,
+    "private_before_publish": true,
+    "sha256_before": "891d5edd7590e82f4e9ab8e06be7403e927ad94331daade232575159fa89a0ad",
+    "dimensions": [
+      48,
+      32
+    ],
+    "learning_article_video_series_survive_restart": true,
+    "learning_article_video_series_survive_recreate": true,
+    "media_and_content_survive_container_recreate": true,
+    "media_and_content_survive_restart": true,
+    "session_survives_restart": true,
+    "mime": "image/webp",
+    "sha256_after": "891d5edd7590e82f4e9ab8e06be7403e927ad94331daade232575159fa89a0ad",
+    "status": "passed",
+    "fixture_cleanup": true
+  },
+  "aparat_live_playback_confirmed": false,
+  "production_release_approved": false,
+  "step8_started": false,
+  "push_performed": false,
+  "note": "Browser runs overlap. Full earlier run stopped after 146 passed / one recovery failure / 21 unrun. Final 96 targeted checks cover corrections and previously unrun learning/public routes; no single all-171 clean run is claimed."
+}

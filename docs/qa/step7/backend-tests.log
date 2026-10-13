@@ -1,0 +1,20 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.16, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\apps\api
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1
+collected 95 items
+
+tests\integration\test_auth.py ......................                    [ 23%]
+tests\integration\test_cms.py ................                           [ 40%]
+tests\integration\test_learning.py .......                               [ 47%]
+tests\integration\test_learning_categories.py .                          [ 48%]
+tests\integration\test_learning_limits.py ...                            [ 51%]
+tests\integration\test_postgres.py ......                                [ 57%]
+tests\unit\test_foundation.py .............                              [ 71%]
+tests\unit\test_learning_safety.py .................                     [ 89%]
+tests\unit\test_security.py ..........                                   [100%]
+
+- generated xml file: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\docs\qa\step7\pytest.xml -
+======================= 95 passed in 157.82s (0:02:37) ========================

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   CmsDenied,
   cmsGet,
@@ -37,12 +36,12 @@ export default async function PreviewPage({
           پیش‌نمایش خصوصی نسخه {content.revision_no.toLocaleString("fa-IR")}؛
           نمایش این مسیر فقط برای مدیران مجاز است.
         </p>
-        <Link
+        <a
           href={`/admin/content/${content.id}`}
           className="inline-flex min-h-11 items-center text-primary-hover"
         >
           بازگشت به ویرایش
-        </Link>
+        </a>
       </aside>
       <CmsRenderer
         content={content}

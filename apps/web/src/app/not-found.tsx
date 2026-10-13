@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/container";
@@ -17,10 +16,12 @@ export function NotFoundContent() {
           را ادامه دهید.
         </p>
         <Button asChild size="lg" className="mt-8">
-          <Link href="/">
+          {/* Reload the document to recover independently of the failed client route tree. */}
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+          <a href="/">
             <ArrowRight aria-hidden="true" />
             بازگشت به صفحه اصلی
-          </Link>
+          </a>
         </Button>
       </div>
     </Container>

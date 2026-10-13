@@ -11,6 +11,7 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
@@ -27,6 +28,12 @@ class Page(UUIDPrimaryKey, Timestamps, Base):
             "(scheduled_revision_id IS NULL) = (scheduled_at IS NULL)", name="schedule_pair"
         ),
         Index("ix_pages_archived_schedule", "is_archived", "scheduled_at", "id"),
+        Index(
+            "uq_learning_slug",
+            text("split_part(slug, ':', 2)"),
+            unique=True,
+            postgresql_where=text("page_type IN ('article','video')"),
+        ),
         *(
             ForeignKeyConstraint(
                 ["id", f"{kind}_revision_id"],

@@ -263,3 +263,20 @@
 | R070، R076، R097–100 | content/media/settings واقعی؛ metrics شمارش رکورد، آزمون PostgreSQL/مرورگر/Docker و تصاویر QA | KPI فروش/مقاله، Lighthouse، Compose وب/proxy/HTTPS/CI مرحله‌های بعد |
 
 Blog/learn فقط صفحه معرفی خالیِ صادقانه دارند؛ فرم دمو/تماس هنوز طبق تحویل مرحله۳ غیرفعال‌اند و در مرحله۸ به ثبت واقعی وصل می‌شوند. CMS این مرحله از داده ساختگی نهایی، Mock API یا localStorage برای persistence استفاده نمی‌کند. fixtureها فقط در دیتابیس/Volume آزمایش مستقل هستند و پاک می‌شوند. گیت Production و خطر dev dependency باز مانده‌اند؛ STEP7 فقط پس از تأیید کاربر.
+## وضعیت مرحله۷ — ۱۳ اکتبر۲۰۲۶
+
+این بخش وضعیت فعلی را به جدول پایه اضافه می‌کند؛ شماره‌های نیازمندی و شواهد مراحل قبلی تغییر نکرده‌اند.
+
+| شناسه | وضعیت پیاده‌سازی و معیار بررسی |
+|---|---|
+| R020/R062 | منتخب خانه۰–۳ کارت واقعی از snapshot عمومی؛ بدون iframe/سکشن خالی؛ آزمون API و سه مرورگر |
+| R039–041 | CRUD وبلاگ/مقاله، taxonomy، تصویر، rich text، SEO، draft/publish/schedule، preview/history و HTML امن؛ PostgreSQL/HTTPX/UI |
+| R049–050 | تمام مسیرهای آموزش SSR؛ فیلتر ترکیبی و pagination، 404 واقعی ناموجود/draft/نوع اشتباه؛ Metadata قبل از header |
+| R051 | qualified view واقعی با ticket۲۰ثانیه، Origin، bot heuristic، rate مشترک و dedupe روزانه؛ محدودیت شمارش شبکه مشترک مستند |
+| R052–053 | TOC/anchor، ابعاد/alt، نقش/زمان/بازبینی، منابع و related/prev-next عمومی بر اساس مجموعه |
+| R054–058 | اعتبارسنجی/ID ذخیره‌شده/Embed ثابت، مشخصات دستی، پوستر/مدت لازم، click-only، responsive و fallback داخلی؛ پخش زنده هنوز تأیید نشده |
+| R059–061 | uploader ویدیو ندارد؛ مجموعه mixed، ترتیب نسخه‌ای، FK/uniqueposition، پیش‌نمایش مجاز و عدم نشت اعضای draft |
+| R065/R067/R069/R071 | هشت جدول جدید، namespace slug مشترک article/video، API عمومی/مدیریتی واقعی و schemaها؛ migration/diff مدل/مجوز واقعی |
+| R063 | Metadata پایه/canonical/OG وجود دارد؛ sitemap/Structured Data/VideoObject کامل و Lighthouse مرحله۹، تکمیل آن ادعا نمی‌شود |
+
+نتیجه نهایی و عدد تست‌ها در [گزارش مرحله۷](step-7-report.md) و docs/qa/step7 ثبت می‌شود. پذیرش پخش واقعی ویدیوی رسمی آپارات، انتشار عمومی و Production باز است. STEP8 آغاز نشده است.

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { adminGet, requireAdmin } from "@/lib/admin-api";
 export default async function DashboardPage() {
-  await requireAdmin();
+  const profile = await requireAdmin();
   const data = await adminGet<{
     metrics: Record<string, number>;
     modules: Record<string, string>;
@@ -45,12 +45,26 @@ export default async function DashboardPage() {
           مدیریت امنیت حساب
         </Link>
       </section>
+      {profile.capabilities.includes("content") && (
+        <section className="mt-6 rounded-2xl border border-border bg-card p-6">
+          <h2 className="text-xl font-semibold">مرکز آموزش و وبلاگ</h2>
+          <p className="mt-3 leading-8 text-muted-foreground">
+            راهنماهای متنی، ویدیوهای آپارات و مجموعه‌ها را ایجاد، بازبینی و
+            منتشر کنید.
+          </p>
+          <Link
+            href="/admin/learn"
+            prefetch={false}
+            className="mt-4 inline-flex min-h-11 items-center text-primary-hover"
+          >
+            مدیریت آموزش و وبلاگ
+          </Link>
+        </section>
+      )}
       <section className="mt-6 rounded-2xl border border-border p-6">
         <h2 className="text-xl font-semibold">بخش‌های در دست توسعه</h2>
         <p className="mt-3 leading-8 text-muted-foreground">
-          مرکز آموزش و درخواست‌های مشاوره در مراحل بعد فعال
-          می‌شوند. این پنل اکنون آمار سرنخ فرضی نمایش
-          نمی‌دهد.
+          ثبت درخواست‌های مشاوره هنوز فعال نیست.
         </p>
       </section>
     </>

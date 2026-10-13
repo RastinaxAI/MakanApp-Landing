@@ -8,7 +8,10 @@ import {
   Users,
   FileClock,
   LogOut,
-  FileText, ImageIcon, Tags, Settings,
+  FileText,
+  ImageIcon,
+  Tags,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { AdminProfile } from "@/lib/admin-api";
@@ -28,11 +31,19 @@ export function AdminShell({
   const items = [
     { href: "/admin", label: "داشبورد", icon: LayoutDashboard },
     { href: "/admin/security", label: "امنیت حساب", icon: ShieldCheck },
-    ...(profile.capabilities.includes("content") ? [
-      { href: "/admin/content", label: "محتوای سایت", icon: FileText },
-      { href: "/admin/media", label: "رسانه‌ها", icon: ImageIcon },
-      { href: "/admin/faq-categories", label: "دسته‌های پرسش", icon: Tags },
-    ] : []),
+    ...(profile.capabilities.includes("content")
+      ? [
+          { href: "/admin/content", label: "محتوای سایت", icon: FileText },
+          { href: "/admin/learn", label: "آموزش و وبلاگ", icon: FileText },
+          {
+            href: "/admin/learn/taxonomy",
+            label: "دسته‌ها و برچسب‌ها",
+            icon: Tags,
+          },
+          { href: "/admin/media", label: "رسانه‌ها", icon: ImageIcon },
+          { href: "/admin/faq-categories", label: "دسته‌های پرسش", icon: Tags },
+        ]
+      : []),
     ...(profile.role === "owner"
       ? [
           { href: "/admin/settings", label: "تنظیمات سایت", icon: Settings },

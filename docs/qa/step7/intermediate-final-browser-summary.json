@@ -1,0 +1,11 @@
+{
+  "note": "Wrong article/video alias checked in metadata as well as body after SSR ECONNRESET on mismatch.",
+  "stats": {
+    "startTime": "2026-10-13T03:30:42.552Z",
+    "duration": 130763.409,
+    "expected": 11,
+    "skipped": 81,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

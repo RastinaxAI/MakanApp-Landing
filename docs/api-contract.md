@@ -232,3 +232,14 @@ cookie توسعه non-Secure فقط loopback و cookie تولید `__Host-*` ب�
 alias یک endpoint واقعی ثبت‌شده برای هر resource است؛ route literal `{resource}` برای client لازم نیست. نوع محتوا discriminated home/page/feature/audience/faq، فیلدهای ناشناخته رد و type immutable است. slug پس از اولین publish/schedule ثابت می‌ماند؛ duplicate409. body JSON256KiB، تصویر۵MiB با سربار bounded؛ 413 حجم و415 نوع نامعتبر. تمام errors ErrorResponse و trace_id دارند و payload/credential در log نیست.
 
 AdminContent شامل revisionها/row_version و publication_state مشتق از ساعت سرور (draft/published/scheduled/archived) است؛ PublicContent از همان revision immutable انتخاب می‌شود و public media تنها ImageRef دارد. HTML صرفاً خروجی sanitized سرور است؛ src تصویر فقط مسیر UUID داخلی و FK موجود. SEO همان snapshot منتشر می‌شود. visibility=false و archive، public را حذف می‌کنند. API public داده آموزشی/حساب اپ اصلی ندارد. مقاله/ویدیو/lead endpoints مرحله۷/۸ همچنان فعال نیستند.
+
+## الحاق مرحله۷ — API0.7.0
+
+- GET /learn/contents، /blog/articles، /learn/series: pagination و sort=newest/popular؛ q متن/عنوان/خلاصه، audience، topic، level، category slug، tag slug؛ type=article/video و featured مخصوص آموزش. page_size<=100؛ sort/type/status نامعتبر422. فهرست، متن کامل و transcript را ارسال نمی‌کند؛ جزئیات متن کامل دارند.
+- GET /learn/contents/{slug}، /blog/articles/{slug}، /learn/series/{slug}: snapshot عمومی موثر؛ draft/پنهان/بایگانی404. related/items/series/previous/next فقط عمومی؛ query series مجموعه را انتخاب می‌کند.
+- GET /learn/categories و /learn/tags: paginated، domain learn/blog؛ فقط taxonomy مرتبط با محتوای عمومی. GET /learn/categories/{slug}: دسته عمومی یا404.
+- /admin/learn/contents، /admin/learn/series، /admin/blog/articles: همان CRUD، revisions، preview، publish، schedule، cancel-schedule، unpublish و archive مرحله۶؛ content capability، CSRF و If-Match لازم‌اند. kind با resource سازگار باشد؛ تغییر نوع ممنوع.
+- /admin/learn/categories و /admin/learn/tags: GET paginated، POST، PATCH/{id} و DELETE/{id}؛ مالک/ویرایشگر؛ domain/slug پس از ثبت ثابت، حذف referenced409.
+- GET /learn/views/{id}/ticket و POST /learn/views/{id}: ticket امضاشده، Origin مجاز، حداقل۲۰ثانیه و حداکثر۱۰دقیقه، کنترل bot، حذف تکرار روزانه و throttle مشترک. خروجی ticket یا counted واقعی؛ مجموع views در projection عمومی. view برای مجموعه پذیرفته نمی‌شود.
+
+تمام پاسخ‌های عمومی schema مستقل OpenAPI دارند. مقدار payload.toc و ابعاد inline image محاسباتی‌اند؛ در ورودی ذخیره toc ارسال نشود. body_html/transcript_html تا۶۴هزار کاراکتر، درخواست مدیریتی۲۵۶KiB، view۱۶KiB، تصویر همان۵MiB است. iframe/embed_url ورودی مجاز نیست؛ aparat_id لینک HTTPS یا ID را به شناسه normalize می‌کند. منابع/CTA HTTPS یا مسیر داخلی امن. ناسازگاری domain/reference و metadata ناقص422، slug duplicate/stale409، If-Match مفقود428 و throttle429 با Retry-After.

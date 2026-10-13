@@ -150,3 +150,7 @@ CSP هر پاسخ مدیریت nonce مستقل دارد؛ SSR مدیریت dyna
 Tiptap3.31.4 در پنل و nh3 0.3.7 در سرور استفاده می‌شوند؛ HTML فعال/پیوند اجرایی/تصویر خارجی حذف می‌شود. Pillow12.3.0 decode/re-encode WebP با محدودیت حجم/pixel/MIME و حذف EXIF انجام می‌دهد. تصویر ابتدا private و خارج web/public است؛ Volume media_data با UID10001، root read-only و مسیر UUID باقی می‌ماند. preview خصوصی optimizer عمومی را دور می‌زند. FK به snapshot، تصویر مصرف‌شده در تاریخچه را از حذف حفظ می‌کند. تنظیمات تنها دو کلید typed عمومی دارند و مخصوص owner هستند؛ secrets همچنان env هستند.
 
 وب/proxy Docker کامل، HTTPS، backup/restore عملی، CI و تأیید انتشار Production مرحله۱۰ باقی‌اند. آموزش/آپارات و CRM مستقل از این CMS معرفی در مراحل۷/۸ اجرا خواهند شد.
+
+## الحاق مرحله۷: آموزش مستقل و نسخه‌بندی مشترک
+
+article/video/blog/series چهار payload معتبر مستقل روی موتور Page/PageRevision موجودند. API و صفحات وبلاگ و مرکز آموزش جدا هستند؛ content بازاریابی به انواع آموزش دسترسی ندارد. روابط taxonomy، related و سری روی revision، FK واقعی دارند و انتشار پیش‌نویس به روابط عمومی نشت نمی‌کند. media storage و auth مستقل لندینگ باقی می‌مانند. [تصمیم‌های مرحله۷](step-7-decisions.md) و [راهنمای عملیات](learning-runbook.md) تعریف بازدید، embedding، زمان‌بندی، محدودیت شبکه و گیت‌های بعدی را توضیح می‌دهند.

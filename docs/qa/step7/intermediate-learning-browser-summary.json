@@ -1,0 +1,11 @@
+{
+  "note": "Metadata mismatch intermittently reset HTTP connection despite metadata guard; investigating streaming behavior. Two passed, one failed, 33 unrun.",
+  "stats": {
+    "startTime": "2026-10-13T04:21:34.999Z",
+    "duration": 82307.977,
+    "expected": 2,
+    "skipped": 33,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

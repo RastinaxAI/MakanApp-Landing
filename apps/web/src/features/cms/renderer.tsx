@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Fragment, type ReactNode } from "react";
 import { ArrowLeft, Check, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { SectionHeading } from "@/components/layout/section-heading";
@@ -41,6 +42,7 @@ type Props = {
   audiences?: Audience[];
   faqs?: FaqItem[];
   privatePreview?: boolean;
+  learning?: ReactNode;
 };
 
 function SectionContent({
@@ -322,6 +324,12 @@ function SectionContent({
 export function CmsRenderer(props: Props) {
   const { content, privatePreview = false } = props;
   const payload = content.payload;
+  const sections =
+    payload.kind === "home" || payload.kind === "page" ? payload.sections : [];
+  const trustIndex = sections.findIndex((s) => s.type === "trust");
+  const ctaIndex = sections.findIndex((s) => s.type === "final-cta");
+  const learningIndex =
+    trustIndex >= 0 ? trustIndex : ctaIndex >= 0 ? ctaIndex : sections.length;
   if (payload.kind === "home" || payload.kind === "page")
     return (
       <>
@@ -345,13 +353,21 @@ export function CmsRenderer(props: Props) {
           </Container>
         )}
         {(payload as LandingPayload).sections.map((section, index) => (
-          <SectionContent
-            {...props}
-            key={index}
-            section={section}
-            index={index}
-          />
+          <Fragment key={index}>
+            {payload.kind === "home" &&
+              index === learningIndex &&
+              props.learning}
+            <SectionContent
+              {...props}
+              key={index}
+              section={section}
+              index={index}
+            />
+          </Fragment>
         ))}
+        {payload.kind === "home" &&
+          learningIndex === sections.length &&
+          props.learning}
       </>
     );
   if (payload.kind === "feature") {

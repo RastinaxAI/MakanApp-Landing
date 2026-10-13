@@ -1,0 +1,9 @@
+{
+  "component": "Docker Desktop",
+  "prior_backend_tests": 94,
+  "note": "Engine status stopped and daemon returned Docker Desktop is unable to start. Owned pytest stopped after connection failure; no test success inferred.",
+  "destructive_reset_performed": false,
+  "final_recheck_completed": false,
+  "status": "interrupted",
+  "recovery": "Docker Desktop CLI restart; preserved all volumes"
+}

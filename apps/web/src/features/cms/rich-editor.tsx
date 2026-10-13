@@ -6,19 +6,24 @@ import ImageExtension from "@tiptap/extension-image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MediaPicker } from "./fields";
+import type { MediaAsset } from "./types";
 
 export function RichEditor({
   value,
   onChange,
   label,
   disabled = false,
+  assets = [],
 }: {
   value: string;
   onChange: (value: string) => void;
   label: string;
   disabled?: boolean;
+  assets?: MediaAsset[];
 }) {
   const [link, setLink] = useState("");
+  const [image, setImage] = useState<string | null>(null);
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: { openOnClick: false } }),
@@ -145,6 +150,40 @@ export function RichEditor({
         </Button>
       </div>
       <EditorContent editor={editor} />
+      {assets.length > 0 && (
+        <div className="flex flex-wrap items-end gap-3 border-t border-border p-3">
+          <div className="min-w-0 flex-1">
+            <MediaPicker
+              label={`تصویر داخل ${label}`}
+              value={image}
+              onChange={setImage}
+              assets={assets}
+              disabled={disabled}
+            />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled || !image}
+            onClick={() => {
+              const asset = assets.find((a) => a.id === image);
+              if (asset) {
+                editor
+                  .chain()
+                  .focus()
+                  .setImage({
+                    src: `/api/v1/media/${asset.id}/file`,
+                    alt: asset.alt_text,
+                  })
+                  .run();
+                setImage(null);
+              }
+            }}
+          >
+            درج تصویر
+          </Button>
+        </div>
+      )}
       <div className="flex flex-wrap items-end gap-3 border-t border-border p-3">
         <div className="min-w-0 flex-1">
           <Label>

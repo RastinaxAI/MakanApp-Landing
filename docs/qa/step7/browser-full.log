@@ -1,0 +1,208 @@
+npm warn exec The following package was not found and will be installed: node@24.21.0
+[WebServer] (node:10556) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 168 tests using 1 worker
+
+(node:14600) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok   1 [chromium] › tests\e2e\admin.spec.ts:59:5 › guest pages redirect, API rejects guest and hostile CSRF (6.3s)
+  ok   2 [chromium] › tests\e2e\admin.spec.ts:75:5 › real login logout, private cookie and noindex CSP (10.3s)
+  ok   3 [chromium] › tests\e2e\admin.spec.ts:153:5 › editor and sales cannot read owner resources (4.1s)
+  ok   4 [chromium] › tests\e2e\admin.spec.ts:174:5 › owner creates and deactivates an account with a real audit event (6.6s)
+  ok   5 [chromium] › tests\e2e\admin.spec.ts:212:5 › MFA enrollment, recovery login and disabling are real (5.8s)
+  ok   6 [chromium] › tests\e2e\admin.spec.ts:263:5 › password change closes sessions and accepts the new password (4.8s)
+  ok   7 [chromium] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 360px (8.1s)
+  ok   8 [chromium] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 768px (7.6s)
+  ok   9 [chromium] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 1440px (8.6s)
+  ok  10 [chromium] › tests\e2e\cms.spec.ts:59:5 › CMS home, feature and audience editors publish their own data and preserve prior versions (16.7s)
+  ok  11 [chromium] › tests\e2e\cms.spec.ts:212:5 › CMS UI creates, previews privately, publishes and restores an immutable revision (11.2s)
+  ok  12 [chromium] › tests\e2e\cms.spec.ts:325:5 › CMS schedule, validation, rich text sanitization and stale writes use real API (9.1s)
+  ok  13 [chromium] › tests\e2e\cms.spec.ts:412:5 › CMS media upload stays private until publication and protects referenced files (9.6s)
+  ok  14 [chromium] › tests\e2e\cms.spec.ts:485:5 › CMS categorized FAQ editing reaches public SSR and owner settings enforce roles (5.7s)
+  ok  15 [chromium] › tests\e2e\cms.spec.ts:553:5 › CMS owner saves official contact settings and public rendering reads the database (5.2s)
+  ok  16 [chromium] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 360px (9.6s)
+  ok  17 [chromium] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 768px (9.5s)
+  ok  18 [chromium] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 1440px (11.9s)
+  ok  19 [chromium] › tests\e2e\layout.spec.ts:6:5 › Persian document, local font, preview metadata and no third-party requests (1.2s)
+  ok  20 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 320px with correct card columns (1.3s)
+  ok  21 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 360px with correct card columns (1.3s)
+  ok  22 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 390px with correct card columns (1.7s)
+  ok  23 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 479px with correct card columns (1.2s)
+  ok  24 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 480px with correct card columns (1.2s)
+  ok  25 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 768px with correct card columns (1.7s)
+  ok  26 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 1024px with correct card columns (1.6s)
+  ok  27 [chromium] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 1440px with correct card columns (1.8s)
+  ok  28 [chromium] › tests\e2e\layout.spec.ts:86:5 › mobile drawer traps focus, closes with Escape and restores the trigger (2.2s)
+  ok  29 [chromium] › tests\e2e\layout.spec.ts:113:5 › skip link reaches main, and keyboard focus remains visible (1.1s)
+  ok  30 [chromium] › tests\e2e\layout.spec.ts:129:5 › RTL tabs, labelled fields and accordion support keyboard interaction (2.1s)
+  ok  31 [chromium] › tests\e2e\layout.spec.ts:163:5 › reduced motion removes smooth scroll, spinner motion and hover translation (1.1s)
+  ok  32 [chromium] › tests\e2e\layout.spec.ts:194:5 › 200 percent text enlargement reflows without horizontal overflow (1.4s)
+  ok  33 [chromium] › tests\e2e\layout.spec.ts:211:7 › axe WCAG audit, all component states and drawer at 390px (6.7s)
+  ok  34 [chromium] › tests\e2e\layout.spec.ts:211:7 › axe WCAG audit, all component states and drawer at 1440px (5.6s)
+  ok  35 [chromium] › tests\e2e\layout.spec.ts:258:5 › missing route returns an actual 404 with a usable recovery link (1.8s)
+  ok  36 [chromium] › tests\e2e\learning.spec.ts:132:5 › learning article UI creates rich text, taxonomy, inline images, preview and a real public article (9.6s)
+  ok  37 [chromium] › tests\e2e\learning.spec.ts:233:5 › Aparat video UI stores manual metadata and loads only on click with responsive fallback (17.8s)
+  ok  38 [chromium] › tests\e2e\learning.spec.ts:301:5 › mixed series UI orders articles and videos and protects unpublished members (8.4s)
+  ok  39 [chromium] › tests\e2e\learning.spec.ts:385:5 › blog publication is independent and draft routes remain private (4.4s)
+  ok  40 [chromium] › tests\e2e\learning.spec.ts:426:5 › learning home selection displays zero to three real published cards (5.2s)
+  ok  41 [chromium] › tests\e2e\learning.spec.ts:464:7 › learning management and library are accessible at 360px (7.7s)
+  ok  42 [chromium] › tests\e2e\learning.spec.ts:464:7 › learning management and library are accessible at 768px (8.2s)
+  ok  43 [chromium] › tests\e2e\learning.spec.ts:464:7 › learning management and library are accessible at 1440px (8.1s)
+  ok  44 [chromium] › tests\e2e\learning.spec.ts:505:7 › published learning details remain accessible at 360px (7.9s)
+  ok  45 [chromium] › tests\e2e\learning.spec.ts:505:7 › published learning details remain accessible at 768px (7.6s)
+  ok  46 [chromium] › tests\e2e\learning.spec.ts:505:7 › published learning details remain accessible at 1440px (9.5s)
+  ok  47 [chromium] › tests\e2e\public-pages.spec.ts:28:5 › all PRD public routes render SSR Persian content, one H1 and distinct metadata (3.4s)
+  ok  48 [chromium] › tests\e2e\public-pages.spec.ts:70:5 › homepage follows PRD order and handles ready vs roadmap product tabs (2.3s)
+  ok  49 [chromium] › tests\e2e\public-pages.spec.ts:120:5 › feature pages honor user confirmation and never present an operational AI demo (1.8s)
+  ok  50 [chromium] › tests\e2e\public-pages.spec.ts:143:5 › audience journeys have distinct actions and explicit access boundaries (2.0s)
+  ok  51 [chromium] › tests\e2e\public-pages.spec.ts:165:5 › draft forms cannot accept data, post requests or show fake success (1.4s)
+  ok  52 [chromium] › tests\e2e\public-pages.spec.ts:188:5 › empty content libraries and legal drafts remain honest and separate (2.0s)
+  ok  53 [chromium] › tests\e2e\public-pages.spec.ts:218:7 › representative public layouts reflow and pass axe at 360px (6.9s)
+  ok  54 [chromium] › tests\e2e\public-pages.spec.ts:218:7 › representative public layouts reflow and pass axe at 768px (6.9s)
+  ok  55 [chromium] › tests\e2e\public-pages.spec.ts:218:7 › representative public layouts reflow and pass axe at 1440px (7.5s)
+  ok  56 [chromium] › tests\e2e\public-pages.spec.ts:272:5 › public mobile navigation and demo backtracking remain usable (2.5s)
+(node:25004) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok  57 [firefox] › tests\e2e\admin.spec.ts:59:5 › guest pages redirect, API rejects guest and hostile CSRF (11.3s)
+  ok  58 [firefox] › tests\e2e\admin.spec.ts:75:5 › real login logout, private cookie and noindex CSP (4.0s)
+  ok  59 [firefox] › tests\e2e\admin.spec.ts:153:5 › editor and sales cannot read owner resources (7.5s)
+  ok  60 [firefox] › tests\e2e\admin.spec.ts:174:5 › owner creates and deactivates an account with a real audit event (6.4s)
+  ok  61 [firefox] › tests\e2e\admin.spec.ts:212:5 › MFA enrollment, recovery login and disabling are real (8.2s)
+  ok  62 [firefox] › tests\e2e\admin.spec.ts:263:5 › password change closes sessions and accepts the new password (5.4s)
+  ok  63 [firefox] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 360px (13.3s)
+  ok  64 [firefox] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 768px (11.7s)
+  ok  65 [firefox] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 1440px (13.9s)
+  ok  66 [firefox] › tests\e2e\cms.spec.ts:59:5 › CMS home, feature and audience editors publish their own data and preserve prior versions (19.0s)
+  ok  67 [firefox] › tests\e2e\cms.spec.ts:212:5 › CMS UI creates, previews privately, publishes and restores an immutable revision (9.8s)
+  ok  68 [firefox] › tests\e2e\cms.spec.ts:325:5 › CMS schedule, validation, rich text sanitization and stale writes use real API (6.5s)
+  ok  69 [firefox] › tests\e2e\cms.spec.ts:412:5 › CMS media upload stays private until publication and protects referenced files (6.8s)
+  ok  70 [firefox] › tests\e2e\cms.spec.ts:485:5 › CMS categorized FAQ editing reaches public SSR and owner settings enforce roles (6.2s)
+  ok  71 [firefox] › tests\e2e\cms.spec.ts:553:5 › CMS owner saves official contact settings and public rendering reads the database (3.8s)
+  ok  72 [firefox] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 360px (22.1s)
+  ok  73 [firefox] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 768px (13.8s)
+  ok  74 [firefox] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 1440px (15.8s)
+  ok  75 [firefox] › tests\e2e\layout.spec.ts:6:5 › Persian document, local font, preview metadata and no third-party requests (2.5s)
+  ok  76 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 320px with correct card columns (2.2s)
+  ok  77 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 360px with correct card columns (1.7s)
+  ok  78 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 390px with correct card columns (1.9s)
+  ok  79 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 479px with correct card columns (2.6s)
+  ok  80 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 480px with correct card columns (1.7s)
+  ok  81 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 768px with correct card columns (2.0s)
+  ok  82 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 1024px with correct card columns (1.6s)
+  ok  83 [firefox] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 1440px with correct card columns (2.0s)
+  ok  84 [firefox] › tests\e2e\layout.spec.ts:86:5 › mobile drawer traps focus, closes with Escape and restores the trigger (2.8s)
+  ok  85 [firefox] › tests\e2e\layout.spec.ts:113:5 › skip link reaches main, and keyboard focus remains visible (2.9s)
+  ok  86 [firefox] › tests\e2e\layout.spec.ts:129:5 › RTL tabs, labelled fields and accordion support keyboard interaction (1.6s)
+  ok  87 [firefox] › tests\e2e\layout.spec.ts:163:5 › reduced motion removes smooth scroll, spinner motion and hover translation (1.4s)
+  ok  88 [firefox] › tests\e2e\layout.spec.ts:194:5 › 200 percent text enlargement reflows without horizontal overflow (1.6s)
+  ok  89 [firefox] › tests\e2e\layout.spec.ts:211:7 › axe WCAG audit, all component states and drawer at 390px (9.3s)
+  ok  90 [firefox] › tests\e2e\layout.spec.ts:211:7 › axe WCAG audit, all component states and drawer at 1440px (8.2s)
+  ok  91 [firefox] › tests\e2e\layout.spec.ts:258:5 › missing route returns an actual 404 with a usable recovery link (1.6s)
+  ok  92 [firefox] › tests\e2e\learning.spec.ts:132:5 › learning article UI creates rich text, taxonomy, inline images, preview and a real public article (10.1s)
+  ok  93 [firefox] › tests\e2e\learning.spec.ts:233:5 › Aparat video UI stores manual metadata and loads only on click with responsive fallback (18.3s)
+  ok  94 [firefox] › tests\e2e\learning.spec.ts:301:5 › mixed series UI orders articles and videos and protects unpublished members (11.2s)
+  ok  95 [firefox] › tests\e2e\learning.spec.ts:385:5 › blog publication is independent and draft routes remain private (7.0s)
+  ok  96 [firefox] › tests\e2e\learning.spec.ts:426:5 › learning home selection displays zero to three real published cards (7.5s)
+  ok  97 [firefox] › tests\e2e\learning.spec.ts:464:7 › learning management and library are accessible at 360px (12.8s)
+  ok  98 [firefox] › tests\e2e\learning.spec.ts:464:7 › learning management and library are accessible at 768px (13.2s)
+  ok  99 [firefox] › tests\e2e\learning.spec.ts:464:7 › learning management and library are accessible at 1440px (13.2s)
+  ok 100 [firefox] › tests\e2e\learning.spec.ts:505:7 › published learning details remain accessible at 360px (11.4s)
+  ok 101 [firefox] › tests\e2e\learning.spec.ts:505:7 › published learning details remain accessible at 768px (11.2s)
+  ok 102 [firefox] › tests\e2e\learning.spec.ts:505:7 › published learning details remain accessible at 1440px (11.2s)
+  ok 103 [firefox] › tests\e2e\public-pages.spec.ts:28:5 › all PRD public routes render SSR Persian content, one H1 and distinct metadata (2.6s)
+  ok 104 [firefox] › tests\e2e\public-pages.spec.ts:70:5 › homepage follows PRD order and handles ready vs roadmap product tabs (5.0s)
+  ok 105 [firefox] › tests\e2e\public-pages.spec.ts:120:5 › feature pages honor user confirmation and never present an operational AI demo (2.9s)
+  ok 106 [firefox] › tests\e2e\public-pages.spec.ts:143:5 › audience journeys have distinct actions and explicit access boundaries (3.6s)
+  ok 107 [firefox] › tests\e2e\public-pages.spec.ts:165:5 › draft forms cannot accept data, post requests or show fake success (1.6s)
+  ok 108 [firefox] › tests\e2e\public-pages.spec.ts:188:5 › empty content libraries and legal drafts remain honest and separate (3.2s)
+  ok 109 [firefox] › tests\e2e\public-pages.spec.ts:218:7 › representative public layouts reflow and pass axe at 360px (11.1s)
+  ok 110 [firefox] › tests\e2e\public-pages.spec.ts:218:7 › representative public layouts reflow and pass axe at 768px (10.0s)
+  ok 111 [firefox] › tests\e2e\public-pages.spec.ts:218:7 › representative public layouts reflow and pass axe at 1440px (12.3s)
+  ok 112 [firefox] › tests\e2e\public-pages.spec.ts:272:5 › public mobile navigation and demo backtracking remain usable (2.6s)
+(node:5860) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 113 [webkit] › tests\e2e\admin.spec.ts:59:5 › guest pages redirect, API rejects guest and hostile CSRF (3.1s)
+  ok 114 [webkit] › tests\e2e\admin.spec.ts:75:5 › real login logout, private cookie and noindex CSP (3.6s)
+  ok 115 [webkit] › tests\e2e\admin.spec.ts:153:5 › editor and sales cannot read owner resources (4.5s)
+  ok 116 [webkit] › tests\e2e\admin.spec.ts:174:5 › owner creates and deactivates an account with a real audit event (5.8s)
+  ok 117 [webkit] › tests\e2e\admin.spec.ts:212:5 › MFA enrollment, recovery login and disabling are real (6.5s)
+  ok 118 [webkit] › tests\e2e\admin.spec.ts:263:5 › password change closes sessions and accepts the new password (4.7s)
+  ok 119 [webkit] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 360px (11.1s)
+  ok 120 [webkit] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 768px (9.3s)
+  ok 121 [webkit] › tests\e2e\admin.spec.ts:289:7 › admin keyboard responsive and axe at 1440px (16.9s)
+  ok 122 [webkit] › tests\e2e\cms.spec.ts:59:5 › CMS home, feature and audience editors publish their own data and preserve prior versions (20.3s)
+  ok 123 [webkit] › tests\e2e\cms.spec.ts:212:5 › CMS UI creates, previews privately, publishes and restores an immutable revision (11.6s)
+  ok 124 [webkit] › tests\e2e\cms.spec.ts:325:5 › CMS schedule, validation, rich text sanitization and stale writes use real API (8.6s)
+  ok 125 [webkit] › tests\e2e\cms.spec.ts:412:5 › CMS media upload stays private until publication and protects referenced files (8.0s)
+  ok 126 [webkit] › tests\e2e\cms.spec.ts:485:5 › CMS categorized FAQ editing reaches public SSR and owner settings enforce roles (5.9s)
+  ok 127 [webkit] › tests\e2e\cms.spec.ts:553:5 › CMS owner saves official contact settings and public rendering reads the database (3.2s)
+  ok 128 [webkit] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 360px (12.1s)
+  ok 129 [webkit] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 768px (17.2s)
+  ok 130 [webkit] › tests\e2e\cms.spec.ts:594:7 › CMS responsive forms and private preview pass axe at 1440px (19.5s)
+  ok 131 [webkit] › tests\e2e\layout.spec.ts:6:5 › Persian document, local font, preview metadata and no third-party requests (1.3s)
+  ok 132 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 320px with correct card columns (1.4s)
+  ok 133 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 360px with correct card columns (1.4s)
+  ok 134 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 390px with correct card columns (2.2s)
+  ok 135 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 479px with correct card columns (1.4s)
+  ok 136 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 480px with correct card columns (1.4s)
+  ok 137 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 768px with correct card columns (2.9s)
+  ok 138 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 1024px with correct card columns (1.7s)
+  ok 139 [webkit] › tests\e2e\layout.spec.ts:42:7 › responsive layout at 1440px with correct card columns (3.7s)
+  ok 140 [webkit] › tests\e2e\layout.spec.ts:86:5 › mobile drawer traps focus, closes with Escape and restores the trigger (3.8s)
+  ok 141 [webkit] › tests\e2e\layout.spec.ts:113:5 › skip link reaches main, and keyboard focus remains visible (1.6s)
+  ok 142 [webkit] › tests\e2e\layout.spec.ts:129:5 › RTL tabs, labelled fields and accordion support keyboard interaction (2.4s)
+  ok 143 [webkit] › tests\e2e\layout.spec.ts:163:5 › reduced motion removes smooth scroll, spinner motion and hover translation (1.8s)
+  ok 144 [webkit] › tests\e2e\layout.spec.ts:194:5 › 200 percent text enlargement reflows without horizontal overflow (1.7s)
+  ok 145 [webkit] › tests\e2e\layout.spec.ts:211:7 › axe WCAG audit, all component states and drawer at 390px (11.2s)
+  ok 146 [webkit] › tests\e2e\layout.spec.ts:211:7 › axe WCAG audit, all component states and drawer at 1440px (15.7s)
+  x  147 [webkit] › tests\e2e\layout.spec.ts:258:5 › missing route returns an actual 404 with a usable recovery link (8.6s)
+Testing stopped early after 1 maximum allowed failures.
+
+
+  1) [webkit] › tests\e2e\layout.spec.ts:258:5 › missing route returns an actual 404 with a usable recovery link
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected: "http://127.0.0.1:3100/"
+    Received: "http://127.0.0.1:3100/not-a-real-page"
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 5000ms
+        7 × locator resolved to <html lang="fa" dir="rtl" class="ZXmN4G_variable">…</html>
+          - unexpected value "http://127.0.0.1:3100/not-a-real-page"
+
+
+      265 |   ).toBeVisible();
+      266 |   await page.getByRole("link", { name: "بازگشت به صفحه اصلی" }).click();
+    > 267 |   await expect(page).toHaveURL("/");
+          |                      ^
+      268 | });
+      269 |
+        at C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\apps\web\tests\e2e\layout.spec.ts:267:22
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\layout-missing-route-retur-b5c34-with-a-usable-recovery-link-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\layout-missing-route-retur-b5c34-with-a-usable-recovery-link-webkit\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\layout-missing-route-retur-b5c34-with-a-usable-recovery-link-webkit\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\layout-missing-route-retur-b5c34-with-a-usable-recovery-link-webkit\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [webkit] › tests\e2e\layout.spec.ts:258:5 › missing route returns an actual 404 with a usable recovery link
+  21 did not run
+  146 passed (17.1m)
+  1 error was not a part of any test, see above for details
+Exception: C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-web-admin.ps1:48
+Line |
+  48 |  … CODE -ne 0){throw 'Browser tests failed. Use Node 24 LTS and install  …
+     |                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Browser tests failed. Use Node 24 LTS and install the selected Playwright browsers.

@@ -2,6 +2,9 @@ param(
     [ValidateSet('msedge','chrome','bundled')][string]$ChromiumChannel = 'msedge',
     [switch]$SmokeOnly,
     [switch]$CmsOnly,
+    [switch]$LearnOnly,
+    [switch]$AdminAndLearnOnly,
+    [switch]$FinalAcceptance,
     [switch]$FailFast
 )
 $ErrorActionPreference='Stop'
@@ -36,6 +39,9 @@ try {
         $taskBrowserArguments=@('../../node_modules/@playwright/test/cli.js','test','--workers=1')
         if ($SmokeOnly) {$taskBrowserArguments+=@('--grep','guest.*CSRF')}
         if ($CmsOnly) {$taskBrowserArguments+=@('cms.spec.ts')}
+        if ($LearnOnly) {$taskBrowserArguments+=@('learning.spec.ts','learning-category.spec.ts')}
+        if ($AdminAndLearnOnly) {$taskBrowserArguments+=@('admin.spec.ts','learning.spec.ts')}
+        if ($FinalAcceptance) {$taskBrowserArguments+=@('admin.spec.ts','learning.spec.ts','learning-category.spec.ts','public-pages.spec.ts','layout.spec.ts','--grep','admin\.spec\.ts|learning(?:-category)?\.spec\.ts|public-pages\.spec\.ts|missing route')}
         if ($FailFast) {$taskBrowserArguments+=@('--max-failures=1')}
         if ((& node --version) -match '^v24\.') {
             & node @taskBrowserArguments

@@ -90,12 +90,12 @@ export function RevisionsPanel({
                   : ""}
               </p>
               <div className="flex flex-wrap gap-3">
-                <Link
+                <a
                   href={`/admin/preview/${content.id}?revision=${item.id}`}
                   className="inline-flex min-h-11 items-center rounded-lg border border-input px-4 text-primary-hover"
                 >
                   پیش‌نمایش این نسخه
-                </Link>
+                </a>
                 <Button
                   variant="outline"
                   disabled={busy}

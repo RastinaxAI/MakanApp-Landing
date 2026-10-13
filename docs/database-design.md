@@ -162,3 +162,19 @@ Grant DML برای پنج جدول در خود migration صریح است؛ audit
 رکورد Page از slug داخلی kind:slug استفاده می‌کند؛ uniqueness در دیتابیس حفظ و رزرو هم‌زمان با advisory lock و conflict409 بررسی می‌شود. PageSection همزمان با snapshot ساخته می‌شود؛ public هرگز working pointer را مصرف نمی‌کند. رابطه رسانه پلی‌مورفیک آزاد یا FK جعلی ندارد. داده JSON پیش از ذخیره Pydantic validate و HTML sanitize می‌شود. امکانات، مخاطبان و FAQ چهار موتور revision جدا نمی‌خواهند؛ جدول‌های جدا از طرح اولیه در این بخش با دلیل فنی مستند جایگزین شده‌اند، API و رفتار مستقل آن‌ها حفظ شده است.
 
 Runtime روی جداول CMS فقط DML لازم دارد؛ audit همان SELECT/INSERT است و UPDATE/DELETE/DDL مجاز نیست. Migration role جدا از runtime است. ارتقا روی fresh/prior، constraints، grant و drift در PostgreSQL واقعی آزموده می‌شوند. هیچ drop/create موقت schema در Production یا داده اصلی انجام نشده است؛ database fixtureهای تست پس از آزمون حذف می‌شوند.
+
+## الحاق مرحله۷: migration0005_learning
+
+جدول فیزیکی learning_contents یا learning_series جدا ایجاد نشد: Page نوع entity و PageRevision snapshot typed، metadata آپارات/متن/SEO/کاور/نقش/سطح/موضوع را نگه می‌دارند. این انتخاب انتشار و امنیت زمان‌بندی مرحله۶ را یکپارچه نگه می‌دارد. مقاله/ویدیو در namespace learn یک slug مشترک یکتا با index جزئی uq_learning_slug دارند؛ وبلاگ و سری مستقل‌اند.
+
+| جدول جدید | کلید/رابطه/قید |
+|---|---|
+| learning_categories, learning_tags | UUID؛ unique(domain,slug)، domain learn/blog، sort_order>=0، timestamps |
+| learning_revision_categories | PK(revision_id,category_id)، FK حقیقی revision و category |
+| learning_revision_tags | PK(revision_id,tag_id)، FK حقیقی revision و tag |
+| learning_revision_relations | PK(revision_id,content_id)، FK حقیقی revision و Page |
+| learning_series_items | PK(revision_id,content_id)، unique(revision_id,position)، position>=0 |
+| learning_views | PK(content_id,viewer_digest,day)، FK Page، expires_at index؛ بدون IP/UA خام |
+| learning_stats | PK/FK content_id، qualified_views>=0؛ upsert اتمیک |
+
+metadata رسانه از RevisionMediaRef موجود استفاده می‌کند. referenced taxonomy/media حذف نمی‌شوند؛ بایگانی سابقه انتشار را حفظ می‌کند. migrator جدول و index را ایجاد می‌کند و runtime فقط CRUD این جدول‌ها را دارد؛ اختیار DDL و UPDATE/DELETE audit ندارد. مدل و migration با compare_metadata روی PostgreSQL واقعی بررسی می‌شوند. جزئیات در [تصمیم‌ها](step-7-decisions.md).

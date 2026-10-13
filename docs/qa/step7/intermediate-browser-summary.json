@@ -1,0 +1,12 @@
+{
+  "note": "First browser run: stopped on creation-navigation race; no unrun test counted as passed.",
+  "errors": 1,
+  "stats": {
+    "startTime": "2026-10-13T02:25:36.75Z",
+    "duration": 45951.466,
+    "expected": 1,
+    "skipped": 22,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

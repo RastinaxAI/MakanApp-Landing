@@ -26,6 +26,9 @@ RESOURCES = {
     "audiences": ("audience",),
     "faqs": ("faq",),
     "content": ("home", "page", "feature", "audience", "faq"),
+    "learn/contents": ("article", "video"),
+    "learn/series": ("series",),
+    "blog/articles": ("blog",),
 }
 
 
@@ -125,6 +128,10 @@ def create_revision(session: Session, item: Page, data: ContentInput, actor: UUI
             )
         )
     attach_media(session, revision, {"payload": payload, "seo": data.seo.model_dump(mode="json")})
+    if payload["kind"] in ("article", "video", "blog", "series"):
+        from app.services.learning import attach_references
+
+        attach_references(session, item, revision, payload)
     item.working_revision_id = revision.id
     return revision
 
@@ -144,6 +151,8 @@ def projection(item: Page, revision: PageRevision, private=False, session: Sessi
     payload = dict(content["payload"])
     if not private:
         payload.pop("evidence_reference", None)
+        payload.pop("related_ids", None)
+        payload.pop("item_ids", None)
     fields = dict(
         id=item.id,
         slug=item.slug.split(":", 1)[-1],
@@ -182,7 +191,7 @@ def projection(item: Page, revision: PageRevision, private=False, session: Sessi
             if due or item.published_revision_id
             else "draft"
         )
-        return AdminContent(
+        result = AdminContent(
             **fields,
             publication_state=state,
             row_version=item.row_version,
@@ -192,7 +201,19 @@ def projection(item: Page, revision: PageRevision, private=False, session: Sessi
             scheduled_at=item.scheduled_at,
             is_archived=item.is_archived,
         )
-    return PublicContent(**fields)
+    else:
+        result = PublicContent(**fields)
+    if item.page_type in ("article", "video", "blog", "series"):
+        from app.services.learning_html import decorate
+
+        images = [image.model_dump(mode="json") for image in result.media]
+        result.payload["body_html"], result.payload["toc"] = decorate(
+            result.payload["body_html"], images
+        )
+        result.payload["transcript_html"], _ = decorate(
+            result.payload["transcript_html"], images, "transcript"
+        )
+    return result
 
 
 def page_list(session: Session, query: ContentQuery, resource="content", public=False):
@@ -282,7 +303,7 @@ def save(
         # Serialize equal slug reservations, including two concurrent creates.
         session.execute(
             sql_text("SELECT pg_advisory_xact_lock(hashtextextended(:slug, 741206))"),
-            {"slug": slug},
+            {"slug": "learn:" + data.slug if data.payload.kind in ("article", "video") else slug},
         )
         if entity_id:
             item = entity(session, resource, entity_id, True)
@@ -304,6 +325,13 @@ def save(
             select(Page.id).where(Page.slug == slug, Page.id != item.id if entity_id else True)
         ):
             raise ApiProblem(409, "SLUG_EXISTS", "این آدرس قبلاً ثبت شده است.")
+        if data.payload.kind in ("article", "video") and session.scalar(
+            select(Page.id).where(
+                Page.slug.in_([key(k, data.slug) for k in ("article", "video")]),
+                Page.id != item.id if entity_id else True,
+            )
+        ):
+            raise ApiProblem(409, "SLUG_EXISTS", "این آدرس آموزش قبلاً ثبت شده است.")
         item.slug = slug
         session.add(item)
         session.flush()
@@ -324,6 +352,10 @@ def save(
 def publication_checks(session: Session, item: Page, revision: PageRevision, expose=True):
     payload = payload_adapter.validate_python(revision.content_json["payload"])
     headline = payload.question if payload.kind == "faq" else payload.headline
+    if payload.kind in ("article", "video", "blog", "series"):
+        from app.services.learning import publication_checks as learning_checks
+
+        learning_checks(payload)
     if not headline.strip() or (
         payload.kind == "home"
         and not next(s.title for s in payload.sections if s.type == "hero").strip()

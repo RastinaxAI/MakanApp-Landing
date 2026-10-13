@@ -102,3 +102,7 @@ npx playwright install firefox webkit
 ## CMS فعال مرحله۶
 
 صفحات عمومی از API منتشرشده PostgreSQL خوانده می‌شوند؛ بعد migration فرمان `docker compose exec -T api python -m app.commands.import_content` را اجرا کنید. محتوا از سورس تألیف‌شده قبلی وارد می‌شود و import تکراری ویرایش مدیر را تغییر نمی‌دهد. پس از ساخت مالک واقعی، `/admin/content`، `/admin/media`، `/admin/faq-categories` و `/admin/settings` فعال‌اند. تنظیمات مخصوص مالک است؛ محتوا برای مالک/ویرایشگر. [راهنمای CMS](docs/cms-runbook.md) و [تصمیم‌های معماری](docs/step-6-decisions.md) جزئیات snapshot، انتشار، تصویر خصوصی و گیت‌های باقی‌مانده را توضیح می‌دهند. API نسخه0.6.0 است؛ volume دیتابیس و رسانه مستقل‌اند. وب در نبود Backend خطای قابل‌فهم نشان می‌دهد و نسخه hardcode را جایگزین CMS نمی‌کند.
+
+## مرکز آموزش و وبلاگ مرحله۷
+
+API به0.7.0 و schema به0005_learning رسید. پس از migration، /admin/learn و /admin/learn/taxonomy برای مالک/ویرایشگر فعال‌اند. article/video/blog/series انتشار نسخه‌ای واقعی دارند؛ مسیرهای /learn و /blog از PostgreSQL خوانده می‌شوند. ویدیو فقط با مشخصات دستی تاییدشده و پلیر رسمی آپارات پخش می‌شود؛ هیچ ویدیوی فرضی یا حساب آموزشی seed نمی‌شود. [راهنمای آموزش](docs/learning-runbook.md)، [تصمیم‌ها](docs/step-7-decisions.md) و [گزارش مرحله](docs/step-7-report.md) مرجعند. برای intro قدیمی کاملاً دست‌نخورده، فرمان python -m app.commands.refresh_learning_intro نسخه تازه بدون حذف تاریخچه می‌سازد؛ ویرایش مدیر را تغییر نمی‌دهد. مرحله۸ به تایید بعدی کاربر وابسته است. Production و Push تایید نشده‌اند.
