@@ -1,0 +1,57 @@
+{
+  "passed": false,
+  "environment": "local HTTP production build; isolated real PostgreSQL; fixture article/video; not HTTPS staging or field data",
+  "cold_cache": true,
+  "runs_per_route": 3,
+  "medians": [
+    {
+      "route": "/",
+      "performance": 78,
+      "seo": 100,
+      "accessibility": 100,
+      "lcp_ms": 3459.4200499999997,
+      "cls": 0.04648848639287554
+    },
+    {
+      "route": "/features",
+      "performance": 90,
+      "seo": 100,
+      "accessibility": 98,
+      "lcp_ms": 3112.9835500000004,
+      "cls": 0.04648848639287554
+    },
+    {
+      "route": "/solutions/schools",
+      "performance": 93,
+      "seo": 100,
+      "accessibility": 100,
+      "lcp_ms": 3080.3252499999994,
+      "cls": 0.04648848639287554
+    },
+    {
+      "route": "/demo",
+      "performance": 89,
+      "seo": 100,
+      "accessibility": 100,
+      "lcp_ms": 3209.8505,
+      "cls": 0.06249444652580029
+    },
+    {
+      "route": "/learn/articles/seo-article",
+      "performance": 90,
+      "seo": 100,
+      "accessibility": 100,
+      "lcp_ms": 2935.44745,
+      "cls": 0.04648848639287554
+    },
+    {
+      "route": "/learn/videos/seo-video",
+      "performance": 81,
+      "seo": 100,
+      "accessibility": 100,
+      "lcp_ms": 2860.80365,
+      "cls": 0.23759825811666904
+    }
+  ],
+  "runId": "2026-10-13T09-28-53.016Z"
+}

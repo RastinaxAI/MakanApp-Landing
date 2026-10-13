@@ -358,6 +358,7 @@ async def test_qualified_views_dwell_bot_signature_origin_dedupe_concurrency_and
     auth_context, monkeypatch
 ):
     config, engine, password, _ = auth_context
+    config = config.model_copy(update={"analytics_enabled": True})
     async with api_client(create_app(config)) as client:
         await sign_in(client, password)
         row = await create(client, content("watched"), True)
@@ -369,21 +370,51 @@ async def test_qualified_views_dwell_bot_signature_origin_dedupe_concurrency_and
             ticket = (await browser.get(endpoint + "/ticket")).json()["ticket"]
             headers = {"Origin": "http://testserver"}
             assert (
-                await browser.post(endpoint, headers=headers, json={"ticket": ticket})
+                await browser.post(
+                    endpoint,
+                    headers=headers,
+                    json={
+                        "ticket": ticket,
+                        "consent": True,
+                        "policy_version": "analytics-2026-10-13-v1",
+                    },
+                )
             ).status_code == 422
             timestamp = int(ticket.split(".")[0])
             monkeypatch.setattr(learning.time, "time", lambda: timestamp + 21)
             assert (
                 await browser.post(
-                    endpoint, headers={"Origin": "https://evil.test"}, json={"ticket": ticket}
+                    endpoint,
+                    headers={"Origin": "https://evil.test"},
+                    json={
+                        "ticket": ticket,
+                        "consent": True,
+                        "policy_version": "analytics-2026-10-13-v1",
+                    },
                 )
             ).status_code == 403
             assert (
-                await browser.post(endpoint, headers=headers, json={"ticket": ticket[:-1] + "x"})
+                await browser.post(
+                    endpoint,
+                    headers=headers,
+                    json={
+                        "ticket": ticket[:-1] + "x",
+                        "consent": True,
+                        "policy_version": "analytics-2026-10-13-v1",
+                    },
+                )
             ).status_code == 422
             results = await asyncio.gather(
                 *[
-                    browser.post(endpoint, headers=headers, json={"ticket": ticket})
+                    browser.post(
+                        endpoint,
+                        headers=headers,
+                        json={
+                            "ticket": ticket,
+                            "consent": True,
+                            "policy_version": "analytics-2026-10-13-v1",
+                        },
+                    )
                     for _ in range(4)
                 ]
             )

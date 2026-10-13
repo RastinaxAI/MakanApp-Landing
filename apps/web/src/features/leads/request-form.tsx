@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { trackEvent, type ErrorKind } from "@/features/analytics/events";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,6 +55,12 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   const [tokenBusy, setTokenBusy] = useState(false);
   const [error, setMessage] = useState("");
   const [reference, setReference] = useState("");
+  useEffect(() => {
+    if (reference)
+      document
+        .querySelector('meta[name="robots"]')
+        ?.setAttribute("content", "noindex, nofollow");
+  }, [reference]);
   const attempt = useRef<{ body: string; key: string } | null>(null);
   const loadedAt = useRef(0);
   async function loadToken() {
@@ -118,6 +125,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
     };
   }, [kind]);
   async function submit(data: Fields) {
+    let errorKind: ErrorKind = "network";
     if (!token) return;
     setMessage("");
     // Minimal wait applies only to immediate autofill; no personal data is stored in browser storage.
@@ -153,6 +161,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
       );
       const result = await response.json();
       if (!response.ok) {
+        errorKind = response.status === 429 ? "rate_limit" : "server";
         for (const item of result.error?.details ?? []) {
           if (Object.hasOwn(data, item.field))
             setError(item.field as keyof Fields, {
@@ -181,7 +190,9 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
           "پاسخ معتبر سامانه دریافت نشد؛ با همین اطلاعات دوباره تلاش کنید.",
         );
       setReference(result.reference_id);
+      if (demo) trackEvent("demo_form_submit_success");
     } catch (failure) {
+      if (demo) trackEvent("demo_form_submit_error", errorKind);
       setMessage(
         failure instanceof Error && failure.name === "Error"
           ? failure.message
@@ -279,9 +290,12 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
         </div>
       ) : (
         <form
+          data-request-kind={kind}
           noValidate
           onSubmit={(event) => {
-            void handleSubmit(submit)(event);
+            void handleSubmit(submit, () => {
+              if (demo) trackEvent("demo_form_submit_error", "validation");
+            })(event);
           }}
           className="mt-6"
         >

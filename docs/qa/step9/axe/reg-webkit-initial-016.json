@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:3100/learn/articles/ui-article-webkit",
+  "timestamp": "2026-10-13T11:00:28.010Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": []
+}

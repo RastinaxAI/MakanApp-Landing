@@ -1,0 +1,9 @@
+{
+  "url": "http://127.0.0.1:3100/learn/articles/detail-article-webkit-768?series=detail-series-webkit-768",
+  "timestamp": "2026-10-13T11:13:39.768Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": []
+}

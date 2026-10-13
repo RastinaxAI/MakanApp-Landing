@@ -1,0 +1,23 @@
+{
+  "production_build": {
+    "passed": true,
+    "verified_exec_session": 44093,
+    "command": "npm.cmd exec --offline --package=node@24 -- node node_modules/next/dist/bin/next build apps/web"
+  },
+  "typecheck": {
+    "passed": true,
+    "exit_code": 0
+  },
+  "eslint": {
+    "passed": true,
+    "exit_code": 0
+  },
+  "ruff": {
+    "passed": true,
+    "exit_code": 0
+  },
+  "compose-config": {
+    "passed": true,
+    "exit_code": 0
+  }
+}

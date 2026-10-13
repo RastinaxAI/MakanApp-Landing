@@ -1,6 +1,6 @@
 import { Container } from "@/components/layout/container";
 import { PageHero } from "@/components/marketing/page-hero";
-import { publicGet } from "@/lib/public-api";
+import { publicGet, getPage, pageMetadata } from "@/lib/public-api";
 import {
   LearningCards,
   libraryQuery,
@@ -9,10 +9,23 @@ import {
 import type { CmsPage } from "@/features/cms/types";
 import type { LearningContent } from "@/features/learning/types";
 import Link from "next/link";
-export const metadata = {
-  title: "مجموعه‌های آموزشی",
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata() {
+  const content = await getPage("learn");
+  return pageMetadata(
+    {
+      ...content,
+      title: "مجموعه‌های آموزشی",
+      seo: {
+        ...content.seo,
+        title: "مجموعه‌های آموزشی",
+        description:
+          "مقاله‌ها و ویدیوهای منتشرشده، به ترتیب برای یادگیری بهتر.",
+      },
+    },
+    "/learn/series",
+    { noindex: true },
+  );
+}
 export default async function Page({
   searchParams,
 }: {

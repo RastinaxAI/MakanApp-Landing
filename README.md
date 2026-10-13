@@ -122,3 +122,18 @@ apps/api/.venv/Scripts/python.exe scripts/test-leads-docker.py
 ```
 
 آزمون‌ها از Compose تست و دیتابیس/حساب مجزای موقت استفاده می‌کنند؛ داده آموزشی یا درخواست فرضی در دیتابیس اصلی seed نمی‌شود. قبل از آزمون مرورگر production build لازم است. روند مرحله۹ نیازمند تأیید بعدی کاربر است؛ انتشار Production و Push در این مرحله انجام نمی‌شوند.
+## الحاق مرحله۹ — SEO و Performance
+
+SEO و analytics طبق تأیید کاربر توسعه یافته‌اند. API داخلی0.9.0 و migration `0007_analytics`؛ index و جمع‌آوری عمومی پیش‌فرض false، بدون domain یا سیاست/رضایت مستقل روشن نمی‌شوند. دامنه هنوز اعلام نشده است. آموزش/آمار ساختگی در main seed نمی‌شود. [قرارداد](docs/step-9-contract.md)، [راهنمای عملیاتی](docs/seo-performance-runbook.md) و [تصمیم‌ها](docs/step-9-decisions.md).
+
+```powershell
+pwsh -NoProfile -File scripts/test-backend.ps1 -Phase step9
+pwsh -NoProfile -File scripts/test-web-admin.ps1 -SeoOnly
+pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step9Acceptance -BrowserProject chromium
+pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step9Acceptance -BrowserProject firefox
+pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step9Acceptance -BrowserProject webkit
+pwsh -NoProfile -File scripts/test-web-admin.ps1 -LighthouseOnly
+apps/api/.venv/Scripts/python.exe scripts/test-leads-docker.py --phase step9
+```
+
+مرورگرها و test PostgreSQL مستقل لازم‌اند؛ Node24 LTS و build تولید پیش‌نیازند. نتایج آزمون و محدودیت‌های انتشار در گزارش مرحله۹ ثبت می‌شوند. STEP10 و Push تا مجوز تازه کاربر آغاز نمی‌شوند.

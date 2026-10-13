@@ -258,3 +258,6 @@ AdminContent شامل revisionها/row_version و publication_state مشتق ا�
 | GET | `/admin/leads/{uuid}/history` | owner/sales؛ صفحه‌بندی تغییرات بدون متن خصوصی |
 
 هر POST عمومی همچنین consent=true، consent_version=`2026-10-13-v1`، form_token، idempotency_key UUIDv4، source allowlist و website خالی دارد. پاسخ 201 `{reference_id,status:"received"}` فقط پس از commit، retry معتبر همان مرجع. کلید مشترک با body متفاوت 409؛ duplicate همسان در ۲۴ ساعت با کلید تازه یک رکورد. خطاهای یکپارچه 403/409/413/422/429/503 و Retry-After؛ مدیر فاقد مجوز403، مهمان401، نسخه غایب428. زمان‌های فیلتر نیازمند timezone؛ پایان بازه غیرشامل. فهرست و تاریخچه دارای PaginationMeta استاندارد هستند. مسیر عمومی lookup رکورد وجود ندارد. OpenAPI از schema واقعی تولید می‌شود؛ قرارداد کامل در [راهنمای CRM](crm-runbook.md).
+## الحاق مرحله۹ — SEO و Performance
+
+API0.9.0 شش endpoint SEO و analytics می‌افزاید؛ مسیرهای قبلی auth/CMS/learning/CRM حفظ شده‌اند. schemaهای strict، Origin، rate مشترک و پاسخ‌های استاندارد برقرارند. [قرارداد کامل مرحله۹](step-9-contract.md) نام هشت رویداد، payload، metric ordering، manifest و مجوز metrics را تعریف می‌کند. API محصول اصلی ماکان تغییری ندارد.

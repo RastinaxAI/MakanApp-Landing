@@ -42,6 +42,9 @@ services:
       FORMS_TOKEN_LIMIT: ${FORMS_TOKEN_LIMIT:-40}
       FORMS_SUBMIT_LIMIT: ${FORMS_SUBMIT_LIMIT:-20}
       FORMS_CONTACT_LIMIT: ${FORMS_CONTACT_LIMIT:-5}
+      SEO_INDEXING_ENABLED: ${SEO_INDEXING_ENABLED:-false}
+      ANALYTICS_ENABLED: ${ANALYTICS_ENABLED:-false}
+      ANALYTICS_EVENT_LIMIT: ${ANALYTICS_EVENT_LIMIT:-240}
       DATABASE_URL: postgresql+psycopg://makan_api:${API_DB_PASSWORD:?Set runtime credential}@db:5432/makan_landing
     ports: ['127.0.0.1:8000:8000']
     networks: [application, database]

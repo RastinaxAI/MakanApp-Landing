@@ -2,7 +2,9 @@
   "name": "makan-landing",
   "version": "0.2.0",
   "private": true,
-  "workspaces": ["apps/web"],
+  "workspaces": [
+    "apps/web"
+  ],
   "scripts": {
     "dev": "npm run dev --workspace @makan/web --",
     "build": "npm run build --workspace @makan/web",
@@ -10,5 +12,9 @@
     "lint": "npm run lint --workspace @makan/web",
     "typecheck": "npm run typecheck --workspace @makan/web",
     "test:e2e": "npm run test:e2e --workspace @makan/web --"
+  },
+  "devDependencies": {
+    "chrome-launcher": "1.2.2",
+    "lighthouse": "13.5.0"
   }
 }

@@ -47,6 +47,7 @@ async def test_large_editorial_body_bounds_and_empty_heading(auth_context):
 
 async def test_ticket_and_view_rate_limits_are_shared_database_state(auth_context, monkeypatch):
     config, engine, password, _ = auth_context
+    config = config.model_copy(update={"analytics_enabled": True})
     app = create_app(config)
     async with api_client(app) as client:
         await sign_in(client, password)
@@ -70,7 +71,9 @@ async def test_ticket_and_view_rate_limits_are_shared_database_state(auth_contex
             for _ in range(60):
                 throttle(db, app.state.security, "learn-view", viewer, 60, 600)
         limited = await client.post(
-            endpoint, headers={"Origin": "http://testserver"}, json={"ticket": ticket}
+            endpoint,
+            headers={"Origin": "http://testserver"},
+            json={"ticket": ticket, "consent": True, "policy_version": "analytics-2026-10-13-v1"},
         )
         assert limited.status_code == 429 and int(limited.headers["retry-after"]) > 0
 

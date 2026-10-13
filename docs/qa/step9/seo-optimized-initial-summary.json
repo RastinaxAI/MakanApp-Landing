@@ -1,0 +1,164 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T10:33:40.538Z",
+    "duration": 221801.38700000002,
+    "expected": 10,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "crawl index and partition agree with SSR canonical and exclude private thin future content",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15022,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real metadata produces matching safe JSON-LD and no player request before click",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7427,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "optional consent refuses tracking then records exact events without PII and withdrawal stops sends",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 8495,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "privacy signals block collection and admin page is noindex",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 5087,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "crawl index and partition agree with SSR canonical and exclude private thin future content",
+      "file": "seo.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 12016,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real metadata produces matching safe JSON-LD and no player request before click",
+      "file": "seo.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 8383,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "optional consent refuses tracking then records exact events without PII and withdrawal stops sends",
+      "file": "seo.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13546,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "privacy signals block collection and admin page is noindex",
+      "file": "seo.spec.ts",
+      "project": "firefox",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 13581,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "crawl index and partition agree with SSR canonical and exclude private thin future content",
+      "file": "seo.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 7432,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real metadata produces matching safe JSON-LD and no player request before click",
+      "file": "seo.spec.ts",
+      "project": "webkit",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 10927,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "optional consent refuses tracking then records exact events without PII and withdrawal stops sends",
+      "file": "seo.spec.ts",
+      "project": "webkit",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "timedOut",
+          "duration": 90633,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "privacy signals block collection and admin page is noindex",
+      "file": "seo.spec.ts",
+      "project": "webkit",
+      "status": "skipped",
+      "results": []
+    }
+  ],
+  "axe_audits": 0,
+  "axe_violations": 0
+}

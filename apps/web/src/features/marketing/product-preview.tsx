@@ -6,11 +6,27 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ProductVisual } from "@/components/marketing/product-visual";
 import type { Feature } from "@/features/marketing/content";
 import { MediaImage } from "@/features/cms/media-image";
+import { trackEvent } from "@/features/analytics/events";
 
-export function ProductPreview({ features, privatePreview = false }: { features: readonly Feature[]; privatePreview?: boolean }) {
+export function ProductPreview({
+  features,
+  privatePreview = false,
+}: {
+  features: readonly Feature[];
+  privatePreview?: boolean;
+}) {
   if (!features.length) return null;
   return (
-    <Tabs defaultValue={features.some(f => f.slug === "messenger") ? "messenger" : features[0]!.slug} dir="rtl">
+    <Tabs
+      onValueChange={() => trackEvent("feature_tab_view")}
+      data-feature-preview
+      defaultValue={
+        features.some((f) => f.slug === "messenger")
+          ? "messenger"
+          : features[0]!.slug
+      }
+      dir="rtl"
+    >
       <TabsList
         aria-label="بخش‌های تجربه محصول"
         className="mb-6 grid h-auto w-full max-w-2xl grid-cols-2 gap-1 tablet:grid-cols-4"
@@ -75,8 +91,16 @@ export function ProductPreview({ features, privatePreview = false }: { features:
                   </p>
                 </div>
               </div>
+            ) : feature.image_media_id &&
+              feature.media?.some((m) => m.id === feature.image_media_id) ? (
+              <MediaImage
+                image={feature.media.find(
+                  (m) => m.id === feature.image_media_id,
+                )!}
+                privatePreview={privatePreview}
+              />
             ) : (
-              feature.image_media_id && feature.media?.some(m => m.id === feature.image_media_id) ? <MediaImage image={feature.media.find(m => m.id === feature.image_media_id)!} privatePreview={privatePreview} /> : <ProductVisual title={`نمای ${feature.title}`} />
+              <ProductVisual title={`نمای ${feature.title}`} />
             )}
           </div>
         </TabsContent>

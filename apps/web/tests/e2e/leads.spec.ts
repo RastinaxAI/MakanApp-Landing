@@ -241,7 +241,7 @@ test("lost response after real commit retries safely and 422 429 failures preser
 test("forms and CRM are responsive accessible and keyboard consent is independent of submission", async ({
   page,
 }, info) => {
-  const directory = path.resolve("../../docs/qa/step8", info.project.name);
+  const directory = path.resolve("../../docs/qa/step9", info.project.name);
   await mkdir(directory, { recursive: true });
   for (const width of [360, 768, 1440])
     for (const kind of ["demo", "contact"]) {

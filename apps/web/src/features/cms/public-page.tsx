@@ -1,8 +1,7 @@
+import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
-import { RequestForm } from "@/features/leads/request-form";
-import { ContactChannels } from "@/components/marketing/contact-channels";
 import { FeatureCard } from "@/features/marketing/feature-card";
 import { AudienceCard } from "@/features/marketing/audience-card";
 import { FaqList } from "@/features/marketing/faq-list";
@@ -17,13 +16,17 @@ import {
 import { CmsRenderer, asFeatures, asAudiences, asFaqs } from "./renderer";
 import type { CmsContent } from "./types";
 import { FeaturedLearning } from "@/features/learning/public";
+import { JsonLd } from "@/features/seo/structured-data";
+import { getSeoStatus } from "@/lib/public-api";
 
 export async function PublicPage({
   slug,
   category,
+  request,
 }: {
   slug: string;
   category?: string;
+  request?: ReactNode;
 }) {
   const content = await getPage(slug);
   if (content.kind === "home") {
@@ -59,6 +62,9 @@ export async function PublicPage({
       {extra && (
         <section className="section-space">
           <Container>
+            <h2 className="sr-only">
+              {slug === "features" ? "بخش‌های ماکان" : "راهکارها برای مخاطبان"}
+            </h2>
             <div className="grid gap-6 tablet:grid-cols-2">
               {slug === "features"
                 ? asFeatures(extra.items).map((f) => (
@@ -72,14 +78,30 @@ export async function PublicPage({
         </section>
       )}
       {slug === "faq" && <FaqPageContent category={category} />}
-      {["demo", "contact"].includes(slug) && (
-        <section className="section-space">
-          <Container className="grid items-start gap-8 desktop:grid-cols-[1.35fr_1fr]">
-            <RequestForm kind={slug as "demo" | "contact"} />
-            <ContactChannels />
-          </Container>
-        </section>
+      {slug === "privacy" && (
+        <Container>
+          <section id="analytics-policy" className="my-10 max-w-3xl space-y-4">
+            <h2 className="text-2xl font-semibold">
+              اندازه‌گیری اختیاری استفاده و سرعت سایت
+            </h2>
+            <p className="leading-8">
+              در صورت فعال‌سازی این قابلیت، تنها با اجازه جداگانه شما رویدادهای
+              کلی و سرعت صفحات ثبت می‌شوند. نام، شماره تماس، ایمیل، متن فرم،
+              نشانی کامل صفحه، IP و اطلاعات حساب در این رویدادها ذخیره نمی‌شود.
+              رضایت فرم درخواست با اجازه اندازه‌گیری مستقل است.
+            </p>
+            <p className="leading-8">
+              شناسه تصادفی نشست در همین تب نگهداری می‌شود، پس از ۳۰ دقیقه
+              بی‌فعالیتی یا تغییر روز عوض می‌شود و در سرور به صورت HMAC روزانه
+              ذخیره می‌شود. رویدادها حداکثر ۳۰ روز نگهداری می‌شوند. انتخاب اجازه
+              نیز حداکثر ۳۰ روز در مرورگر باقی می‌ماند. از «تنظیم اندازه‌گیری
+              اختیاری» می‌توانید اجازه را لغو کنید؛ DNT و Global Privacy Control
+              رعایت می‌شوند. این انتخاب مستقل از رضایت ثبت درخواست است.
+            </p>
+          </section>
+        </Container>
       )}
+      {request}
       {["blog", "learn"].includes(slug) && (
         <Container>
           <section className="my-8 rounded-2xl border border-dashed border-input bg-card p-8">
@@ -103,6 +125,22 @@ async function FaqPageContent({ category }: { category?: string }) {
   ]);
   return (
     <section className="section-space">
+      {!!faqs.items.length && (await getSeoStatus()).origin && (
+        <JsonLd
+          data={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: asFaqs(faqs.items).map((f) => ({
+              "@type": "Question",
+              name: f.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: f.answer_html || f.answer,
+              },
+            })),
+          }}
+        />
+      )}
       <Container className="max-w-4xl">
         <nav aria-label="دسته‌های پرسش" className="mb-6 flex flex-wrap gap-3">
           <Link

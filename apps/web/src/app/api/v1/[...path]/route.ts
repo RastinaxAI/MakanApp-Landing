@@ -26,6 +26,7 @@ function failure(status: number, code: string) {
 async function bridge(request: Request, context: Context) {
   const path = (await context.params).path.join("/");
   const allowed =
+    /^(?:analytics\/(?:config|events)|admin\/analytics\/metrics)$/.test(path) ||
     /^(?:forms\/token|leads\/demo|contact|admin\/leads(?:\/(?:assignees|metrics|[0-9a-f-]{36}(?:\/(?:notes|history))?))?)$/.test(
       path,
     ) ||
@@ -51,6 +52,8 @@ async function bridge(request: Request, context: Context) {
       "sec-fetch-site",
       "if-match",
       "user-agent",
+      "dnt",
+      "sec-gpc",
     ]) {
       const value = request.headers.get(name);
       if (value) headers.set(name, value);

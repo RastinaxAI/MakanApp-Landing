@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import Field, field_validator, model_validator
+from pydantic import Field, StrictBool, field_validator, model_validator
 
 from app.schemas.common import PaginationQuery, StrictSchema
 from app.services.aparat import video_id
@@ -112,3 +112,5 @@ class TaxonomyQuery(PaginationQuery):
 
 class ViewInput(StrictSchema):
     ticket: str = Field(min_length=40, max_length=500)
+    consent: StrictBool = False
+    policy_version: Literal["analytics-2026-10-13-v1"] | None = None

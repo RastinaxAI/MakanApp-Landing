@@ -24,6 +24,7 @@ from app.models import (
     RevisionTag,
     SeriesItem,
 )
+from app.schemas.analytics import POLICY_VERSION
 from app.schemas.learning import LibraryQuery
 from app.services import cms
 from app.services.auth import now_utc, throttle
@@ -277,6 +278,7 @@ def subject(request):
 
 
 def ticket(request, content_id):
+    view_privacy(request)
     timestamp = int(time.time())
     security = request.app.state.security
     viewer = subject(request)
@@ -288,10 +290,22 @@ def ticket(request, content_id):
     return f"{timestamp}.{proof}"
 
 
-def qualified_view(request, session, content_id, value):
+def view_privacy(request):
+    if (
+        not request.app.state.settings.analytics_enabled
+        or request.headers.get("dnt") == "1"
+        or request.headers.get("sec-gpc") == "1"
+    ):
+        raise ApiProblem(403, "VIEW_MEASUREMENT_DISABLED", "اندازه‌گیری اختیاری فعال نیست.")
+
+
+def qualified_view(request, session, content_id, value, consent=False, policy_version=None):
     origin = request.headers.get("origin")
     if origin not in request.app.state.settings.auth_allowed_origins:
         raise ApiProblem(403, "INVALID_ORIGIN", "مبدأ درخواست معتبر نیست.")
+    view_privacy(request)
+    if not consent or policy_version != POLICY_VERSION:
+        raise ApiProblem(403, "VIEW_CONSENT_REQUIRED", "اجازه اندازه‌گیری اختیاری لازم است.")
     viewer = subject(request)
     security = request.app.state.security
     try:

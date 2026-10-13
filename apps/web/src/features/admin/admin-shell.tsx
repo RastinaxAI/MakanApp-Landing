@@ -32,7 +32,14 @@ export function AdminShell({
     { href: "/admin", label: "داشبورد", icon: LayoutDashboard },
     { href: "/admin/security", label: "امنیت حساب", icon: ShieldCheck },
     ...(profile.capabilities.includes("leads")
-      ? [{ href: "/admin/leads", label: "درخواست‌ها و پیگیری", icon: Users }]
+      ? [
+          { href: "/admin/leads", label: "درخواست‌ها و پیگیری", icon: Users },
+          {
+            href: "/admin/analytics",
+            label: "آمار استفاده و سرعت",
+            icon: LayoutDashboard,
+          },
+        ]
       : []),
     ...(profile.capabilities.includes("content")
       ? [

@@ -1,0 +1,7 @@
+
+> makan-landing@0.2.0 typecheck
+> npm run typecheck --workspace @makan/web
+
+
+> @makan/web@0.2.0 typecheck
+> tsc --noEmit

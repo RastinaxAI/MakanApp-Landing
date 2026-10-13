@@ -65,7 +65,10 @@ def database_factory(test_control_url):
                     )
                 )
             engine = build_engine(
-                Settings(database_url=owner.render_as_string(hide_password=False))
+                Settings(
+                    database_url=owner.render_as_string(hide_password=False),
+                    db_statement_timeout_ms=30000,
+                )
             )
             try:
                 if revision:

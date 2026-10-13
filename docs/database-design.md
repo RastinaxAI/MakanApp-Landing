@@ -188,3 +188,8 @@ metadata رسانه از RevisionMediaRef موجود استفاده می‌کن�
 | lead_status_history | UUID PK؛ lead/actor FK | تغییرات نوع‌دار status/outcome/assignee و زمان؛ فاقد نام/شماره/پیام |
 
 Indexهای status/created، kind/created، fingerprint/created، retention جزئی `purged_at IS NULL`، receipt expiry و lead/time تاریخچه/یادداشت. constraint وضعیت/نوع/تماس، demo فقط phone، closed نتیجه غیرNULL معتبر، won فقط demo، version>=1 و PII الزامی مگر پس از purge. نوشتن فرم و رسید/تاریخچه/audit در یک تراکنش؛ advisory lock برای race. پاک‌سازی اطلاعات شخصی UPDATE+حذف notes/receipts، بدون حذف آمار یا migration مخرب. مدل/مهاجرت با PostgreSQL واقعی و compare_metadata بررسی می‌شود. تنظیم سرویس اصلی ماکان مستقل باقی است.
+## الحاق مرحله۹ — SEO و Performance
+
+migration افزایشی `0007_analytics` فقط جدول analytics_events و مجوزهای محدود آن را می‌افزاید. هیچ جدول موجودی بازسازی یا داده‌ای seed نمی‌شود. PK=UUID رویداد؛ day، HMAC نشست، نام رویداد، route template، channel، error_kind و metric_name/value/revision و created_at. Constraint نام/channel/digest/metric pair/مقدار و Index day/name و day/session_digest، با grant UPDATE فقط روی دو ستون عددی metric. UPDATE/DELETE تاریخچه CRM و audit همچنان ممنوع است.
+
+ماندگاری، report ordering، de-duplication و purge با نقش runtime روی PostgreSQL واقعی آزمون می‌شوند. آمار به admin/lead یا حساب محصول join نمی‌شود؛ شناسه و متن شخصی ذخیره ندارد. تفاصيل و سیاست batch/backup در [قرارداد](step-9-contract.md) و [راهنمای عملیاتی](seo-performance-runbook.md).

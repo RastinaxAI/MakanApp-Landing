@@ -23,6 +23,13 @@ export const publicGet = cache(async <T>(path: string): Promise<T> => {
 export const getPage = (slug: string) =>
   publicGet<CmsContent>(`pages/${encodeURIComponent(slug)}`);
 export const getSettings = () => publicGet<CmsSettings>("site/settings");
+export type SeoStatus = {
+  origin: string | null;
+  enabled: boolean;
+  shard_size: number;
+  counts: { pages: number; learning: number };
+};
+export const getSeoStatus = () => publicGet<SeoStatus>("seo/status");
 export const getFeatures = () =>
   publicGet<CmsPage<CmsContent>>("features?page_size=100");
 export const getAudiences = () =>
@@ -35,6 +42,7 @@ export const getCategories = () => publicGet<FaqCategory[]>("faq-categories");
 export async function pageMetadata(
   content: CmsContent,
   path: string,
+  options: { noindex?: boolean } = {},
 ): Promise<Metadata> {
   const settings = await getSettings();
   const title =
@@ -42,16 +50,41 @@ export async function pageMetadata(
     (content.kind === "home" ? settings.seo.default_title : content.title);
   const description =
     content.seo.description ||
-    settings.seo.default_description ||
-    ("summary" in content.payload ? content.payload.summary : content.title);
-  const url = settings.general.site_url
-    ? new URL(path, settings.general.site_url).href
-    : undefined;
+    ("summary" in content.payload ? content.payload.summary : content.title) ||
+    settings.seo.default_description;
+  const status = await getSeoStatus();
+  const url = status.origin ? new URL(path, status.origin).href : undefined;
   const imageId = content.seo.og_media_id || settings.seo.og_media_id;
   const image =
-    imageId && settings.general.site_url
-      ? new URL(`/api/v1/media/${imageId}/file`, settings.general.site_url).href
+    imageId && status.origin
+      ? new URL(`/api/v1/media/${imageId}/file`, status.origin).href
       : undefined;
+  const imageInfo = imageId
+    ? content.media.find((m) => m.id === imageId) ||
+      (await publicGet<{ width: number; height: number; alt_text: string }>(
+        `media/${imageId}`,
+      ))
+    : undefined;
+  const eligibility =
+    status.enabled && !options.noindex && content.seo.indexable
+      ? await publicGet<{ indexable: boolean }>(
+          `seo/page?path=${encodeURIComponent(path)}`,
+        )
+      : { indexable: false };
+  const images = image
+    ? [
+        {
+          url: image,
+          ...(imageInfo
+            ? {
+                width: imageInfo.width,
+                height: imageInfo.height,
+                alt: imageInfo.alt_text,
+              }
+            : {}),
+        },
+      ]
+    : undefined;
   return {
     title: {
       absolute:
@@ -62,9 +95,18 @@ export async function pageMetadata(
     openGraph: {
       title,
       description,
+      type: "website",
+      locale: "fa_IR",
+      siteName: settings.general.brand_name,
       ...(url ? { url } : {}),
-      ...(image ? { images: [image] } : {}),
+      ...(images ? { images } : {}),
     },
-    robots: { index: false, follow: false },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title,
+      description,
+      images,
+    },
+    robots: { index: eligibility.indexable, follow: true },
   };
 }

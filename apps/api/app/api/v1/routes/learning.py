@@ -73,7 +73,9 @@ def view_ticket(content_id: UUID, request: Request, session: SessionDep):
 @router.post("/learn/views/{content_id}", response_model=ViewResult)
 def record_view(content_id: UUID, data: ViewInput, request: Request, session: SessionDep):
     with session.begin():
-        return learning.qualified_view(request, session, content_id, data.ticket)
+        return learning.qualified_view(
+            request, session, content_id, data.ticket, data.consent, data.policy_version
+        )
 
 
 @router.get("/learn/{taxonomy}", response_model=PaginatedResponse[Taxonomy])

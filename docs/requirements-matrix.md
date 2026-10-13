@@ -295,3 +295,19 @@ Blog/learn فقط صفحه معرفی خالیِ صادقانه دارند؛ ف�
 | R089/R090/R097–100/R104 | فرم واقعی strict TS، رابط responsive و tests PostgreSQL/مرورگر/Docker | آمار دقیق و شواهد QA در گزارش مرحله۸؛ WCAG کامل/Production/Lighthouse همچنان پذیرش جدا دارند |
 
 این جدول وضعیت جدید است و ردیف‌های تاریخی مرحله۳ درباره «فرم غیرفعال» صرفاً سابقه‌اند. نتیجه نهایی تست‌ها از QA مرحله۸ خوانده شود؛ اجراهای متوقف یا skip موفق شمرده نشده‌اند.
+## الحاق مرحله۹ — SEO و Performance
+
+| شناسه | وضعیت مرحله۹ | معیار و محدودیت |
+| --- | --- | --- |
+| R051 | qualified view با رضایت اختیاری نسخه‌دار و flag، DNT/GPC و لغو timer؛ bot/dedupe واقعی | از داده ساختگی برای «محبوب» استفاده نمی‌شود؛ محدودیت شبکه مشترک مستند |
+| R063 | metadata/canonical/OG/Twitter و breadcrumb/Article/VideoObject و sitemap آموزش | VideoObject فقط با داده کامل و تاریخ گذشته معتبر؛ محتوای واقعی رسمی و دامنه برای پذیرش انتشار لازم است |
+| R077 | KPI با cohort و مخرج واقعی، CRM مستقل و صفر=null | فقط نشست رضایت‌داده؛ baseline میدانی هنوز وجود ندارد و هدف ساختگی تنظیم نشده |
+| R078 | هشت event دقیق، allowlist و رضایت اختیاری و بدون PII | PostgreSQL، Origin/rate/dedupe، DNT/GPC و لغو اجازه؛ فعال‌سازی عمومی در پیکربندی انتشار |
+| R079 | SSR و no-store، cache فقط در رندر، snapshot مؤثر انتشار و sitemap زمان درخواست | build بدون API روشن؛ draft/preview cache عمومی ندارند؛ تأخیر staging هنوز باید سنجیده شود |
+| R080 | metadata یکتا و canonical مسیر اصلی و slug فارسی | alias نادرست404؛ دامنه نهایی هنوز ارائه نشده و ایندکس بسته است |
+| R081 | schema مبتنی بر محتوا و escape script | تست محلی تطابق/ساختار؛ validator موتور جست‌وجو روی دامنه واقعی پس از انتشار لازم است |
+| R082 | sitemap خودکار قطعات۱۰۰۰تایی از snapshot عمومی مؤثر | future/draft/archive/hidden/legal draft/empty حذف؛ admin/preview/404/result/filter noindex |
+| R083 | local font، next/image AVIF/WebP، preload و ابعاد ثابت | Motion از root حذف؛ ارزیابی نهایی با assets رسمی پس از دریافت لازم است |
+| R084 | جمع‌آوری RUM پس از رضایت و p75 با ordering و sample count | نتیجه میدانی واقعی هنوز قابل ادعا نیست؛ نمونه آزمایشگاه جای آن را نمی‌گیرد |
+| R085 | ابزار Lighthouse13.5.0 و سه دور برای هر شش مسیر | نتایج نهایی در گزارش QA؛ آزمون محلی HTTP/fixture با HTTPS staging تفکیک می‌شود |
+| R086 | مسیر blog/learn مستقل و canonical و انتشار انسانی | متن رسمی آموزش/وبلاگ هنوز از کاربر دریافت نشده؛ داده fixture فقط در DB تست |

@@ -17,6 +17,7 @@ import { FaqList, type FaqItem } from "@/features/marketing/faq-list";
 import { MediaImage } from "./media-image";
 import { RichText } from "./rich-text";
 import type { Audience, Feature } from "@/features/marketing/content";
+import { ContentSeo } from "@/features/seo/structured-data";
 import type { CmsContent, CmsSection, LandingPayload } from "./types";
 
 export function asFeatures(contents: CmsContent[]): Feature[] {
@@ -322,6 +323,28 @@ function SectionContent({
 }
 
 export function CmsRenderer(props: Props) {
+  const p = props.content.payload;
+  const trust =
+    p.kind === "home" || p.kind === "page"
+      ? p.sections.find((s) => s.type === "trust")
+      : undefined;
+  const visibleFaqs = trust
+    ? trust.faq_slugs?.length
+      ? trust.faq_slugs.flatMap((slug) =>
+          (props.faqs || []).filter((f) => f.id === slug),
+        )
+      : (props.faqs || []).slice(0, 4)
+    : [];
+  return (
+    <>
+      {!props.privatePreview && (
+        <ContentSeo content={props.content} faqs={visibleFaqs} />
+      )}
+      <CmsBody {...props} />
+    </>
+  );
+}
+function CmsBody(props: Props) {
   const { content, privatePreview = false } = props;
   const payload = content.payload;
   const sections =

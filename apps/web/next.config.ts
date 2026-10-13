@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const config: NextConfig = {
   output: "standalone",
   poweredByHeader: false,
+  images: {
+    formats: ["image/avif", "image/webp"],
+    localPatterns: [{ pathname: "/api/v1/media/**", search: "" }],
+  },
   reactStrictMode: true,
   // Resolve CMS metadata before sending headers, so missing/mismatched content stays a real 404.
   htmlLimitedBots: /.*/,

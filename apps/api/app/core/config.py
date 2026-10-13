@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     forms_token_limit: int = Field(default=40, ge=1, le=1000)
     forms_submit_limit: int = Field(default=20, ge=1, le=1000)
     forms_contact_limit: int = Field(default=5, ge=1, le=100)
+    seo_indexing_enabled: bool = False
+    analytics_enabled: bool = False
+    analytics_event_limit: int = Field(default=240, ge=1, le=1000)
 
     @field_validator("auth_secret", "auth_mfa_key")
     @classmethod

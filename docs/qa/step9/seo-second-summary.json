@@ -1,0 +1,60 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T08:27:51.865Z",
+    "duration": 51949.248,
+    "expected": 2,
+    "skipped": 1,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "crawl index and partition agree with SSR canonical and exclude private thin future content",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 15068,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "real metadata produces matching safe JSON-LD and no player request before click",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "expected",
+      "results": [
+        {
+          "status": "passed",
+          "duration": 4651,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "optional consent refuses tracking then records exact events without PII and withdrawal stops sends",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "unexpected",
+      "results": [
+        {
+          "status": "failed",
+          "duration": 6080,
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "title": "privacy signals block collection and admin page is noindex",
+      "file": "seo.spec.ts",
+      "project": "chromium",
+      "status": "skipped",
+      "results": []
+    }
+  ],
+  "axe_audits": 0,
+  "axe_violations": 0
+}

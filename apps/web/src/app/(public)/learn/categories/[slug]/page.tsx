@@ -1,5 +1,5 @@
 import { Library, type Search } from "@/features/learning/public";
-import { publicGet } from "@/lib/public-api";
+import { publicGet, getPage, pageMetadata } from "@/lib/public-api";
 import type { Taxonomy } from "@/features/learning/types";
 export async function generateMetadata({
   params,
@@ -9,7 +9,20 @@ export async function generateMetadata({
   const c = await publicGet<Taxonomy>(
     `learn/categories/${encodeURIComponent((await params).slug)}`,
   );
-  return { title: c.title, robots: { index: false, follow: false } };
+  const header = await getPage("learn");
+  return pageMetadata(
+    {
+      ...header,
+      title: c.title,
+      seo: {
+        ...header.seo,
+        title: c.title,
+        description: `آموزش‌های منتشرشده در دسته ${c.title}`,
+      },
+    },
+    `/learn/categories/${encodeURIComponent(c.slug)}`,
+    { noindex: true },
+  );
 }
 export default async function Page({
   params,

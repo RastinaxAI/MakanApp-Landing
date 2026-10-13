@@ -1,4 +1,5 @@
 from app.models.admin import Admin, AuditLog
+from app.models.analytics import AnalyticsEvent
 from app.models.auth import (
     AdminMfa,
     AdminRecoveryCode,
@@ -28,6 +29,7 @@ from app.models.learning import (
 )
 
 __all__ = [
+    "AnalyticsEvent",
     "Lead",
     "LeadHistory",
     "LeadNote",

@@ -36,7 +36,7 @@ test("CRM list handles long names native filters and reflows at mobile tablet de
     .fill(process.env.E2E_ADMIN_PASSWORD!);
   await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
   await expect(page).toHaveURL(/\/admin$/, { timeout: 15000 });
-  const directory = path.resolve("../../docs/qa/step8", info.project.name);
+  const directory = path.resolve("../../docs/qa/step9", info.project.name);
   await mkdir(directory, { recursive: true });
   for (const width of [360, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });

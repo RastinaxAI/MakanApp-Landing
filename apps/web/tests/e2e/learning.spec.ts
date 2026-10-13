@@ -469,8 +469,16 @@ for (const width of [360, 768, 1440])
     page,
   }, info) => {
     await login(page);
+    const categoryTitle = `دسته آزمون دسترس‌پذیری ${info.project.name} ${width}`;
+    const category = await mutate(page, "learn/categories", {
+      domain: "learn",
+      slug: `a11y-${info.project.name}-${width}`,
+      title: categoryTitle,
+      sort_order: 0,
+    });
+    expect(category.status()).toBe(201);
     await page.setViewportSize({ width, height: 900 });
-    const directory = path.resolve("../../docs/qa/step8", info.project.name);
+    const directory = path.resolve("../../docs/qa/step9", info.project.name);
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["library", "/learn"],
@@ -485,6 +493,10 @@ for (const width of [360, 768, 1440])
           page.getByRole("textbox", { name: "متن اصلی آموزش", exact: true }),
         ).toBeVisible();
       await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+      if (url === "/admin/learn/taxonomy")
+        await expect(
+          page.getByRole("button", { name: `حذف ${categoryTitle}`, exact: true }),
+        ).toBeEnabled();
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth + 1,
@@ -531,7 +543,7 @@ for (const width of [360, 768, 1440])
     const blog = await fixture(page, `detail-blog-${suffix}`, "blog", {
       cover_media_id: media,
     });
-    const directory = path.resolve("../../docs/qa/step8", info.project.name);
+    const directory = path.resolve("../../docs/qa/step9", info.project.name);
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["article-detail", `/learn/articles/${a.slug}?series=${series.slug}`],

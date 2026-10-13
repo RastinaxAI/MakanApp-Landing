@@ -3,11 +3,16 @@ param(
     [switch]$SmokeOnly,
     [switch]$CmsOnly,
     [switch]$LearnOnly,
+    [switch]$LearningLayoutOnly,
     [switch]$AdminAndLearnOnly,
     [switch]$FinalAcceptance,
     [switch]$LeadsOnly,
     [switch]$Step8Acceptance,
     [switch]$CrmLayoutOnly,
+    [switch]$SeoOnly,
+    [switch]$LighthouseOnly,
+    [switch]$Step9Acceptance,
+    [switch]$PublicOnly,
     [ValidateSet('all','chromium','firefox','webkit')][string]$BrowserProject = 'all',
     [switch]$FailFast
 )
@@ -16,7 +21,7 @@ $taskRoot=Split-Path -Parent $PSScriptRoot
 $taskValues=@{}
 foreach ($line in [IO.File]::ReadAllLines((Join-Path $taskRoot '.env.test'))) {if ($line -match '^([A-Z_]+)=([a-f0-9]{64})$') {$taskValues[$matches[1]]=$matches[2]}}
 $taskPrevious=@{}
-foreach ($key in @('TEST_DATABASE_ADMIN_URL','TEST_MIGRATION_DB_PASSWORD','TEST_API_DB_PASSWORD','AUTH_SECRET','AUTH_MFA_KEY','E2E_ADMIN_PASSWORD','API_INTERNAL_URL','PLAYWRIGHT_CHROMIUM_CHANNEL')) {$taskPrevious[$key]=[Environment]::GetEnvironmentVariable($key,'Process')}
+foreach ($key in @('TEST_DATABASE_ADMIN_URL','TEST_MIGRATION_DB_PASSWORD','TEST_API_DB_PASSWORD','AUTH_SECRET','AUTH_MFA_KEY','E2E_ADMIN_PASSWORD','API_INTERNAL_URL','PLAYWRIGHT_CHROMIUM_CHANNEL','E2E_SEO_FIXTURES')) {$taskPrevious[$key]=[Environment]::GetEnvironmentVariable($key,'Process')}
 $env:TEST_DATABASE_ADMIN_URL="postgresql+psycopg://postgres:$($taskValues.POSTGRES_PASSWORD)@127.0.0.1:15432/makan_test_control"
 $env:TEST_MIGRATION_DB_PASSWORD=$taskValues.MIGRATION_DB_PASSWORD
 $env:TEST_API_DB_PASSWORD=$taskValues.API_DB_PASSWORD
@@ -24,10 +29,12 @@ $env:AUTH_SECRET=$taskValues.AUTH_SECRET
 $env:AUTH_MFA_KEY=$taskValues.AUTH_MFA_KEY
 $env:E2E_ADMIN_PASSWORD=[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(24))
 $env:API_INTERNAL_URL='http://127.0.0.1:8100'
+$env:E2E_SEO_FIXTURES=if($SeoOnly -or $LighthouseOnly){'1'}else{$null}
 $env:PLAYWRIGHT_CHROMIUM_CHANNEL=if ($ChromiumChannel -eq 'bundled') {$null} else {$ChromiumChannel}
 $taskPreview=Join-Path $taskRoot '.preview'
 New-Item -ItemType Directory -Path $taskPreview -Force | Out-Null
 if (Get-NetTCPConnection -LocalPort 8100 -State Listen -ErrorAction SilentlyContinue) {throw 'E2E API port 8100 is already in use.'}
+if (Test-Path -LiteralPath (Join-Path $taskPreview 'e2e-db-name.txt')) {throw 'An earlier owned E2E fixture needs cleanup before another run.'}
 $taskServer=Start-Process -FilePath (Join-Path $taskRoot 'apps/api/.venv/Scripts/python.exe') -ArgumentList ('"'+(Join-Path $taskRoot 'apps/api/tests/e2e_server.py')+'"') -WorkingDirectory (Join-Path $taskRoot 'apps/api') -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $taskPreview 'api-e2e-out.log') -RedirectStandardError (Join-Path $taskPreview 'api-e2e-error.log')
 try {
     $taskReady=$false
@@ -44,11 +51,16 @@ try {
         if ($SmokeOnly) {$taskBrowserArguments+=@('--grep','guest.*CSRF')}
         if ($CmsOnly) {$taskBrowserArguments+=@('cms.spec.ts')}
         if ($LearnOnly) {$taskBrowserArguments+=@('learning.spec.ts','learning-category.spec.ts')}
+        if ($LearningLayoutOnly) {$taskBrowserArguments+=@('learning.spec.ts','--grep','learning management and library are accessible')}
         if ($AdminAndLearnOnly) {$taskBrowserArguments+=@('admin.spec.ts','learning.spec.ts')}
         if ($FinalAcceptance) {$taskBrowserArguments+=@('admin.spec.ts','learning.spec.ts','learning-category.spec.ts','public-pages.spec.ts','layout.spec.ts','--grep','admin\.spec\.ts|learning(?:-category)?\.spec\.ts|public-pages\.spec\.ts|missing route')}
         if ($LeadsOnly) {$taskBrowserArguments+=@('leads.spec.ts')}
         if ($Step8Acceptance) {$taskBrowserArguments+=@('leads.spec.ts','public-pages.spec.ts','admin.spec.ts')}
         if ($CrmLayoutOnly) {$taskBrowserArguments+=@('leads-layout.spec.ts')}
+        if ($SeoOnly) {$taskBrowserArguments+=@('seo.spec.ts')}
+        if ($PublicOnly) {$taskBrowserArguments+=@('public-pages.spec.ts')}
+        if ($Step9Acceptance) {$taskBrowserArguments+=@('leads.spec.ts','public-pages.spec.ts','admin.spec.ts','learning.spec.ts','learning-category.spec.ts')}
+        if ($LighthouseOnly) {$taskBrowserArguments=@('../../scripts/lighthouse-step9.mjs')}
         if ($BrowserProject -ne 'all') {$taskBrowserArguments+=@("--project=$BrowserProject")}
         if ($FailFast) {$taskBrowserArguments+=@('--max-failures=1')}
         if ((& node --version) -match '^v24\.') {

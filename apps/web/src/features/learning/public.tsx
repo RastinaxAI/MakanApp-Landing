@@ -9,7 +9,8 @@ import { publicGet, pageMetadata, getPage } from "@/lib/public-api";
 import { CmsRenderer } from "@/features/cms/renderer";
 import type { CmsPage } from "@/features/cms/types";
 import { AparatPlayer } from "./player";
-import { QualifiedView } from "./view";
+import { QualifiedView, type ViewPolicy } from "./view";
+import { LearningSeo } from "@/features/seo/structured-data";
 import {
   audiences,
   levels,
@@ -328,6 +329,10 @@ export async function learningMetadata(content: LearningContent) {
     {
       ...content,
       kind: "page",
+      seo: {
+        ...content.seo,
+        og_media_id: content.seo.og_media_id || content.payload.cover_media_id,
+      },
       payload: {
         kind: "page",
         headline: content.payload.headline,
@@ -341,15 +346,22 @@ export async function learningMetadata(content: LearningContent) {
 export function LearningArticle({
   content,
   privatePreview = false,
+  viewPolicy,
 }: {
   content: LearningDetail;
   privatePreview?: boolean;
+  viewPolicy?: ViewPolicy;
 }) {
   const p = content.payload;
   const cover = content.media.find((m) => m.id === p.cover_media_id);
   return (
     <>
+      {!privatePreview && <LearningSeo content={content} />}
       <PageHero
+        parent={{
+          label: content.kind === "blog" ? "وبلاگ" : "مرکز آموزش",
+          href: content.kind === "blog" ? "/blog" : "/learn",
+        }}
         eyebrow={
           content.kind === "blog"
             ? "وبلاگ"
@@ -361,18 +373,6 @@ export function LearningArticle({
         description={p.summary}
       />
       <Container className="max-w-5xl">
-        <nav
-          aria-label="مسیر صفحه"
-          className="my-5 flex flex-wrap gap-3 text-sm"
-        >
-          <Link href="/">خانه</Link>
-          <span aria-hidden="true">/</span>
-          <Link href={content.kind === "blog" ? "/blog" : "/learn"}>
-            {content.kind === "blog" ? "وبلاگ" : "مرکز آموزش"}
-          </Link>
-          <span aria-hidden="true">/</span>
-          <span>{p.headline}</span>
-        </nav>
         <p className="mb-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
           <span>{p.audiences.map((role) => audiences[role]).join("، ")}</span>
           <span>
@@ -574,8 +574,8 @@ export function LearningArticle({
             {p.cta_label}
           </Link>
         </aside>
-        {!privatePreview && content.kind !== "series" && (
-          <QualifiedView id={content.id} />
+        {!privatePreview && content.kind !== "series" && viewPolicy && (
+          <QualifiedView id={content.id} policy={viewPolicy} />
         )}
       </Container>
     </>
@@ -602,5 +602,6 @@ export async function PublicLearningDetail({
   series?: string;
 }) {
   const content = await getLearningDetail(slug, kind, series);
-  return <LearningArticle content={content} />;
+  const viewPolicy = await publicGet<ViewPolicy>("analytics/config");
+  return <LearningArticle content={content} viewPolicy={viewPolicy} />;
 }

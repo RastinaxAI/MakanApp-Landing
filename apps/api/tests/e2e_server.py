@@ -36,7 +36,11 @@ with psycopg.connect(
     )
 # Private cleanup marker contains no credential; force-stop teardown can remove this exact fixture.
 Path("../../.preview/e2e-db-name.txt").write_text(name, encoding="utf-8")
-engine = build_engine(Settings(database_url=owner.render_as_string(hide_password=False)))
+engine = build_engine(
+    Settings(
+        database_url=owner.render_as_string(hide_password=False), db_statement_timeout_ms=30000
+    )
+)
 try:
     with engine.begin() as connection:
         connection.exec_driver_sql(
@@ -60,6 +64,9 @@ try:
         forms_token_limit=1000,
         forms_submit_limit=1000,
         forms_contact_limit=100,
+        seo_indexing_enabled=os.environ.get("E2E_SEO_FIXTURES") == "1",
+        analytics_enabled=os.environ.get("E2E_SEO_FIXTURES") == "1",
+        analytics_event_limit=1000,
         media_root=Path("../../.preview/e2e-media") / name,
     )
     security = Security(settings)
@@ -81,6 +88,14 @@ try:
                         password_hash=security.hasher.hash(os.environ["E2E_ADMIN_PASSWORD"]),
                     )
                 )
+        session.flush()
+        if os.environ.get("E2E_SEO_FIXTURES") == "1":
+            from sqlalchemy import select
+
+            from tests.seo_fixtures import seed
+
+            owner_id = session.scalar(select(Admin.id).where(Admin.email == "owner@example.com"))
+            seed(session, settings, owner_id)
     uvicorn.run(
         create_app(settings), host="127.0.0.1", port=8100, log_config=None, access_log=False
     )

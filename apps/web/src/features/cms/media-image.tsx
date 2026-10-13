@@ -16,7 +16,7 @@ export function MediaImage({
       width={image.width}
       height={image.height}
       unoptimized={privatePreview}
-      priority={priority}
+      preload={priority}
       className="h-auto w-full rounded-2xl border border-border object-contain"
       sizes="(max-width: 768px) 90vw, 640px"
     />

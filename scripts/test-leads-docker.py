@@ -4,6 +4,7 @@ No fixture account or image is written to the development database/media volume.
 Credentials are forwarded using process environment variable names, never CLI values.
 """
 
+import argparse
 import hashlib
 import json
 import os
@@ -19,6 +20,9 @@ from psycopg import sql
 from sqlalchemy.engine import make_url
 
 ROOT = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser()
+parser.add_argument("--phase", choices=("step8", "step9"), default="step9")
+phase = parser.parse_args().phase
 values = {}
 for line in (ROOT / ".env.test").read_text().splitlines():
     match = re.fullmatch(r"([A-Z_]+)=([a-f0-9]{64})", line)
@@ -34,6 +38,8 @@ environment = {
     "APP_ENV": "test",
     "MEDIA_ROOT": "/srv/media",
     "AUTH_ALLOWED_ORIGINS": '["http://127.0.0.1:18100"]',
+    "ANALYTICS_ENABLED": "true" if phase == "step9" else "false",
+    "SEO_INDEXING_ENABLED": "true" if phase == "step9" else "false",
 }
 control = make_url(
     f"postgresql://postgres:{values['POSTGRES_PASSWORD']}@127.0.0.1:15432/makan_test_control"
@@ -162,6 +168,8 @@ try:
                 "APP_ENV",
                 "MEDIA_ROOT",
                 "AUTH_ALLOWED_ORIGINS",
+                "ANALYTICS_ENABLED",
+                "SEO_INDEXING_ENABLED",
             )
             for item in ("-e", key)
         ],
@@ -194,6 +202,81 @@ try:
             == 200
         )
         form = client.get("/api/v1/forms/token?kind=demo").json()
+        if phase == "step9":
+            current = client.get("/api/v1/admin/settings").json()
+            h = headers()
+            h["If-Match"] = str(current["row_version"])
+            assert (
+                client.patch(
+                    "/api/v1/admin/settings",
+                    headers=h,
+                    json={
+                        "general": {
+                            **current["general"],
+                            "site_url": "https://makan.example",
+                        },
+                        "seo": current["seo"],
+                    },
+                ).status_code
+                == 200
+            )
+            analytics_body = {
+                "id": str(uuid4()),
+                "session_id": str(uuid4()),
+                "consent": True,
+                "policy_version": "analytics-2026-10-13-v1",
+                "name": "session_start",
+                "path": "/demo",
+                "channel": "direct",
+            }
+            ah = {
+                "Origin": "http://127.0.0.1:18100",
+                "User-Agent": "Mozilla/5.0 Docker acceptance",
+            }
+            for _ in range(2):
+                assert (
+                    client.post(
+                        "/api/v1/analytics/events", headers=ah, json=analytics_body
+                    ).status_code
+                    == 200
+                )
+            vital = {
+                **analytics_body,
+                "id": str(uuid4()),
+                "name": "web_vital",
+                "metric_name": "LCP",
+                "metric_value": 2000.0,
+                "metric_revision": 1,
+            }
+            assert (
+                client.post(
+                    "/api/v1/analytics/events", headers=ah, json=vital
+                ).status_code
+                == 200
+            )
+            assert (
+                client.post(
+                    "/api/v1/analytics/events",
+                    headers=ah,
+                    json={**vital, "metric_value": 1500.0, "metric_revision": 2},
+                ).status_code
+                == 200
+            )
+
+        def check_analytics():
+            if phase != "step9":
+                return
+            metrics = client.get("/api/v1/admin/analytics/metrics").json()
+            assert metrics["sessions"] == metrics["events"]["session_start"] == 1
+            assert metrics["vitals"]["LCP"]["p75"] == 1500.0
+            assert metrics["vitals"]["LCP"]["count"] == 1
+            crawl = client.get("/api/v1/seo/sitemap?group=learning").json()["items"]
+            assert {row["path"] for row in crawl} == {
+                "/learn/articles/docker-article",
+                "/learn/videos/docker-video",
+                "/learn/series/docker-series",
+            }
+
         time.sleep(1.2)
         submission = {
             "full_name": "Docker isolated lead fixture",
@@ -325,6 +408,7 @@ try:
                 json={
                     "slug": slug,
                     "title": slug,
+                    "seo": {"indexable": phase == "step9"},
                     "payload": {
                         "kind": kind,
                         "headline": slug,
@@ -395,13 +479,14 @@ try:
 
         check_learning()
         check_leads()
+        check_analytics()
 
         before = client.get(f"/api/v1/media/{mid}/file")
         assert before.status_code == 200
         digest = hashlib.sha256(before.content).hexdigest()
         evidence.update(
             {
-                "migration_head": "0006_leads",
+                "migration_head": "0007_analytics",
                 "uid": docker("exec", container, "id", "-u").strip(),
                 "readonly_root": True,
                 "caps_dropped": True,
@@ -414,6 +499,7 @@ try:
         ready()
         check_learning()
         check_leads()
+        check_analytics()
         evidence["learning_article_video_series_survive_restart"] = True
         after = client.get(f"/api/v1/media/{mid}/file")
         assert (
@@ -429,6 +515,7 @@ try:
         ready()
         check_learning()
         check_leads()
+        check_analytics()
         evidence["learning_article_video_series_survive_recreate"] = True
         recreated = client.get(f"/api/v1/media/{mid}/file")
         assert (
@@ -479,6 +566,25 @@ try:
         )
         assert client.get("/api/v1/admin/leads/metrics").json()["contracts"] == 1
         evidence["cli_purge_real_postgres_preserves_contract_count"] = True
+        if phase == "step9":
+            with psycopg.connect(
+                owner.set(
+                    drivername="postgresql", host="127.0.0.1", port=15432
+                ).render_as_string(hide_password=False)
+            ) as db:
+                assert (
+                    db.execute("SELECT count(*) FROM analytics_events").fetchone()[0]
+                    == 2
+                )
+                db.execute("UPDATE analytics_events SET day=CURRENT_DATE-31")
+            output = docker(
+                "exec", container, "python", "-m", "app.commands.analytics_cleanup"
+            )
+            assert json.loads(output)["expired_events"] == 2
+            assert client.get("/api/v1/admin/analytics/metrics").json()["sessions"] == 0
+            assert client.get("/api/v1/admin/leads/metrics").json()["contracts"] == 1
+            evidence["analytics_and_crawl_survive_restart_recreate"] = True
+            evidence["analytics_cli_purge_runtime_role"] = True
         evidence["status"] = "passed"
 finally:
     # Only the exact two randomly named fixtures created above are removed.
@@ -504,7 +610,7 @@ finally:
             )
         )
     evidence["fixture_cleanup"] = True
-    (ROOT / "docs/qa/step8/docker-persistence.json").write_text(
+    (ROOT / f"docs/qa/{phase}/docker-persistence.json").write_text(
         json.dumps(evidence, indent=2) + "\n", encoding="utf-8"
     )
 print("CMS Docker acceptance passed; disposable database, account and volume removed.")

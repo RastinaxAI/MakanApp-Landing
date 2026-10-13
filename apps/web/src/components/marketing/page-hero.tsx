@@ -42,7 +42,7 @@ export function PageHero({
               <ChevronLeft size={14} aria-hidden="true" />
             </>
           )}
-          <span aria-current="page">{eyebrow}</span>
+          <span aria-current="page">{title}</span>
         </nav>
         <div className="max-w-3xl">
           <p className="section-kicker mb-4">{eyebrow}</p>

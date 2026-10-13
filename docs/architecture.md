@@ -159,3 +159,20 @@ article/video/blog/series چهار payload معتبر مستقل روی موتو
 جریان: رابط RHF/Zod → BFF با allowlist/body limit → FastAPI/Pydantic/Origin/rate → سرویس leads → PostgreSQL تراکنشی → پنل owner/sales. توکن و کلید تلاش عمومی از cookie حساب اپلیکیشن مستقل‌اند. رخدادهای عملیاتی بدون PII، audit تغییرات حساس، تاریخچه و یادداشت در دامنه لندینگ باقی‌اند. سرویس بیرونی برای موفقیت فرم لازم نیست و اعلان provider تنظیم‌نشده فعال نیست.
 
 تماس و دمو با یک جدول و schema جدا مدیریت می‌شوند؛ شناسه پیگیری عمومی تصادفی است و endpoint lookup ندارد. نسخه و زمان رضایت، TTL رسید، fingerprint HMAC، optimistic concurrency و purge مستقل قابل تست هستند. سیاست ۱۸۰ روز با تأیید کاربر در این مرحله تصویب شده است. متن CMS اولیه تنها با تطبیق نسخه دست‌نخورده به revision جدید منتقل می‌شود. شرایط Production، HTTPS، تفکیک trusted IP، زمان‌بندی purge و backup در مرحله ۱۰ پذیرش جدا دارند؛ analytics بازدید و conversion مرحله ۹.
+## الحاق مرحله۹ — SEO و Performance
+
+SEO نسخه مؤثر CMS را به metadata و manifest قطعه‌بندی‌شده متصل می‌کند. build به API روشن وابسته نیست. index فقط با flag انتشار و origin معتبر و snapshot indexable فعال است؛ مسیر داخلی، draft و محتوای کم‌محتوا حذف می‌شوند. نوع محتوا مسیر canonical را تعیین می‌کند و slug فارسی در هر دو شکل Unicode/encoded هم‌ارز است.
+
+آنالیتیکس first-party مستقل از CRM و حساب محصول است: رضایت اختیاری → BFF با allowlist و انتقال DNT/GPC → Origin/rate/schema → PostgreSQL → پنل owner/sales. RUM با web-vitals پس از رضایت بارگیری می‌شود. [قرارداد مرحله۹](step-9-contract.md) و [راهنمای عملیات](seo-performance-runbook.md) مرجع جاری‌اند. توضیحات مراحل قبلی تاریخچه‌اند؛ ماژول‌های ۷ و ۸ اکنون فعال هستند.
+
+```mermaid
+flowchart LR
+  Web["Next.js SSR"] --> SEO["API SEO و نسخه عمومی"]
+  SEO --> DB["PostgreSQL"]
+  Web --> XML["sitemap قطعه‌بندی‌شده"]
+  Visitor["بازدیدکننده"] --> Consent["رضایت اختیاری"]
+  Consent --> BFF["BFF؛ بدون PII"]
+  BFF --> Guard["Origin و rate و schema"]
+  Guard --> DB
+  DB --> Panel["آمار owner / sales"]
+```
