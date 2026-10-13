@@ -1,0 +1,27 @@
+{
+  "browser_tests": {
+    "startTime": "2026-10-13T20:05:40.130Z",
+    "duration": 177140.415,
+    "expected": 15,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "axe_checks": 27,
+  "axe_violations": 0,
+  "widths": [
+    390,
+    768,
+    1440
+  ],
+  "engines": [
+    "chromium (Edge)",
+    "firefox",
+    "webkit"
+  ],
+  "host_production_build": true,
+  "eslint": true,
+  "typescript": true,
+  "logo_original_sha256": "5cdb5a25dfe6134de15da90e56a0440efa59283840d5eebfb539538e9b0d1b0b",
+  "production_deployment": false
+}

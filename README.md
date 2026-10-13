@@ -1,153 +1,146 @@
-# وب‌سایت ماکان
+# ماکان — راهنمای ساده اجرا
 
-وضعیت فعلی: STEP 5، ورود امن مدیر، MFA اختیاری و پنل پایه متصل به FastAPI/PostgreSQL واقعی، کنار صفحات عمومی مرحله۳. CMS، CRM و فرم ذخیره‌سازی هنوز ساخته نشده‌اند. وب برای بررسی پیش از انتشار با noindex و robots مسدود است؛ انتشار Production محسوب نمی‌شود.
+این پروژه شامل سایت معرفی ماکان و پنل مدیریت آن است. مقاله، ویدیوهای آپارات، محتوای سایت و درخواست‌های دمو از پنل قابل مدیریت‌اند. فرم‌ها به دیتابیس واقعی وصل هستند.
 
-## اجرا
+## ۱. قبل از شروع
 
-Node 24 LTS پیشنهاد می‌شود (`.nvmrc`). وابستگی‌ها در package-lock قفل شده‌اند. از ریشه پروژه:
+روی ویندوز این دو برنامه را نصب کنید:
+
+- **Docker Desktop**: آن را باز کنید و صبر کنید تا آماده شود؛ حالت Linux containers فعال باشد.
+- **PowerShell 7**: دستورهای زیر را در این برنامه اجرا کنید.
+
+برای روش Docker، نصب جداگانه Node، Python یا PostgreSQL لازم نیست. اولین ساخت به اینترنت نیاز دارد و ممکن است چند دقیقه طول بکشد.
+
+## ۲. اجرای سایت روی کامپیوتر
+
+PowerShell را در پوشه همین پروژه باز کنید. اگر این پروژه در مسیر فعلی شما قرار دارد:
+
+```powershell
+cd C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite
+```
+
+**بار اول** دستورهای زیر را به‌ترتیب اجرا کنید. هر دستور باید بدون خطا تمام شود تا دستور بعدی را اجرا کنید:
+
+```powershell
+# ساخت تنظیمات و رمزهای خصوصی؛ تنظیمات موجود حفظ می‌شوند
+pwsh -NoProfile -File .\scripts\setup-development.ps1
+
+# ساخت برنامه‌ها
+docker compose --profile tools --profile website build api migrate web
+
+# آماده‌کردن دیتابیس و اجرای تغییرات آن
+docker compose up -d --wait db
+docker compose --profile tools run --rm migrate
+
+# اجرای Backend
+docker compose up -d --wait api
+
+# واردکردن متن‌های اولیه سایت؛ ویرایش‌های مدیر بازنویسی نمی‌شوند
+docker compose exec -T api python -m app.commands.import_content
+docker compose exec -T api python -m app.commands.refresh_learning_intro
+docker compose exec -T api python -m app.commands.refresh_form_copy
+
+# به‌روزکردن آمار دیتابیس پس از ورود محتوا
+docker compose exec -T db psql -U postgres -d makan_landing -c ANALYZE
+
+# اجرای سایت
+docker compose --profile website up -d --wait web
+```
+
+حالا این آدرس‌ها را در مرورگر باز کنید:
+
+| بخش | آدرس |
+|---|---|
+| سایت | http://127.0.0.1:3100 |
+| ورود مدیر | http://127.0.0.1:3100/admin/login |
+| مستندات API برای توسعه‌دهنده | http://127.0.0.1:8000/api/v1/docs |
+
+مقاله و ویدیو باید از پنل منتشر شوند؛ محتوای آموزشی فرضی به سایت اضافه نمی‌شود. متن‌های حقوقی و اطلاعات تماس را هم قبل از انتشار عمومی بررسی و تکمیل کنید.
+
+## ۳. ساخت حساب مدیر
+
+حساب و رمز پیش‌فرض وجود ندارد. فقط بار اول، دستور زیر را اجرا کنید؛ ایمیل خود را وارد کنید:
+
+```powershell
+$managerEmail = Read-Host 'ایمیل مدیر را وارد کنید'
+docker compose exec -it api python -m app.commands.admin bootstrap --email $managerEmail
+```
+
+رمز را دو بار وارد کنید. باید حداقل **۱۵ کاراکتر** باشد. هنگام تایپ رمز چیزی نمایش داده نمی‌شود؛ این طبیعی است.
+
+سپس در آدرس **/admin/login** وارد شوید. از پنل می‌توانید:
+
+- متن صفحه اصلی، امکانات، پرسش‌ها و تصاویر را تغییر دهید.
+- مقاله، ویدیو و مجموعه آموزشی بسازید و منتشر کنید.
+- درخواست‌های دمو و مشاوره را ببینید و پیگیری کنید.
+- اطلاعات عمومی، SEO و حساب مدیران را تنظیم کنید.
+- از بخش امنیت، ورود دومرحله‌ای اختیاری را فعال کنید.
+
+اگر قبلاً حساب مدیر ساخته‌اید، همان حساب را استفاده کنید؛ دستور بالا حساب موجود را تغییر نمی‌دهد.
+
+## ۴. اجراهای بعدی و توقف
+
+برای روشن‌کردن دوباره سایت:
+
+```powershell
+docker compose --profile website up -d --wait db api web
+```
+
+برای توقف:
+
+```powershell
+docker compose --profile website stop web api db
+```
+
+داده‌ها پس از توقف باقی می‌مانند. از دستور **down --volumes** برای این محیط استفاده نکنید؛ داده‌های ذخیره‌شده را حذف می‌کند.
+
+اگر کد پروژه تغییر کرد، دوباره `build` را اجرا کنید، سپس `migrate` و `up` را طبق بخش۲ انجام دهید.
+
+## ۵. اگر سایت باز نشد
+
+```powershell
+# وضعیت سرویس‌ها؛ باید running و در صورت وجود healthcheck، healthy باشند
+docker compose --profile website ps
+
+# دیدن خطاهای اخیر
+docker compose --profile website logs --tail 60 web api
+```
+
+- خطای اتصال Docker: Docker Desktop را باز کنید.
+- خطای متغیر محیطی: دستور setup-development.ps1 را از بخش۲ اجرا کنید.
+- خطای پورت۳۱۰۰: برنامه‌ای که از این پورت استفاده می‌کند ببندید؛ این سایت روی۳۱۰۰ اجرا می‌شود، نه۳۰۰۰.
+- خطای ورود: حساب مدیر را طبق بخش۳ بسازید یا با ایمیل و رمز قبلی وارد شوید.
+- صفحه بدون محتوا: دستور import_content بخش۲ را بررسی کنید.
+
+رمزها در فایل خصوصی `.env` هستند. آن را منتشر نکنید یا داخل Git قرار ندهید.
+
+## رنگ و لوگو
+
+لوگوی شما در `apps/web/public/brand/makan-logo.png` بدون تغییر ذخیره شده و در سایت و آیکون مرورگر استفاده می‌شود. رنگ اصلی لوگو **#156FEE** است؛ دکمه‌ها و نوشته‌ها با آبی خواناتر، سفید و زمینه آبی بسیار روشن هماهنگ شده‌اند. رنگ‌ها در `apps/web/src/styles/tokens.css` تنظیم می‌شوند. لوگوی ثبت‌شده در تنظیمات پنل همچنان قابل جایگزینی است.
+
+## انتشار روی دامنه واقعی
+
+دستورهای بالا برای اجرای محلی هستند. برای دامنه واقعی، راهنمای جداگانه [استقرار روی سرور](docs/production-runbook.md) و [بکاپ و بازیابی](docs/backup-restore-runbook.md) را بخوانید. دامنه/سرور هنوز تعیین نشده‌اند؛ انتشار عمومی انجام نشده است. وضعیت تست‌ها و موارد باقی‌مانده در [گزارش مرحله۱۰](docs/step-10-report.md) ثبت شده است.
+
+## برای توسعه‌دهنده
+
+Node24، Python3.13 و نسخه‌های وابستگی در فایل‌های پروژه ثبت شده‌اند. راهنمای [Backend](docs/backend-runbook.md)، [CMS](docs/cms-runbook.md)، [مرکز آموزش](docs/learning-runbook.md) و [طراحی](docs/ui-design-system.md) جزئیات را دارند.
+
+برای اجرای وب خارج Docker، ابتدا Backend بخش۲ را روشن کنید؛ سپس با Node24:
 
 ```powershell
 npm ci
 npm run dev
 ```
 
-صفحه اصلی: `http://127.0.0.1:3000/`؛ امکانات: `/features`؛ راهکارهای نقش‌ها: `/solutions`؛ راهنمای زنده کامپوننت‌ها: `/design-system`.
+این روش سایت را روی http://127.0.0.1:3000 اجرا می‌کند. مسیر پیش‌فرض API داخلی http://127.0.0.1:8000 است.
 
-مسیرهای عمومی: امکانات پیام‌رسان/مدرسه/گزارش/AI، راهکارهای مدارس/معلم/والد/دانش‌آموز، درباره، FAQ، دمو، تماس، حریم خصوصی و شرایط استفاده. `/blog` و `/learn` هنوز محتوای منتشرشده ندارند. فرم‌ها غیرفعال‌اند و داده‌ای ثبت نمی‌کنند؛ متن حقوقی پیش‌نویس است.
+اگر پورت۳۰۰۰ اشغال بود، از `npm run dev -- --port 3200` استفاده کنید.
 
-پیام‌رسان، مدرسه و گزارش‌ها با تأیید مستقیم کاربر «آماده» معرفی می‌شوند. AI در نقشه راه می‌ماند. اطلاعات تماس و لینک ورود رسمی هنوز ارائه نشده‌اند و جعل نمی‌شوند. برای تنظیم مقدارهای عمومی معتبر در توسعه، `.env.example` را به `apps/web/.env.local` کپی و مقدارهای تأییدشده را وارد کنید؛ سپس dev یا build را دوباره اجرا کنید. لینک ورود فقط HTTPS بدون credential پذیرفته می‌شود؛ فایل env خصوصی در Git قرار نمی‌گیرد.
-
-برای اجرای خروجی تولید:
-
-```powershell
-npm run build
-npm start
-```
-
-start از server مستقل تولیدشده Next و فایل‌های static/public محلی استفاده می‌کند. به‌صورت پیش‌فرض فقط روی loopback اجرا می‌شود. پورت دلخواه: `npm start -- --port 3200` یا `npm run dev -- --port 3200`. Docker و Reverse Proxy تولید در STEP 10 تکمیل خواهند شد؛ Compose توسعه Backend در STEP4 ساخته و آزموده شده است.
-
-## Backend مستقل
-
-راهنمای کامل نصب Python/uv، migration، مجوزها و تست در [راهنمای Backend](docs/backend-runbook.md). از ریشه با Docker Desktop فعال:
-
-```powershell
-./scripts/setup-development.ps1
-docker compose build api migrate
-docker compose up -d --wait db
-docker compose run --rm migrate
-docker compose up -d --wait api
-```
-
-API: `http://127.0.0.1:8000/api/v1/docs`؛ سلامت: `/api/v1/health/live` و `/api/v1/health/ready`. PostgreSQL توسعه پورت میزبان ندارد؛ schema فقط با Alembic ساخته می‌شود. داده در volume حفظ می‌شود و توقف با `docker compose down` داده را حذف نمی‌کند. `.env` و `.env.test` خصوصی را در Git قرار ندهید.
-
-Python3.13.16، uv0.13.0 و وابستگی‌های دقیق در `apps/api/pyproject.toml` / `uv.lock` ثبت‌اند. پس از `uv sync --frozen` در apps/api، تست واقعی از ریشه:
-
-```powershell
-docker compose --env-file .env.test -f compose.test.yaml up -d --wait
-./scripts/test-backend.ps1
-docker compose --env-file .env.test -f compose.test.yaml down
-```
-
-DB تست مستقل است؛ تست‌ها SQLite یا API ساختگی ندارند. جزئیات پذیرش مرحله۴ در [گزارش STEP4](docs/step-4-report.md) ثبت می‌شود. ورود و پنل مرحله۵ طبق [راهنمای مدیر](docs/admin-runbook.md) اجرا می‌شوند؛ حساب پیش‌فرض وجود ندارد. CMS مرحله۶ طبق [راهنمای محتوا](docs/cms-runbook.md) اجرا می‌شود؛ فرم‌های واقعی در مرحله۸ هستند.
-
-پس از migration، اولین مالک واقعی را با ایمیل خود بسازید؛ رمز بدون نمایش پرسیده می‌شود:
-
-```powershell
-docker compose exec -it api python -m app.commands.admin bootstrap --email YOUR_REAL_EMAIL
-```
-
-مسیر ورود `/admin/login`، امنیت/MFA در `/admin/security` و حساب‌ها/audit مخصوص مالک هستند. کلیدها، recovery و محدودیت‌ها در راهنمای مدیر آمده‌اند.
-
-## بررسی کیفیت
+بررسی کد:
 
 ```powershell
 npm run lint
-npm run typecheck
 npm run build
-npx playwright install chromium firefox webkit
-./scripts/test-web-admin.ps1
+npm run typecheck
 ```
-
-Playwright سرور تولید مجزا روی پورت 3100 راه می‌اندازد؛ قبل آن build لازم است. ۲۷ سناریوی عمومی، ۹ سناریوی امنیت پنل و ۹ سناریوی CMS برای هر موتور اجرا می‌شوند: RTL، فونت محلی، عرض‌های 320/360/390/479/480/768/1024/1440، منو و focus trap، skip link، tab/accordion/checkbox، reduced motion، بزرگ‌کردن متن، axe، 404، همه مسیرهای سند، یکتایی metadata، لینک‌ها، ترتیب Home، وضعیت AI و فرم غیرفعال. ورود/خروج، RBAC، حساب واقعی، MFA/بازیابی، تغییر رمز و CSP نیز بررسی می‌شوند. DB تست فعال لازم است؛ اسکریپت پنل API واقعی روی۸۱۰۰ و DB اختصاصی موقت می‌سازد و cleanup محدود به همان اجراست. خروجی‌های QA این مرحله در `docs/qa/step6` هستند؛ QA قبلی حفظ شده است.
-
-اگر دانلود Chromium از سرویس رسمی در دسترس نیست و Edge نصب شده، در PowerShell:
-
-```powershell
-$env:PLAYWRIGHT_CHROMIUM_CHANNEL='msedge'
-npx playwright install firefox webkit
-./scripts/test-web-admin.ps1
-```
-
-این متغیر فقط پروژه chromium را روی Edge اجرا می‌کند؛ Firefox و WebKit همچنان نسخه‌های مدیریت‌شده Playwright هستند. حذف متغیر برای بازگشت به Chromium bundled: `Remove-Item Env:PLAYWRIGHT_CHROMIUM_CHANNEL`. نسخه مرورگر و محدودیت دانلود باید در گزارش تست ثبت شود.
-
-## ساختار و تغییر طراحی
-
-- `apps/web/src/styles/tokens.css`: رنگ‌ها، typography scale، فاصله، radius، shadow، breakpoints و motion.
-- `apps/web/src/styles/globals.css`: RTL shell، container، grid و قواعد focus/reduced motion.
-- `apps/web/src/components/ui`: هشت primitive از registry رسمی shadcn و دو جزء اختصاصی status/motion.
-- `apps/web/src/components/layout`: Header/Footer/Brand/Container و providers.
-- `apps/web/src/features/design-system`: نمونه تعامل‌ها؛ بدون ثبت داده یا API ساختگی.
-- `apps/web/src/features/marketing`: کارت‌های مخاطبان/امکانات، FAQ و تب تجربه محصول متصل به CMS؛ copy اولیه در manifest API حفظ شده است.
-- `apps/web/src/components/marketing`: hero، CTA، جایگاه تصویر، کانال تماس و صفحات عمومی مشترک.
-- `apps/web/public/fonts`: وزیرمتن متغیر محلی و OFL.
-- `apps/web/tests/e2e`: پذیرش UI روی سرور production.
-- `docs`: تصمیم‌ها، وضعیت نیازمندی‌ها، گزارش مرحله و screenshots واقعی QA.
-
-منبع shadcn: سبک new-york، CLI نسخه قفل‌شده 4.21.4. تغییرات پروژه روی primitives شامل ترجمه close، محل close در RTL، هدف لمسی، کنتراست hover/focus و utilities محلی‌اند. فرمان add بعدی را به‌صورت overwrite بدون بازبینی اجرا نکنید. Next.js در اجرای dev فایل نسخه‌محور `apps/web/AGENTS.md` را ایجاد می‌کند؛ راهنمای همان نسخه در node_modules/next/dist/docs قابل خواندن است.
-
-فونت: Vazirmatn / [منبع رسمی](https://github.com/rastikerdar/vazirmatn)، بسته Fontsource 5.3.0، مجوز SIL OFL 1.1 همراه فایل نگهداری شده است. هیچ تصویر ساختگی محصول، آمار مشتری یا لوگوی جدید به‌عنوان دارایی رسمی معرفی نشده است. رنگ‌ها پیشنهادی و برند متنی موقت‌اند.
-
-سند مبنا و برنامه کامل در [گزارش تحلیل](docs/analysis-report.md)، [سیستم طراحی](docs/ui-design-system.md) و [برنامه اجرا](docs/implementation-plan.md) قرار دارند. گزارش‌های قبلی در `docs/step-2-report.md` و `docs/step-3-report.md` حفظ شده‌اند. منشأ و محدودیت copy در `docs/content-review-step3.md` است. [گزارش STEP5](docs/step-5-report.md) شواهد و ریسک باز dev dependency را ثبت می‌کند؛ audit وابستگی‌های runtime وب صفر finding دارد، اما ابزارهای توسعه به‌علت braces دارای ۹ هشدار high از یک advisory هستند. انتشار Production تأیید نشده است. STEP6 با درخواست کاربر اجرا می‌شود؛ STEP7 به تأیید بعدی کاربر وابسته است. Push فقط با مجوز صریح.
-
-## CMS فعال مرحله۶
-
-صفحات عمومی از API منتشرشده PostgreSQL خوانده می‌شوند؛ بعد migration فرمان `docker compose exec -T api python -m app.commands.import_content` را اجرا کنید. محتوا از سورس تألیف‌شده قبلی وارد می‌شود و import تکراری ویرایش مدیر را تغییر نمی‌دهد. پس از ساخت مالک واقعی، `/admin/content`، `/admin/media`، `/admin/faq-categories` و `/admin/settings` فعال‌اند. تنظیمات مخصوص مالک است؛ محتوا برای مالک/ویرایشگر. [راهنمای CMS](docs/cms-runbook.md) و [تصمیم‌های معماری](docs/step-6-decisions.md) جزئیات snapshot، انتشار، تصویر خصوصی و گیت‌های باقی‌مانده را توضیح می‌دهند. API نسخه0.6.0 است؛ volume دیتابیس و رسانه مستقل‌اند. وب در نبود Backend خطای قابل‌فهم نشان می‌دهد و نسخه hardcode را جایگزین CMS نمی‌کند.
-
-## مرکز آموزش و وبلاگ مرحله۷
-
-API به0.7.0 و schema به0005_learning رسید. پس از migration، /admin/learn و /admin/learn/taxonomy برای مالک/ویرایشگر فعال‌اند. article/video/blog/series انتشار نسخه‌ای واقعی دارند؛ مسیرهای /learn و /blog از PostgreSQL خوانده می‌شوند. ویدیو فقط با مشخصات دستی تاییدشده و پلیر رسمی آپارات پخش می‌شود؛ هیچ ویدیوی فرضی یا حساب آموزشی seed نمی‌شود. [راهنمای آموزش](docs/learning-runbook.md)، [تصمیم‌ها](docs/step-7-decisions.md) و [گزارش مرحله](docs/step-7-report.md) مرجعند. برای intro قدیمی کاملاً دست‌نخورده، فرمان python -m app.commands.refresh_learning_intro نسخه تازه بدون حذف تاریخچه می‌سازد؛ ویرایش مدیر را تغییر نمی‌دهد. مرحله۸ به تایید بعدی کاربر وابسته است. Production و Push تایید نشده‌اند.
-# فرم‌ها و CRM مرحله۸
-
-API نسخه0.8.0 و schema `0006_leads`؛ فرم‌های `/demo` و `/contact` پس از رضایت در PostgreSQL ثبت می‌شوند. `/admin/leads` برای owner/sales شامل جست‌وجو، فیلتر، مسئول، وضعیت، نتیجه قرارداد، یادداشت و تاریخچه است. editor به اطلاعات فرم دسترسی ندارد. اطلاعات شخصی ۱۸۰ روز پس از آخرین پیگیری حذف می‌شوند؛ زمان‌بندی روزانه purge و سیاست backup پیش از Production در مرحله۱۰ لازم‌اند. ایمیل/SMS و وعده زمان پاسخ فعال نیستند. [راهنمای CRM](docs/crm-runbook.md) مرجع ثبت، retry، خطا، حریم خصوصی و نگهداری است.
-
-```powershell
-docker compose --profile tools build api migrate
-docker compose --profile tools run --rm migrate
-docker compose up -d --no-build --wait api
-docker compose exec -T api python -m app.commands.refresh_form_copy
-docker compose exec -T api python -m app.commands.leads_cleanup --batch-size 1000
-pwsh -NoProfile -File scripts/test-backend.ps1 -Phase step8
-pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step8Acceptance
-apps/api/.venv/Scripts/python.exe scripts/test-leads-docker.py
-```
-
-آزمون‌ها از Compose تست و دیتابیس/حساب مجزای موقت استفاده می‌کنند؛ داده آموزشی یا درخواست فرضی در دیتابیس اصلی seed نمی‌شود. قبل از آزمون مرورگر production build لازم است. روند مرحله۹ نیازمند تأیید بعدی کاربر است؛ انتشار Production و Push در این مرحله انجام نمی‌شوند.
-## الحاق مرحله۹ — SEO و Performance
-
-SEO و analytics طبق تأیید کاربر توسعه یافته‌اند. API داخلی0.9.0 و migration `0007_analytics`؛ index و جمع‌آوری عمومی پیش‌فرض false، بدون domain یا سیاست/رضایت مستقل روشن نمی‌شوند. دامنه هنوز اعلام نشده است. آموزش/آمار ساختگی در main seed نمی‌شود. [قرارداد](docs/step-9-contract.md)، [راهنمای عملیاتی](docs/seo-performance-runbook.md) و [تصمیم‌ها](docs/step-9-decisions.md).
-
-```powershell
-pwsh -NoProfile -File scripts/test-backend.ps1 -Phase step9
-pwsh -NoProfile -File scripts/test-web-admin.ps1 -SeoOnly
-pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step9Acceptance -BrowserProject chromium
-pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step9Acceptance -BrowserProject firefox
-pwsh -NoProfile -File scripts/test-web-admin.ps1 -Step9Acceptance -BrowserProject webkit
-pwsh -NoProfile -File scripts/test-web-admin.ps1 -LighthouseOnly
-apps/api/.venv/Scripts/python.exe scripts/test-leads-docker.py --phase step9
-```
-
-مرورگرها و test PostgreSQL مستقل لازم‌اند؛ Node24 LTS و build تولید پیش‌نیازند. نتایج آزمون و محدودیت‌های انتشار در گزارش مرحله۹ ثبت می‌شوند. STEP10 و Push تا مجوز تازه کاربر آغاز نمی‌شوند.
-# مرحله۱۰ — اجرای Docker و عملیات
-
-پشته مستقل تولید و ابزارهای واقعی backup/restore ساخته و در محیط مستقل Docker/HTTPS آزموده شده‌اند. [گزارش و محدودیت‌های پذیرش](docs/step-10-report.md)، [استقرار](docs/production-runbook.md)، [backup/restore](docs/backup-restore-runbook.md)، [امنیت](docs/security-runbook.md) و [قرارداد مرحله۱۰](docs/step-10-contract.md) را پیش از انتشار بخوانید. دامنه/سرور هنوز اعلام نشده و انتشار عمومی انجام نشده است؛ Push مجاز نیست.
-
-```powershell
-apps/api/.venv/Scripts/python.exe scripts/production.py --env-file .preview/local-production.env init --local-test
-apps/api/.venv/Scripts/python.exe scripts/production.py --env-file .preview/local-production.env build
-apps/api/.venv/Scripts/python.exe scripts/test-production.py --env-file .preview/local-production.env --keep
-apps/api/.venv/Scripts/python.exe scripts/test-production-browser.py --env-file .preview/local-production.env
-pwsh -NoProfile -File scripts/test-backend.ps1 -Phase step10
-docker compose --profile website up -d --build --wait web
-```
-
-آخرین دستور وب Docker توسعه را روی لوپ‌بک۳۱۰۰ اجرا می‌کند؛ قبل از آزمون‌های E2E آن سرویس را متوقف کنید. نمونه Linux، ساخت حساب واقعی مدیر با prompt امن و چرخه انتشار در runbook آمده است. هیچ credential ثابت یا seed آموزشی آزمون به محیط واقعی وارد نمی‌شود.

@@ -18,7 +18,7 @@ export function ContentGrid({
       {items.map((item, i) => (
         <article
           key={i}
-          className="min-w-0 rounded-2xl border border-border bg-card p-6 tablet:p-7"
+          className="brand-card min-w-0 rounded-2xl border border-border bg-card p-6 tablet:p-7"
         >
           {numbered && (
             <span className="mb-5 inline-flex size-10 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary-hover">

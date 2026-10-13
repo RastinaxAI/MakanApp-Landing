@@ -43,7 +43,7 @@ export function InteractionSpecimens() {
         <Accordion type="single" collapsible>
           <AccordionItem value="keyboard"><AccordionTrigger className="min-h-14 text-start">آیا می‌توان بدون ماوس از صفحه استفاده کرد؟</AccordionTrigger><AccordionContent className="text-muted-foreground">منو، تب‌ها، پرسش‌ها و فیلدها با صفحه‌کلید قابل استفاده‌اند. وضعیت تمرکز با خط دور کنترل مشخص می‌شود.</AccordionContent></AccordionItem>
           <AccordionItem value="motion"><AccordionTrigger className="min-h-14 text-start">اگر کاهش حرکت را در دستگاه فعال کنم چه می‌شود؟</AccordionTrigger><AccordionContent className="text-muted-foreground">انیمیشن‌های غیرضروری و پیمایش نرم حذف می‌شوند. محتوا و کارکرد اصلی همچنان در دسترس می‌مانند.</AccordionContent></AccordionItem>
-          <AccordionItem value="brand"><AccordionTrigger className="min-h-14 text-start">آیا این رنگ‌ها و نشان، هویت نهایی ماکان‌اند؟</AccordionTrigger><AccordionContent className="text-muted-foreground">خیر. پالت پیشنهادی و نشان متنی موقت‌اند؛ دارایی‌های رسمی بعد از تأیید جایگزین می‌شوند.</AccordionContent></AccordionItem>
+          <AccordionItem value="brand"><AccordionTrigger className="min-h-14 text-start">رنگ‌ها و نشان ماکان از کجا آمده‌اند؟</AccordionTrigger><AccordionContent className="text-muted-foreground">لوگوی ارائه‌شده مالک محصول مبنای نشان و رنگ آبی سایت است. برای متن، دکمه و حالت تمرکز از آبی تیره‌تر استفاده می‌شود تا خوانایی حفظ شود. تصویر لوگو بدون تغییر نگهداری شده است.</AccordionContent></AccordionItem>
         </Accordion>
       </TabsContent>
     </Tabs>

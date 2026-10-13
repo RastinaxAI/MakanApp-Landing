@@ -21,7 +21,7 @@ export function SiteHeader({ appUrl, brandName, logo }: { appUrl?: string; brand
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-[var(--z-sticky)] border-b border-border bg-card/95 backdrop-blur-md">
+    <header className="site-header sticky top-0 z-[var(--z-sticky)] border-b border-border bg-card/95 backdrop-blur-md">
       <div className="site-container flex min-h-22 items-center justify-between gap-4">
         <Brand name={brandName} logo={logo}/>
         <nav

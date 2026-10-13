@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "home_status": 200,
+  "ready_status": 200,
+  "logo_sha256": "5cdb5a25dfe6134de15da90e56a0440efa59283840d5eebfb539538e9b0d1b0b",
+  "favicon_redirect": 308,
+  "local_site": "http://127.0.0.1:3100",
+  "docker": true
+}

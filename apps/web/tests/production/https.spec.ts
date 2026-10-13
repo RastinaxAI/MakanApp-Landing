@@ -28,7 +28,7 @@ test(`production TLS ${path} hydrates under nonce CSP and remains responsive`, a
       expect(() => JSON.parse(content || "")).not.toThrow();
     }
     if (path.includes("/articles/")) {
-      const cover = page.locator("img").first();
+      const cover = page.getByRole("main").locator("img").first();
       await expect.poll(() => cover.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
       expect(await cover.getAttribute("src")).toContain("/_next/image");
     }

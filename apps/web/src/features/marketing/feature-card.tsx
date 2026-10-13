@@ -6,7 +6,7 @@ import type { Feature } from "@/features/marketing/content";
 
 export function FeatureCard({ feature }: { feature: Feature }) {
   return (
-    <article className="flex min-w-0 flex-col rounded-2xl border border-border bg-card p-6 shadow-soft">
+    <article className="brand-card flex min-w-0 flex-col rounded-2xl border border-border bg-card p-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <span className="flex size-12 items-center justify-center rounded-xl bg-secondary text-primary-hover">
           <FeatureIcon slug={feature.slug} />

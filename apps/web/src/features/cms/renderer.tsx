@@ -63,13 +63,13 @@ function SectionContent({
   if (section.type === "hero")
     return (
       <section
-        className="border-b border-border bg-card"
+        className="brand-hero border-b border-border"
         data-section="hero"
         aria-labelledby="hero-title"
       >
         <Container className="hero-grid">
           <div>
-            <p className="mb-6 inline-flex rounded-full border border-border bg-secondary px-4 py-1.5 text-sm text-primary-hover">
+            <p className="brand-kicker mb-6 inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 text-sm text-primary-hover shadow-soft">
               {section.kicker}
             </p>
             <h1 id="hero-title" className="hero-heading">
@@ -230,7 +230,7 @@ function SectionContent({
               {section.items.map((item, i) => (
                 <article
                   key={i}
-                  className="flex min-w-0 flex-col rounded-2xl border border-border bg-background p-6"
+                  className="brand-card flex min-w-0 flex-col rounded-2xl border border-border bg-background p-6"
                 >
                   <FeatureIcon
                     slug={item.href?.split("/").pop() || "school"}

@@ -21,7 +21,7 @@ export function PageHero({
   ctaHref?: string;
 }) {
   return (
-    <section className="border-b border-border bg-card py-10 tablet:py-16 desktop:py-20">
+    <section className="brand-hero border-b border-border py-10 tablet:py-16 desktop:py-20">
       <Container>
         <nav
           aria-label="مسیر صفحه"

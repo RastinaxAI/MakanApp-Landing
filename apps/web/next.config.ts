@@ -5,7 +5,7 @@ const config: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
-    localPatterns: [{ pathname: "/api/v1/media/**", search: "" }],
+    localPatterns: [{ pathname: "/api/v1/media/**", search: "" }, { pathname: "/brand/**", search: "" }],
   },
   reactStrictMode: true,
   // Resolve CMS metadata before sending headers, so missing/mismatched content stays a real 404.

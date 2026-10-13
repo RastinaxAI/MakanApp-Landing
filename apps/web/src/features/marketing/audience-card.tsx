@@ -20,7 +20,7 @@ export function AudienceCard({ audience }: { audience: Audience }) {
     ? icons[audience.slug as AudienceSlug]
     : Users;
   return (
-    <article className="flex min-w-0 flex-col rounded-2xl border border-border bg-background p-6">
+    <article className="brand-card flex min-w-0 flex-col rounded-2xl border border-border bg-card p-6">
       <Icon
         size={28}
         className="mb-6 text-primary-hover"
