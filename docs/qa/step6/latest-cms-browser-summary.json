@@ -1,0 +1,583 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T01:10:24.421Z",
+    "duration": 321444.87,
+    "expected": 27,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "title": "CMS home, feature and audience editors publish their own data and preserve prior versions",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 17210
+    },
+    {
+      "title": "CMS UI creates, previews privately, publishes and restores an immutable revision",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 15242
+    },
+    {
+      "title": "CMS schedule, validation, rich text sanitization and stale writes use real API",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 8328
+    },
+    {
+      "title": "CMS media upload stays private until publication and protects referenced files",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 8852
+    },
+    {
+      "title": "CMS categorized FAQ editing reaches public SSR and owner settings enforce roles",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 5974
+    },
+    {
+      "title": "CMS owner saves official contact settings and public rendering reads the database",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 3395
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 360px",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 9647
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 768px",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 8490
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 1440px",
+      "project": "chromium",
+      "status": "passed",
+      "duration_ms": 9424
+    },
+    {
+      "title": "CMS home, feature and audience editors publish their own data and preserve prior versions",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 27616
+    },
+    {
+      "title": "CMS UI creates, previews privately, publishes and restores an immutable revision",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 9937
+    },
+    {
+      "title": "CMS schedule, validation, rich text sanitization and stale writes use real API",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 6860
+    },
+    {
+      "title": "CMS media upload stays private until publication and protects referenced files",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 8661
+    },
+    {
+      "title": "CMS categorized FAQ editing reaches public SSR and owner settings enforce roles",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 5374
+    },
+    {
+      "title": "CMS owner saves official contact settings and public rendering reads the database",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 4399
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 360px",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 13976
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 768px",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 11620
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 1440px",
+      "project": "firefox",
+      "status": "passed",
+      "duration_ms": 13760
+    },
+    {
+      "title": "CMS home, feature and audience editors publish their own data and preserve prior versions",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 22984
+    },
+    {
+      "title": "CMS UI creates, previews privately, publishes and restores an immutable revision",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 12249
+    },
+    {
+      "title": "CMS schedule, validation, rich text sanitization and stale writes use real API",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 7387
+    },
+    {
+      "title": "CMS media upload stays private until publication and protects referenced files",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 7343
+    },
+    {
+      "title": "CMS categorized FAQ editing reaches public SSR and owner settings enforce roles",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 6020
+    },
+    {
+      "title": "CMS owner saves official contact settings and public rendering reads the database",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 3332
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 360px",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 11572
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 768px",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 13702
+    },
+    {
+      "title": "CMS responsive forms and private preview pass axe at 1440px",
+      "project": "webkit",
+      "status": "passed",
+      "duration_ms": 17813
+    }
+  ],
+  "audits": [
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/content/04863c93-79ca-4cbd-b22c-02de8cce096b",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/preview/04863c93-79ca-4cbd-b22c-02de8cce096b",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/content/719817ee-adb2-4e5d-8a31-da7f0837becd",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/preview/719817ee-adb2-4e5d-8a31-da7f0837becd",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/content/72a9470d-f5ef-4a0e-945e-6cbda09d1ee9",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "chromium",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/preview/72a9470d-f5ef-4a0e-945e-6cbda09d1ee9",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/content/c91ef562-67d8-4efc-9f48-39e15c52ad93",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/preview/c91ef562-67d8-4efc-9f48-39e15c52ad93",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/content/3c848247-1392-4739-92f5-ade8dc151599",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/preview/3c848247-1392-4739-92f5-ade8dc151599",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/content/59496513-ea5c-4489-9205-6d6fc15ae2fc",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "firefox",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/preview/59496513-ea5c-4489-9205-6d6fc15ae2fc",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/content/c2a8bd30-1638-44a2-be3d-0ec0317a8168",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 360px",
+      "name": "axe-cms-/admin/preview/c2a8bd30-1638-44a2-be3d-0ec0317a8168",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/content/0b54c7b6-ba1f-4d0c-9221-eee50093b841",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 768px",
+      "name": "axe-cms-/admin/preview/0b54c7b6-ba1f-4d0c-9221-eee50093b841",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/content",
+      "violations": 0,
+      "passes": 26,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/content/1c510e69-9973-484f-99b4-1b3887b3e208",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/media",
+      "violations": 0,
+      "passes": 25,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/settings",
+      "violations": 0,
+      "passes": 24,
+      "incomplete": 0,
+      "version": "4.13.0"
+    },
+    {
+      "project": "webkit",
+      "test": "CMS responsive forms and private preview pass axe at 1440px",
+      "name": "axe-cms-/admin/preview/1c510e69-9973-484f-99b4-1b3887b3e208",
+      "violations": 0,
+      "passes": 21,
+      "incomplete": 0,
+      "version": "4.13.0"
+    }
+  ],
+  "audit_count": 45,
+  "violation_count": 0
+}

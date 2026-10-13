@@ -199,3 +199,36 @@ PaginationQuery مشترک با page>=1/page_size<=100 و unknown-field rejectio
 login password۱–۱۲۸ برای سازگاری خطای عمومی؛ رمز جدید۱۵–۱۲۸ است. email normalized trim/lower و حداکثر۲۵۴ است. MFA login اختیاری در schema ولی برای مدیر enabled الزامی است؛ code field می‌تواند TOTP یا recovery باشد. تمام requestها extra fields را رد می‌کنند. body تغییر حداکثر۱۶KiB است. تغییر role/active خود نشست را می‌بندد؛ ورود دوباره لازم است. role reset endpoint ساخته نشده؛ operator CLI recovery مرجع است. account q/filter تا نیاز CMS/CRM اضافه نشده و جعل نمی‌شود.
 
 cookie توسعه non-Secure فقط loopback و cookie تولید `__Host-*` با Secure است؛ HTTPX حالت production را با HTTPS بررسی می‌کند، اما TLS واقعی هنوز مرحله۱۰ است. rate limits و کلیدها در راهنمای مدیر ثبت‌اند. درخواست مستقیم API و bridge توسعه قرارداد یکسان JSON/trace/Retry-After دارند؛ headerهای غیرمجاز forward نمی‌شوند.
+
+## قرارداد فعال مرحله۶ — نسخه 0.6.0
+
+قرارداد auth مرحله۵ حفظ شده است. جدول زیر زیر پیشوند `/api/v1` است؛ OpenAPI واقعی و schemaها در QA همین مرحله ثبت می‌شوند. owner/editor محتوا و رسانه را مدیریت می‌کنند؛ sales403 و مهمان401. settings مدیریتی فقط owner است. همه mutations نیازمند Origin/CSRF معتبر هستند؛ content/settings به If-Match نسخه جاری نیاز دارند (نبود428، stale409).
+
+| روش/مسیر | ورودی/خروجی و اثر |
+|---|---|
+| GET `/pages/{slug}` | PublicContent؛ فقط snapshot مؤثر home/page؛ unpublished/archive/invisible404 |
+| GET `/features`, `/audiences`, `/faqs` | PaginatedResponse[PublicContent]؛ page/page_size<=100، q، category_id مناسب FAQ؛ فقط عمومی |
+| GET `/features/{slug}`, `/audiences/{slug}`, `/faqs/{slug}` | PublicContent؛ evidence_reference مدیریتی حذف می‌شود |
+| GET `/site/settings` | GeneralSettings + SeoSettings + row_version؛ فقط allowlist عمومی |
+| GET `/faq-categories` | دسته‌های دارای FAQ مؤثر عمومی؛ navigation bounded |
+| GET `/admin/content` و aliases `/admin/pages`, `/admin/features`, `/admin/audiences`, `/admin/faqs` | PaginatedResponse[AdminContent]؛ kind، status، q و category_id؛ ترتیب sort_order/id |
+| POST `/admin/{alias}` | ContentInput discriminated payload →201 AdminContent؛ draft واقعی |
+| GET/PATCH `/admin/{alias}/{id}` | خواندن working snapshot / ویرایش immutable revision جدید با If-Match |
+| DELETE `/admin/{alias}/{id}` | archive+قطع publication/schedule؛ تاریخچه حذف نمی‌شود |
+| GET `/admin/{alias}/{id}/preview?revision_id=` | snapshot انتخابی فقط همین entity؛ احراز هویت و no-store؛ نامعتبر404 |
+| GET `/admin/{alias}/{id}/revisions` | تاریخچه صفحه‌بندی‌شده، created/published/actor، ترتیب revision_no نزولی |
+| POST `/admin/{alias}/{id}/publish` | RevisionAction revision_id؛ validation/readiness/alt، جایگزینی public pointer و لغو schedule |
+| POST `/admin/{alias}/{id}/schedule` | revision_id و publish_at با timezone؛ زمان گذشته/بدون offset422؛ UTC ذخیره می‌شود |
+| POST `/admin/{alias}/{id}/cancel-schedule`, `/unpublish` | If-Match؛ لغو برنامه / قطع هر دو publication pointers |
+| GET/POST `/admin/faq-categories` | PaginationQuery → PaginatedResponse[Category] / CategoryInput→201 Category |
+| PATCH/DELETE `/admin/faq-categories/{id}` | CategoryInput /204؛ category referenced در هر revision409 |
+| GET/POST `/admin/media` | pagination / multipart file+alt_text→201 MediaInfo؛ فایل واقعی private WebP |
+| PATCH/DELETE `/admin/media/{id}` | alt_text+make_public /204؛ FK reference مانع حذف409 |
+| GET `/admin/media/{id}/file` | binary WebP محافظت‌شده؛ no-store/nosniff، بدون optimizer عمومی |
+| GET `/media/{id}` | ImageRef عمومی با id/width/height/alt؛ filename/storage_key/actor ندارد |
+| GET `/media/{id}/file` | public WebP یا404؛ private scheduled قبل زمان مخفی |
+| GET/PATCH `/admin/settings` | SettingsOutput / SettingsInput general+seo، If-Match؛ فقط owner، extra/secret fields422 |
+
+alias یک endpoint واقعی ثبت‌شده برای هر resource است؛ route literal `{resource}` برای client لازم نیست. نوع محتوا discriminated home/page/feature/audience/faq، فیلدهای ناشناخته رد و type immutable است. slug پس از اولین publish/schedule ثابت می‌ماند؛ duplicate409. body JSON256KiB، تصویر۵MiB با سربار bounded؛ 413 حجم و415 نوع نامعتبر. تمام errors ErrorResponse و trace_id دارند و payload/credential در log نیست.
+
+AdminContent شامل revisionها/row_version و publication_state مشتق از ساعت سرور (draft/published/scheduled/archived) است؛ PublicContent از همان revision immutable انتخاب می‌شود و public media تنها ImageRef دارد. HTML صرفاً خروجی sanitized سرور است؛ src تصویر فقط مسیر UUID داخلی و FK موجود. SEO همان snapshot منتشر می‌شود. visibility=false و archive، public را حذف می‌کنند. API public داده آموزشی/حساب اپ اصلی ندارد. مقاله/ویدیو/lead endpoints مرحله۷/۸ همچنان فعال نیستند.

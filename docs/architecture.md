@@ -140,3 +140,13 @@ SSR پنل و bridge توسعه فقط cookieهای مجاز و headerهای Ori
 CSP هر پاسخ مدیریت nonce مستقل دارد؛ SSR مدیریت dynamic است، script بدون nonce در آزمون تزریق HTML اجرا نمی‌شود. پنل no-store/noindex است؛ token در storage مرورگر قرار ندارد. logout/تغییر رمز/MFA مسیر خصوصی را با full navigation پاک می‌کنند. cookie Secure در staging/production و HTTPS origin اجباری است؛ TLS واقعی هنوز تحویل مرحله۱۰ است.
 
 ثبت first owner و بازیابی lost-MFA فقط CLI کنسول مجاز، بدون رمز در argv است. AES-256-GCM با کلید مستقل و AAD شناسه حساب برای secret MFA؛ HMAC برای token/CSRF/recovery/rate subject. TOTP شش رقم، ۳۰ثانیه، replay guard و هشت کد بازیابی یک‌بارمصرف دارد. راهنمای policy و rotation در [admin-runbook](admin-runbook.md) است. dashboard شمارش واقعی DB دارد و ماژول‌های CMS/CRM را pending اعلام می‌کند؛ این مرحله هیچ CMS/lead ساختگی ندارد.
+
+## معماری اجراشده مرحله۶ — نسخه API 0.6.0
+
+صفحات عمومی از FastAPI/PostgreSQL خوانده می‌شوند؛ copy runtime ثابت حذف و متن تألیف‌شده قبلی به manifest idempotent منتقل شده است. public SSR با fetch no-store و React cache در محدوده درخواست، snapshot مؤثر را می‌گیرد؛ CMS خراب با copy جایگزین پنهان نمی‌شود. بهینه‌سازی cache/SEO مرحله۹ است. پنل همان auth/CSRF/RBAC مرحله۵ را مصرف می‌کند؛ BFF مقصد و route/header را allowlist و If-Match را منتقل می‌کند. JSON CMS حداکثر۲۵۶KiB، auth۱۶KiB و multipart تصویر۵MiB به‌علاوه سربار محدود است؛ فایل به‌صورت binary stream سرو می‌شود.
+
+موتور Page/PageRevision موجود برای home/page/feature/audience/faq با قراردادهای typed مستقل حفظ شد. slug داخلی kind:slug و endpointهای مستقل، همگرایی انتشار را از تفکیک دامنه جدا می‌کنند؛ جزئیات دلیل فنی در step-6-decisions است. ویرایش snapshot جدید، publication pointer ثابت، If-Match، row lock و advisory lock رزرو slug دارد. schedule روی snapshot انتخابی و ساعت UTC سرور اعمال می‌شود؛ worker برای درست‌بودن نمایش لازم نیست. audit و تغییر محتوا یک تراکنش دارند.
+
+Tiptap3.31.4 در پنل و nh3 0.3.7 در سرور استفاده می‌شوند؛ HTML فعال/پیوند اجرایی/تصویر خارجی حذف می‌شود. Pillow12.3.0 decode/re-encode WebP با محدودیت حجم/pixel/MIME و حذف EXIF انجام می‌دهد. تصویر ابتدا private و خارج web/public است؛ Volume media_data با UID10001، root read-only و مسیر UUID باقی می‌ماند. preview خصوصی optimizer عمومی را دور می‌زند. FK به snapshot، تصویر مصرف‌شده در تاریخچه را از حذف حفظ می‌کند. تنظیمات تنها دو کلید typed عمومی دارند و مخصوص owner هستند؛ secrets همچنان env هستند.
+
+وب/proxy Docker کامل، HTTPS، backup/restore عملی، CI و تأیید انتشار Production مرحله۱۰ باقی‌اند. آموزش/آپارات و CRM مستقل از این CMS معرفی در مراحل۷/۸ اجرا خواهند شد.

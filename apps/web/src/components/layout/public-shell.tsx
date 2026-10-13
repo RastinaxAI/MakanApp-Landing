@@ -1,19 +1,19 @@
 import type { ReactNode } from "react";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { siteConfig } from "@/lib/site-config";
+import type { CmsSettings, CmsImageRef } from "@/features/cms/types";
 
-export function PublicShell({ children }: { children: ReactNode }) {
+export function PublicShell({ children, settings, logo }: { children: ReactNode; settings?: CmsSettings; logo?: CmsImageRef }) {
   return (
     <>
       <a className="skip-link" href="#main-content" tabIndex={0}>
         رفتن به محتوای اصلی
       </a>
-      <SiteHeader appUrl={siteConfig.appUrl} />
+      <SiteHeader appUrl={settings?.general.app_url || undefined} brandName={settings?.general.brand_name} logo={logo}/>
       <main id="main-content" tabIndex={-1}>
         {children}
       </main>
-      <SiteFooter />
+      <SiteFooter settings={settings} logo={logo}/>
     </>
   );
 }

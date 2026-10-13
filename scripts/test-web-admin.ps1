@@ -1,6 +1,8 @@
 param(
     [ValidateSet('msedge','chrome','bundled')][string]$ChromiumChannel = 'msedge',
-    [switch]$SmokeOnly
+    [switch]$SmokeOnly,
+    [switch]$CmsOnly,
+    [switch]$FailFast
 )
 $ErrorActionPreference='Stop'
 $taskRoot=Split-Path -Parent $PSScriptRoot
@@ -33,6 +35,8 @@ try {
     try {
         $taskBrowserArguments=@('../../node_modules/@playwright/test/cli.js','test','--workers=1')
         if ($SmokeOnly) {$taskBrowserArguments+=@('--grep','guest.*CSRF')}
+        if ($CmsOnly) {$taskBrowserArguments+=@('cms.spec.ts')}
+        if ($FailFast) {$taskBrowserArguments+=@('--max-failures=1')}
         if ((& node --version) -match '^v24\.') {
             & node @taskBrowserArguments
         } else {

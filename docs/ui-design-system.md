@@ -122,3 +122,13 @@ Layout مستقل RTL با tokenها و primitiveهای موجود؛ desktop sid
 صفحات پنل: login، dashboard، security، accounts و audit. وضعیت خالی از DB واقعی است؛ عدد leads یا نمودار فرضی وجود ندارد. MFA به‌صورت کلید دستی محلی و کدهای بازیابی فقط در پاسخ همان بار نمایش دارد. نقش و دسترسی UI از Profile server است و کنترل نهایی API انجام می‌شود. بعد revoke عملیات خود، navigation کامل داده خصوصی را کنار می‌گذارد. تاریخ‌های client با timeZone تهران تولید می‌شوند تا UTC سرور و مرورگر hydration متفاوت نسازند.
 
 شواهد responsive/keyboard/axe و screenshots این مرحله در `qa/step5` ذخیره‌اند؛ QA قبلی حفظ شده است. این بررسی خودکار، گواهی کامل WCAG یا تست دستگاه واقعی نیست.
+
+## اتصال طراحی به CMS در مرحله۶
+
+توکن‌ها، RTL، فونت محلی و شِمای responsive مرحله۲ حفظ شده‌اند. Rich Editor Tiptap دارای toolbar هدف۴۴px، label، textbox چندخطی و SSR بدون hydration editor اولیه است. تغییر editable با emitUpdate=false انجام می‌شود تا فعال/غیرفعال‌شدن، محتوا را بی‌دلیل dirty نکند. تصاویر public با ابعاد واقعی و next/image، private preview بدون optimizer عمومی هستند. پاک‌سازی HTML در سرور انجام می‌شود و stylesheet .cms-rich-text متن، heading، list، quote و تصویر را کنترل می‌کند.
+
+پنل محتوا، فرم مستقل هر نوع، ویرایش کارت/سکشن، فهرست/filter/pagination، رسانه، دسته و settings دارد. حالت busy، خطای server، conflict و نتیجه ذخیره واقعی نمایش داده می‌شوند. preview از renderer همان snapshot و قالب عمومی استفاده می‌کند؛ ورود/مجوز و noindex دارد. صفحه عمومی content-service error با retry نشان می‌دهد و متن hardcode را به‌عنوان نسخه واقعی جا نمی‌زند. دارایی رسمی بدون تأیید owner لوگو نمی‌شود؛ placeholder تصویر/برند همچنان روشن است.
+
+معیار UI: سناریوی CMS واقعی در Chromium/Firefox/WebKit، عرض۳۶۰/۷۶۸/۱۴۴۰، بدون overflow، axe WCAG2/2.1/2.2 AA و تصاویر واقعی QA. audit خودکار اثبات کامل دسترس‌پذیری یا Lighthouse نیست؛ گزارش actual در step-6-report ثبت می‌شود.
+
+فرم‌های CMS در SSR با fieldset disabled رندر می‌شوند و useSyncExternalStore پس از hydration آن‌ها را فعال می‌کند؛ این guard از گم‌شدن input سریع قبل اتصال handler جلوگیری می‌کند. busy نیز همان guard را می‌بندد. تست FAQ علاوه بر نمایش عمومی، پاسخ ذخیره‌شده را پیش از publish بررسی می‌کند؛ audit فرم پس از فعال‌شدن کنترل‌ها و آماده‌شدن Rich Editor اجرا می‌شود.

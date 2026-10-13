@@ -15,14 +15,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { publicNavigation } from "@/lib/site-navigation";
+import type { CmsImageRef } from "@/features/cms/types";
 
-export function SiteHeader({ appUrl }: { appUrl?: string }) {
+export function SiteHeader({ appUrl, brandName, logo }: { appUrl?: string; brandName?: string; logo?: CmsImageRef }) {
   const [open, setOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-[var(--z-sticky)] border-b border-border bg-card/95 backdrop-blur-md">
       <div className="site-container flex min-h-22 items-center justify-between gap-4">
-        <Brand />
+        <Brand name={brandName} logo={logo}/>
         <nav
           aria-label="ناوبری اصلی"
           className="hidden items-center gap-1 desktop:flex"

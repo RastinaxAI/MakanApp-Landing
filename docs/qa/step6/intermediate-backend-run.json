@@ -1,0 +1,7 @@
+{
+  "tests": "67",
+  "failures": "1",
+  "passed": 66,
+  "reason": "login returned 503 while Docker image build and browser production build were concurrently active; later media 401 was a missing session, not upload acceptance",
+  "correction": "Assert fixture login success explicitly and rerun the entire suite without heavy concurrent builds; production timeouts remain unchanged"
+}

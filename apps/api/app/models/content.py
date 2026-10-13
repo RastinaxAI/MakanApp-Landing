@@ -63,4 +63,8 @@ class PageRevision(UUIDPrimaryKey, Timestamps, Base):
     indexable: Mapped[bool] = mapped_column(Boolean, server_default="true")
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_by: Mapped[UUID] = mapped_column(ForeignKey("admins.id", ondelete="RESTRICT"))
+    created_by: Mapped[UUID | None] = mapped_column(ForeignKey("admins.id", ondelete="RESTRICT"))
+    content_json: Mapped[dict] = mapped_column(JSONB, server_default="{}")
+    category_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("faq_categories.id", ondelete="RESTRICT")
+    )

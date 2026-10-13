@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Brand } from "@/components/layout/brand";
-import { siteConfig } from "@/lib/site-config";
+import type { CmsSettings, CmsImageRef } from "@/features/cms/types";
 
 const groups = [
   {
@@ -22,15 +22,15 @@ const groups = [
   },
 ] as const;
 
-export function SiteFooter() {
+export function SiteFooter({ settings, logo }: { settings?: CmsSettings; logo?: CmsImageRef }) {
+  const siteConfig = settings?.general;
   return (
     <footer className="border-t border-border bg-card">
       <div className="site-container grid gap-8 py-12 tablet:grid-cols-2 desktop:grid-cols-[1.4fr_1fr_1fr_1.25fr]">
         <div>
-          <Brand />
+          <Brand name={siteConfig?.brand_name} logo={logo}/>
           <p className="mt-5 max-w-xs text-sm text-muted-foreground">
-            ارتباط و مدیریت آموزش، در یک فضای یکپارچه؛ برای مدرسه، معلم، خانواده
-            و دانش‌آموز.
+            {siteConfig?.tagline || "ارتباط و مدیریت آموزش، در یک فضای یکپارچه؛ برای مدرسه، معلم، خانواده و دانش‌آموز."}
           </p>
         </div>
         {groups.map((group) => (
@@ -62,7 +62,7 @@ export function SiteFooter() {
           >
             درخواست دمو
           </Link>
-          {siteConfig.phone && (
+          {siteConfig?.phone && (
             <a
               href={`tel:${siteConfig.phone.replace(/[ ()-]/g, "")}`}
               dir="ltr"
@@ -71,7 +71,7 @@ export function SiteFooter() {
               {siteConfig.phone}
             </a>
           )}
-          {siteConfig.email && (
+          {siteConfig?.email && (
             <a
               href={`mailto:${siteConfig.email}`}
               dir="ltr"
@@ -84,7 +84,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border">
         <div className="site-container flex flex-wrap items-center justify-between gap-3 py-5 text-sm text-muted-foreground">
-          <span>ماکان · ارتباط و مدیریت آموزش</span>
+          <span>{siteConfig?.brand_name || "ماکان"} · {siteConfig?.tagline || "ارتباط و مدیریت آموزش"}</span>
           <nav aria-label="اطلاعات حقوقی" className="flex flex-wrap gap-5">
             <Link
               href="/privacy"

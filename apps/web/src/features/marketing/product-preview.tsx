@@ -4,11 +4,13 @@ import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProductVisual } from "@/components/marketing/product-visual";
-import { features } from "@/features/marketing/content";
+import type { Feature } from "@/features/marketing/content";
+import { MediaImage } from "@/features/cms/media-image";
 
-export function ProductPreview() {
+export function ProductPreview({ features, privatePreview = false }: { features: readonly Feature[]; privatePreview?: boolean }) {
+  if (!features.length) return null;
   return (
-    <Tabs defaultValue="messenger" dir="rtl">
+    <Tabs defaultValue={features.some(f => f.slug === "messenger") ? "messenger" : features[0]!.slug} dir="rtl">
       <TabsList
         aria-label="بخش‌های تجربه محصول"
         className="mb-6 grid h-auto w-full max-w-2xl grid-cols-2 gap-1 tablet:grid-cols-4"
@@ -74,7 +76,7 @@ export function ProductPreview() {
                 </div>
               </div>
             ) : (
-              <ProductVisual title={`نمای ${feature.title}`} />
+              feature.image_media_id && feature.media?.some(m => m.id === feature.image_media_id) ? <MediaImage image={feature.media.find(m => m.id === feature.image_media_id)!} privatePreview={privatePreview} /> : <ProductVisual title={`نمای ${feature.title}`} />
             )}
           </div>
         </TabsContent>

@@ -8,7 +8,7 @@ export default async function DashboardPage() {
   }>("dashboard");
   const labels: Record<string, string> = {
     active_admins: "مدیر فعال",
-    pages: "صفحه ثبت‌شده در مدیریت محتوا",
+    pages: "محتوای ثبت‌شده",
   };
   return (
     <>
@@ -48,8 +48,8 @@ export default async function DashboardPage() {
       <section className="mt-6 rounded-2xl border border-border p-6">
         <h2 className="text-xl font-semibold">بخش‌های در دست توسعه</h2>
         <p className="mt-3 leading-8 text-muted-foreground">
-          مدیریت محتوا، مرکز آموزش و درخواست‌های مشاوره در مراحل بعد فعال
-          می‌شوند. این پنل اکنون آمار سرنخ یا محتوای منتشرشده فرضی نمایش
+          مرکز آموزش و درخواست‌های مشاوره در مراحل بعد فعال
+          می‌شوند. این پنل اکنون آمار سرنخ فرضی نمایش
           نمی‌دهد.
         </p>
       </section>

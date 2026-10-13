@@ -7,3 +7,4 @@ tests
 .env*
 test-results
 dist
+.media

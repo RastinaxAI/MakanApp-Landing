@@ -39,6 +39,12 @@ def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
             "audit_logs",
             "pages",
             "page_revisions",
+            "faq_categories",
+            "media_assets",
+            "page_sections",
+            "revision_media_refs",
+            "site_settings",
+            "setting_media_refs",
         } == set(inspect(engine).get_table_names())
         migrate(engine)
         with engine.connect() as connection:

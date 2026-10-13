@@ -1,0 +1,1 @@
+{"api_version": "0.6.0", "runtime_role": "makan_api", "migration": "0004_cms", "pages": 26, "revisions": 26, "admins": 0, "media_assets": 0, "uid": 10001, "media_root_exists": true, "media_root_writable": true, "audit_insert": true, "audit_update": false, "audit_delete": false}

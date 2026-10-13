@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
@@ -23,6 +24,7 @@ class Settings(BaseSettings):
     auth_login_ip_limit: int = Field(default=20, ge=1, le=1000)
     auth_login_account_limit: int = Field(default=5, ge=1, le=200)
     auth_challenge_limit: int = Field(default=30, ge=1, le=1000)
+    media_root: Path = Path(".media")
 
     @field_validator("auth_secret", "auth_mfa_key")
     @classmethod

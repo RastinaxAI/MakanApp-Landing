@@ -1,0 +1,9 @@
+{
+  "scope": "CMS browser scenarios, first production build",
+  "completed_passed": 1,
+  "completed_failed": 1,
+  "remaining": "interrupted to correct confirmed editor defect; not counted as passed",
+  "defect": "Tiptap setEditable emitted an update on hydration and busy transitions, marking unchanged content dirty and disabling publication/scheduling",
+  "correction": "setEditable(editable, false), followed by a fresh production build and complete browser rerun",
+  "cleanup": "owned processes stopped, isolated E2E database and media removed"
+}

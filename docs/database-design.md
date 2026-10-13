@@ -145,3 +145,20 @@ Migration جدید `0003_auth_mfa` روی head قبلی `0002_pages` اعمال 
 Grant DML برای پنج جدول در خود migration صریح است؛ audit همچنان runtime SELECT/INSERT دارد و UPDATE/DELETE ندارد. حذف حساب از UI وجود ندارد. تغییر نقش/active و revoke با audit در یک تراکنش انجام می‌شود. آخرین مالک فعال تحت advisory lock حفاظت می‌شود؛ دو تغییر همزمان فقط یکی مجاز است. نقش migration از runtime و دیتابیس تست از توسعه مستقل است.
 
 فرمان `app.commands.auth_cleanup` در هر transaction یک batch محدود از challenge و bucket منقضی پاک می‌کند؛ live record، حساب، نشست و audit را لمس نمی‌کند. retention نشست/audit تا policy تولید خودکار نشده است. secret MFA خارج DB کلید دارد؛ key backup و DB backup باید هماهنگ بازیابی شوند. هیچ حساب عملیاتی یا محتوا به DB توسعه seed نشده؛ fixtureهای تست فقط DB اختصاصی هستند. مدل‌های CMS و CRM با تأیید مراحل۶–۸ افزوده خواهند شد.
+
+## تغییر واقعی مرحله۶ — migration 0004_cms
+
+شش جدول faq_categories، page_sections، media_assets، revision_media_refs، site_settings و setting_media_refs افزوده شدند. PageRevision اکنون content_json JSONB، category_id FK و created_by nullable برای import سیستمی دارد. ویرایش HTTP بدون actor مجاز نیست. جدول Page و اشاره‌گرهای working/published/scheduled، زمان UTC و row_version موجود استفاده می‌شوند. schema با Alembic ارتقا می‌یابد؛ مسیر downgrade این migration به علت حذف داده/تاریخچه عمداً مسدود است و recovery از backup لازم است.
+
+| جدول | کلید/رابطه/قید |
+|---|---|
+| faq_categories | UUID PK؛ slug یکتا، sort_order>=0 و timestamp؛ category_id هر revision با RESTRICT |
+| page_sections | UUID PK؛ revision_id FK RESTRICT؛ position یکتا در revision، type و schema_version=1، JSON typed snapshot |
+| media_assets | UUID PK؛ storage_key یکتا؛ checksum، WebP MIME، size/dimensions>0، alt، visibility private/public CHECK، created_by FK و timestamp |
+| revision_media_refs | PK مرکب revision_id/media_id؛ هر دو FK RESTRICT؛ ارجاع همه snapshotهای معرفی و تصاویر HTML/SEO |
+| site_settings | key PK allowlist general/seo در service؛ JSON typed، schema_version، row_version، updated_by و زمان |
+| setting_media_refs | PK مرکب setting_key/media_id؛ FK RESTRICT؛ حفاظت لوگو و OG |
+
+رکورد Page از slug داخلی kind:slug استفاده می‌کند؛ uniqueness در دیتابیس حفظ و رزرو هم‌زمان با advisory lock و conflict409 بررسی می‌شود. PageSection همزمان با snapshot ساخته می‌شود؛ public هرگز working pointer را مصرف نمی‌کند. رابطه رسانه پلی‌مورفیک آزاد یا FK جعلی ندارد. داده JSON پیش از ذخیره Pydantic validate و HTML sanitize می‌شود. امکانات، مخاطبان و FAQ چهار موتور revision جدا نمی‌خواهند؛ جدول‌های جدا از طرح اولیه در این بخش با دلیل فنی مستند جایگزین شده‌اند، API و رفتار مستقل آن‌ها حفظ شده است.
+
+Runtime روی جداول CMS فقط DML لازم دارد؛ audit همان SELECT/INSERT است و UPDATE/DELETE/DDL مجاز نیست. Migration role جدا از runtime است. ارتقا روی fresh/prior، constraints، grant و drift در PostgreSQL واقعی آزموده می‌شوند. هیچ drop/create موقت schema در Production یا داده اصلی انجام نشده است؛ database fixtureهای تست پس از آزمون حذف می‌شوند.

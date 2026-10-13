@@ -128,3 +128,7 @@ CI باید PostgreSQL واقعی service داشته باشد. integration DB/vo
 کاربر STEP4 را تأیید و مرحله Authentication/Admin را درخواست کرد؛ پاسخ مستقیم او «MFA اختیاری برای هر مدیر» است. ورود امن، owner bootstrap/recovery، نشست/CSRF/limiter واقعی، roleها، last-owner guard، audit، MFA و چهار صفحه پنل پایه + login اکنون ساخته شده‌اند. هیچ backend اصلی ماکان تغییر نکرده؛ fixture تست مستقل از دیتابیس توسعه است. شواهد build/Pytest/Playwright/Docker و وضعیت پذیرش در [گزارش STEP5](step-5-report.md) ثبت می‌شوند.
 
 MFA دیگر تصمیم باز نیست. باقی‌مانده‌های زیرساخت تولید، retention/audit policy، TLS واقعی و هشدار ابزار توسعه در مرحله۱۰ پیگیری می‌شوند؛ CMS و CRM به مراحل۶–۸ تعلق دارند. قبل از آغاز STEP6 باید تأیید تازه کاربر دریافت شود. هیچ Push مجاز فرض نشده است.
+
+## وضعیت اجرای STEP6
+
+شروع این مرحله با درخواست مستقیم کاربر مجاز شد؛ content/media/settings/FAQ معرفی و اتصال عمومی در همین مرحله پیاده می‌شوند. تصمیم‌های اصلاح معماری در step-6-decisions و عملیات در cms-runbook ثبت‌اند. گیت Build/TypeScript/ESLint/Ruff، Pytest روی PostgreSQL، browser acceptance واقعی و Docker media persistence باید قبل commit پاس شوند. نتیجه و تعداد نهایی در step-6-report مرجع است. STEP7 بدون تأیید تازه شروع نمی‌شود؛ Push مجاز نیست.

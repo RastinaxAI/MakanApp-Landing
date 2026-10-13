@@ -1,0 +1,11 @@
+{
+  "stats": {
+    "startTime": "2026-10-12T23:52:21.376Z",
+    "duration": 59923.716,
+    "expected": 2,
+    "skipped": 21,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "failure": "private lazy image dimensions read before decoding; adjust test to scroll and await naturalWidth, preserve exact 48 px assertion"
+}

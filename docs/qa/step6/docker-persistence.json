@@ -1,0 +1,21 @@
+{
+  "database_fixture": true,
+  "account_fixture_only": true,
+  "migration_head": "0004_cms",
+  "uid": "10001",
+  "readonly_root": true,
+  "caps_dropped": true,
+  "private_before_publish": true,
+  "sha256_before": "891d5edd7590e82f4e9ab8e06be7403e927ad94331daade232575159fa89a0ad",
+  "dimensions": [
+    48,
+    32
+  ],
+  "media_and_content_survive_container_recreate": true,
+  "media_and_content_survive_restart": true,
+  "session_survives_restart": true,
+  "mime": "image/webp",
+  "sha256_after": "891d5edd7590e82f4e9ab8e06be7403e927ad94331daade232575159fa89a0ad",
+  "status": "passed",
+  "fixture_cleanup": true
+}

@@ -11,6 +11,7 @@ FROM python:3.13.16-slim-bookworm AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/srv/api/.venv/bin:$PATH"
 WORKDIR /srv/api
 RUN groupadd --gid 10001 api && useradd --uid 10001 --gid api --no-create-home api
+RUN mkdir -p /srv/media && chown 10001:10001 /srv/media
 COPY --from=builder --chown=10001:10001 /srv/api/.venv ./.venv
 COPY --chown=10001:10001 app ./app
 COPY --chown=10001:10001 alembic ./alembic

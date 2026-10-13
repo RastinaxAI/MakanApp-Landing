@@ -1,0 +1,13 @@
+{
+  "stats": {
+    "startTime": "2026-10-13T00:37:19.227Z",
+    "duration": 256036.159,
+    "expected": 22,
+    "skipped": 4,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "scope": "Latest CMS regression including archive and custom slug edge cases",
+  "failure": "WebKit filled a controlled field before hydration; PATCH trace contained the original answer despite the entered text. Accordion opened correctly and showed exactly the stored old value.",
+  "correction": "Disable CMS form controls through useSyncExternalStore server/client hydration snapshots; functional payload updates; rerun all 27 CMS cases with immediate input."
+}

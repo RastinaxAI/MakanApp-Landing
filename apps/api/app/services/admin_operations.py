@@ -251,7 +251,7 @@ def dashboard(request: Request, session: Session):
             metrics["pages"] = session.scalar(
                 select(func.count()).select_from(Page).where(Page.is_archived.is_(False))
             )
-        return {"metrics": metrics, "modules": {"content": "pending", "leads": "pending"}}
+        return {"metrics": metrics, "modules": {"content": "ready", "leads": "pending"}}
 
 
 def enroll(data: Reauthentication, request: Request, session: Session):

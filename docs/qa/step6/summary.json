@@ -1,0 +1,16 @@
+{
+  "backend_tests": 67,
+  "backend_failures": 0,
+  "backend_seconds": 69.947,
+  "full_browser_tests": 135,
+  "full_browser_audits": 171,
+  "latest_cms_browser_tests": 27,
+  "latest_cms_audits": 45,
+  "axe_violations": 0,
+  "screenshots": 108,
+  "docker_persistence": "passed",
+  "migration_drift": 0,
+  "npm_runtime_findings": 0,
+  "npm_dev_high": 9,
+  "fixture_cleanup": "passed, no temporary DB/container/volume or E2E marker"
+}

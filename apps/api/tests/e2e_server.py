@@ -17,6 +17,7 @@ from app.core.security import Security
 from app.db.session import build_engine
 from app.main import create_app
 from app.models import Admin
+from app.services.content_import import import_initial
 
 control = make_url(os.environ["TEST_DATABASE_ADMIN_URL"])
 if control.host != "127.0.0.1" or control.port != 15432 or control.database != "makan_test_control":
@@ -56,9 +57,11 @@ try:
         auth_login_ip_limit=1000,
         auth_login_account_limit=200,
         auth_challenge_limit=1000,
+        media_root=Path("../../.preview/e2e-media") / name,
     )
     security = Security(settings)
     with Session(engine) as session, session.begin():
+        import_initial(session)
         for role in ("owner", "editor", "sales"):
             for suffix in (
                 "",

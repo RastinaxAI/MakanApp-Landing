@@ -1,6 +1,7 @@
 import { Mail, Phone } from "lucide-react";
-import { siteConfig } from "@/lib/site-config";
-export function ContactChannels() {
+import { getSettings } from "@/lib/public-api";
+export async function ContactChannels() {
+  const siteConfig = (await getSettings()).general;
   return (
     <aside className="rounded-2xl border border-border bg-secondary p-6">
       <h2 className="text-xl font-semibold">راه‌های ارتباطی رسمی</h2>

@@ -85,3 +85,7 @@ docker compose --env-file .env.test -f compose.test.yaml down
 Node24 LTS و مرورگرهای Playwright لازم‌اند. اسکریپت مرورگر API واقعی روی 8100، Next خروجی تولید روی 3100 و دیتابیس اختصاصی موقت می‌سازد؛ حساب‌های fixture فقط در آن DB هستند. نام DB و DSN cleanup guard دارند و پس از پایان، فرآیند متعلق به همان تست و DB همان اجرا حذف می‌شود. هیچ API ساختگی جای اتصال واقعی نیست. اجرای پذیرش این میزبان یک worker دارد؛ assertionهای امنیت و تمام موتورهای مرورگر حفظ می‌شوند. اسکریپت این میزبان از Edge نصب‌شده برای موتور Chromium استفاده می‌کند؛ Firefox/WebKit نسخه مدیریت‌شده Playwright هستند. برای Chromium بسته‌شده پس از `npx playwright install chromium firefox webkit` از `./scripts/test-web-admin.ps1 -ChromiumChannel bundled` استفاده کنید. اسکریپت Node24 نصب‌شده را مستقیم اجرا می‌کند؛ fallback این میزبان از نسخه۲۴ cached npm استفاده می‌کند. XML و خلاصه شواهد در `docs/qa/step5` قرار دارند.
 
 برای بررسی سریع خود ابزار اجرا و cleanup پس از تغییر اسکریپت، `./scripts/test-web-admin.ps1 -SmokeOnly` سه سناریوی guest/CSRF را اجرا می‌کند؛ این فرمان جای آزمون کامل مرحله را نمی‌گیرد.
+
+## ماژول‌های فعال پس از مرحله۶
+
+مالک و ویرایشگر در `/admin/content`، `/admin/media` و `/admin/faq-categories` کار می‌کنند؛ `/admin/settings` فقط مالک است. نقش فروش CMS را نمی‌بیند و API403 دارد. امنیت/جلسات/MFA همان سیاست مرحله۵ را حفظ می‌کند. هیچ role جدید یا حساب پیش‌فرضی ساخته نشده است. متن اولیه با CLI idempotent و بدون حساب fixture وارد می‌شود. [راهنمای CMS](cms-runbook.md) مرجع انتشار/تاریخچه، تصویر خصوصی و تنظیمات عمومی است.

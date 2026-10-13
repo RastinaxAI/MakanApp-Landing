@@ -42,12 +42,29 @@ class RequestContextMiddleware:
                 "DELETE",
             ):
                 body = bytearray()
+                limit = 16384
+                if scope["path"] == "/api/v1/admin/media":
+                    limit = 5 * 1024 * 1024 + 65536
+                elif scope["path"].startswith(
+                    tuple(
+                        f"/api/v1/admin/{name}"
+                        for name in (
+                            "pages",
+                            "features",
+                            "audiences",
+                            "faqs",
+                            "content",
+                            "settings",
+                        )
+                    )
+                ):
+                    limit = 262144
                 while True:
                     part = await receive()
                     if part["type"] == "http.disconnect":
                         return
                     body.extend(part.get("body", b""))
-                    if len(body) > 16384:
+                    if len(body) > limit:
                         await error_response(
                             Request(scope),
                             413,

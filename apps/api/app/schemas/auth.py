@@ -106,4 +106,4 @@ class AuditEvent(StrictSchema):
 
 class Dashboard(StrictSchema):
     metrics: dict[str, int]
-    modules: dict[str, Literal["pending"]]
+    modules: dict[str, Literal["ready", "pending"]]

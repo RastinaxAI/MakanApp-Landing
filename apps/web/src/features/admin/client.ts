@@ -7,8 +7,10 @@ export async function adminRequest<T>(
   path: string,
   method = "GET",
   body?: unknown,
+  version?: number,
 ): Promise<T> {
   const headers: Record<string, string> = {};
+  if (version !== undefined) headers["If-Match"] = `"${version}"`;
   if (method !== "GET") {
     const challenge = await fetch("/api/v1/admin/auth/csrf", {
       cache: "no-store",

@@ -1,10 +1,4 @@
-import type { Metadata } from "next";
-import { EmptyLibrary } from "@/components/marketing/empty-library";
-export const metadata: Metadata = {
-  title: "مرکز آموزش",
-  description:
-    "راهنماهای متنی، ویدیو و مجموعه‌های آموزشی استفاده از ماکان؛ هنوز مطلبی منتشر نشده است.",
-};
-export default function LearnPage() {
-  return <EmptyLibrary kind="learn" />;
-}
+import { PublicPage } from "@/features/cms/public-page";
+import { getPage, pageMetadata } from "@/lib/public-api";
+export async function generateMetadata() { return pageMetadata(await getPage("learn"), "/learn"); }
+export default async function Page() { return <PublicPage slug="learn"/>; }

@@ -5,13 +5,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { faqs } from "@/features/marketing/content";
-export function FaqList({ compact = false }: { compact?: boolean }) {
-  const items = compact
-    ? faqs.filter((item) =>
-        ["core", "ai", "onboarding", "access"].includes(item.id),
-      )
-    : faqs;
+import { RichText } from "@/features/cms/rich-text";
+export type FaqItem = { id: string; question: string; answer: string; answer_html?: string };
+export function FaqList({ items }: { items: readonly FaqItem[] }) {
   return (
     <Accordion
       type="single"
@@ -24,7 +20,7 @@ export function FaqList({ compact = false }: { compact?: boolean }) {
             {item.question}
           </AccordionTrigger>
           <AccordionContent className="pb-6 leading-8 text-muted-foreground">
-            {item.answer}
+            {item.answer_html ? <RichText html={item.answer_html} /> : item.answer}
           </AccordionContent>
         </AccordionItem>
       ))}

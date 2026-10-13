@@ -12,7 +12,7 @@ export function PageHero({
   ctaLabel,
   ctaHref,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: string;
   description: string;
   parent?: { label: string; href: string };

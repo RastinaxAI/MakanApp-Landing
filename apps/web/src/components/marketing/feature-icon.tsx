@@ -17,11 +17,13 @@ export function FeatureIcon({
   className,
   size = 26,
 }: {
-  slug: FeatureSlug;
+  slug: string;
   className?: string;
   size?: number;
 }) {
-  const Icon = icons[slug];
+  const Icon = Object.hasOwn(icons, slug)
+    ? icons[slug as FeatureSlug]
+    : BookOpen;
   return (
     <Icon
       size={size}

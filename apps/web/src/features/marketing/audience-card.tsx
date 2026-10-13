@@ -16,7 +16,9 @@ const icons: Record<AudienceSlug, LucideIcon> = {
   students: GraduationCap,
 };
 export function AudienceCard({ audience }: { audience: Audience }) {
-  const Icon = icons[audience.slug];
+  const Icon = Object.hasOwn(icons, audience.slug)
+    ? icons[audience.slug as AudienceSlug]
+    : Users;
   return (
     <article className="flex min-w-0 flex-col rounded-2xl border border-border bg-background p-6">
       <Icon

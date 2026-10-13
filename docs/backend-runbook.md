@@ -76,3 +76,7 @@ migration آنلاین یک PostgreSQL advisory lock می‌گیرد؛ انتظ�
 `APP_ENV`: development/test/staging/production؛ `DATABASE_URL`: secret ضروری. pool پیش‌فرض۵ و overflow صفر؛ `DB_POOL_SIZE` حداکثر۵۰، `DB_POOL_TIMEOUT` و `DB_CONNECT_TIMEOUT` پیش‌فرض۳ ثانیه، `DB_STATEMENT_TIMEOUT_MS` پیش‌فرض۳۰۰۰ و حداکثر۳۰۰۰۰. برای migration بزرگ‌تر timeout با بررسی عملیات تنظیم شود؛ این حدود جای load test نیستند. کلیدهای auth/MFA اکنون ضروری و جداگانه اعتبارسنجی می‌شوند؛ origins و policy در راهنمای مدیر آمده‌اند.
 
 لاگ درخواست JSON شامل شناسه تولیدشده server، method، route template، status، duration و code است؛ IP، query، body، DSN و متن exception در آن نیست. Header ورودی X-Trace-Id مبنای اعتماد قرار نمی‌گیرد. پاسخ‌ها no-store هستند؛ CORS عمومی و اعتماد خودکار به proxy header فعال نیست. آینده proxy فقط پس از پیکربندی allowlist مصوب فعال می‌شود.
+
+## ارتقای CMS مرحله۶
+
+پس از build image، migration `0004_cms` را با سرویس migrate اجرا کنید و API را recreate کنید؛ سپس فرمان `docker compose exec -T api python -m app.commands.import_content` فقط متن تألیف‌شده موجود را وارد می‌کند. runtime role نیازمند grantهای migration جدید است؛ بدون migration ready503 می‌ماند. API0.6.0، media_root=/srv/media و Volume media_data اضافه‌اند. دیتابیس و media هر دو باید backup داشته باشند؛ فایل‌ها داخل web/public یا writable root کانتینر نیستند. هیچ secret در CMS ذخیره نمی‌شود. اجرای اصلی/تست/تولید و no-default-account مطابق مرحله۵ حفظ است.

@@ -1,0 +1,1 @@
+{"before_fix": "ValueError", "cause": "36 hyphens passed the old media URL pattern but were not a valid UUID", "fix": "canonical UUID shape, invalid src dropped during sanitization; integration regression checks the stored HTML"}

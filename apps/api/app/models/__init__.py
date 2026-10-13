@@ -6,6 +6,14 @@ from app.models.auth import (
     AuthChallenge,
     RateLimitBucket,
 )
+from app.models.cms import (
+    FaqCategory,
+    MediaAsset,
+    PageSection,
+    RevisionMediaRef,
+    SettingMediaRef,
+    SiteSetting,
+)
 from app.models.content import Page, PageRevision
 
 __all__ = [
@@ -18,4 +26,10 @@ __all__ = [
     "RateLimitBucket",
     "AdminMfa",
     "AdminRecoveryCode",
+    "FaqCategory",
+    "MediaAsset",
+    "PageSection",
+    "RevisionMediaRef",
+    "SiteSetting",
+    "SettingMediaRef",
 ]

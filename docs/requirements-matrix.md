@@ -242,3 +242,24 @@
 | R091–099 | image API و migration مرحله۵ با Docker توسعه آزموده | Compose تولید وب/proxy/HTTPS/CI/backup و scans نهایی مرحله۱۰ |
 
 هیچ requirement مربوط به CMS، آموزش یا فرم Lead با این مرحله complete اعلام نشده است. ریسک باز `braces` ابزارهای توسعه در گزارش و dependency-audit ثبت شده؛ تأیید امنیت Production صادر نشده است. گزارش‌های تاریخی مراحل۲–۴ تغییر نمی‌کنند.
+
+## پیشرفت مرحله۶ — CMS مستقل معرفی
+
+این بخش وضعیت دامنه مرحله۶ است؛ اعداد/نتایج نهایی در step-6-report مرجع هستند و پیشرفت تاریخی مراحل قبل حذف نمی‌شود.
+
+| شناسه | اجرای مرحله۶ | معیار/وابستگی باقی‌مانده |
+|---|---|---|
+| R003–005 | readiness، evidence خصوصی و reviewed_at؛ سه حوزه آماده طبق تأیید کاربر، AI roadmap؛ publication بدون شاهد رد می‌شود | صحت هر ادعای جدید به بازبینی انسانی محصول وابسته است |
+| R006–007 | هیچ مشتری/آمار/دارایی واقعی ناموجود ساخته نشده؛ uploader و metadata امن برای دارایی دارای مجوز | تصویر/لوگو/رضایت مشتری هنوز از مالک دریافت نشده؛ placeholder مشخص باقی است |
+| R012، R024 | برند، tagline، URL رسمی و تماس از تنظیمات واقعی؛ منو/CTA همان ساختار PRD | تماس و دامنه رسمی باید مالک ثبت کند؛ شبکه اجتماعی بی‌منبع نمایش داده نمی‌شود |
+| R037–038 | CRUD page/section/feature/audience/FAQ دسته‌دار، ترتیب/visibility، editor واقعی، snapshot و If-Match | API/مرورگر واقعی، پیش‌نویس و انتشار مستقل؛ archive تاریخچه را حفظ می‌کند |
+| R040 | draft/private preview/publish/schedule/unpublish و history در معرفی | بخش مقاله/آموزش مرحله۷؛ sitemap مرحله۹ |
+| R041 | nh3 سرور، حذف HTML فعال/URL اجرایی/تصویر خارجی و FK برای تصویر داخلی | استفاده همین policy در متن مقاله مرحله۷ |
+| R042 | settings owner-only allowlist، SEO صفحه و OG/canonical از snapshot/دامنه معتبر | همه صفحات همچنان noindex؛ Structured Data/sitemap/SEO نهایی مرحله۹ |
+| R043، R059، R074 | WebP واقعی، حجم/pixel/MIME/EXIF/path، private→public، volume و حفاظت reference؛ بدون ویدیو خام | quota/deployment/cache/backup کامل مرحله۱۰؛ فایل آپارات upload نمی‌شود |
+| R045، R048 | RBAC، CSRF، audit تراکنشی CMS و پنل بدون JSON دستی | مقاله/مرکز آموزش و درخواست‌ها به مراحل۷/۸ تعلق دارند |
+| R065–066 | شش جدول با PK/FK/CHECK/index، namespaces و revision engine موجود | دلیل فنی به‌جای جدول revision تکراری در step-6-decisions؛ سایر موجودیت‌ها آینده |
+| R068–069 | REST نسخه‌دار typed، aliasهای مستقل، filter/pagination، public snapshot مؤثر و fieldهای عمومی | endpoint آموزش/lead هنوز وجود ندارد |
+| R070، R076، R097–100 | content/media/settings واقعی؛ metrics شمارش رکورد، آزمون PostgreSQL/مرورگر/Docker و تصاویر QA | KPI فروش/مقاله، Lighthouse، Compose وب/proxy/HTTPS/CI مرحله‌های بعد |
+
+Blog/learn فقط صفحه معرفی خالیِ صادقانه دارند؛ فرم دمو/تماس هنوز طبق تحویل مرحله۳ غیرفعال‌اند و در مرحله۸ به ثبت واقعی وصل می‌شوند. CMS این مرحله از داده ساختگی نهایی، Mock API یا localStorage برای persistence استفاده نمی‌کند. fixtureها فقط در دیتابیس/Volume آزمایش مستقل هستند و پاک می‌شوند. گیت Production و خطر dev dependency باز مانده‌اند؛ STEP7 فقط پس از تأیید کاربر.

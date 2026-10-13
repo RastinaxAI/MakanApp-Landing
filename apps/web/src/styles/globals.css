@@ -56,3 +56,13 @@
 
 /* Preserve a solid AA focus outline over primitive utility styles. */
 body :focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+
+.cms-rich-text { line-height: 2.1; overflow-wrap: anywhere; }
+.cms-rich-text p, .cms-rich-text ul, .cms-rich-text ol, .cms-rich-text blockquote { margin-block: 1rem; }
+.cms-rich-text h2 { font-size: 1.5rem; font-weight: 600; margin-block: 1.5rem .75rem; }
+.cms-rich-text h3 { font-size: 1.25rem; font-weight: 600; margin-block: 1.25rem .75rem; }
+.cms-rich-text ul { list-style: disc; padding-inline-start: 1.5rem; }
+.cms-rich-text ol { list-style: decimal; padding-inline-start: 1.5rem; }
+.cms-rich-text img { max-width: 100%; height: auto; border-radius: var(--radius); }
+.cms-rich-text a { color: var(--color-primary-hover); text-decoration: underline; }
+.cms-rich-text blockquote { border-inline-start: 3px solid var(--color-primary); padding-inline-start: 1rem; }
