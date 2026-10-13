@@ -36,22 +36,45 @@ def tls(operator, directory):
 
 
 def client(operator, directory):
-    return httpx.Client(
+    browser = httpx.Client(
         base_url=operator.values["PUBLIC_ORIGIN"],
         verify=tls(operator, directory),
         timeout=30,
     )
+    browser._makan_operator = operator
+    return browser
 
 
 def login(browser, password, role="owner"):
+    operator = browser._makan_operator
+    require(
+        operator.project.startswith(
+            ("makan-landing-acceptance-", "makan-landing-restore-")
+        ),
+        "Controlled OTP fixture only",
+    )
     csrf = browser.get("/api/v1/admin/auth/csrf").json()["csrf_token"]
+    challenge = browser.cookies.get("__Host-makan_challenge")
+    phone = {"owner": "09120000001", "editor": "09120000002", "sales": "09120000003"}[
+        role
+    ]
+    code = f"{secrets.randbelow(888888) + 100000:06d}"
+    fixture = (ROOT / "apps/api/tests/production_fixtures.py").read_text(
+        encoding="utf-8"
+    )
+    program = (
+        fixture
+        + "\nseed_otp_delivery("
+        + ",".join(
+            repr(value)
+            for value in (phone, challenge, code, operator.values["PUBLIC_ORIGIN"])
+        )
+        + ")\n"
+    )
+    operator.run("exec", "-T", "api", "python", "-", input=program.encode())
     response = browser.post(
-        "/api/v1/admin/auth/login",
-        json={
-            "email": f"{role}@example.com",
-            "password": password,
-            "mfa_code": None,
-        },
+        "/api/v1/admin/auth/otp/verify",
+        json={"phone": phone, "code": code},
         headers={"Origin": str(browser.base_url).rstrip("/"), "X-CSRF-Token": csrf},
     )
     require(response.status_code == 200, "TLS administrator login failed")
@@ -73,11 +96,15 @@ def run(env_file, keep):
         source.values.get("CADDY_CONFIG") == "/etc/caddy/Caddyfile.local",
         "Internal CA acceptance only",
     )
-    directory = ROOT / ".preview/step10"
+    directory = ROOT / ".preview" / os.environ.get("MAKAN_QA_PHASE", "step10")
     directory.mkdir(parents=True, exist_ok=True)
     password_path = directory / "admin-password.txt"
     clone = None
-    report = {"checks": [], "public_deployment": False}
+    report = {
+        "checks": [],
+        "public_deployment": False,
+        "sms_delivery": "Controlled delivery fixture; no live SMS sent or claimed",
+    }
 
     def passed(name):
         report["checks"].append(name)
@@ -379,7 +406,12 @@ def run(env_file, keep):
             clone.run("down", "--volumes", "--remove-orphans", check=False)
         if not keep:
             source.run("down", "--volumes", "--remove-orphans", check=False)
-        output = ROOT / "docs/qa/step10/docker-acceptance.json"
+        output = (
+            ROOT
+            / "docs/qa"
+            / os.environ.get("MAKAN_QA_PHASE", "step10")
+            / "docker-acceptance.json"
+        )
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
 

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     "ماکان؛ پیام‌رسان، مدیریت کلاس، تکلیف، آزمون و گزارش‌های آموزشی در یک فضای یکپارچه برای مدرسه و خانواده.",
   robots: { index: false, follow: false },
-  icons: { icon: { url: "/brand/makan-logo.png", type: "image/png" }, apple: "/brand/makan-logo.png" },
+  icons: { icon: { url: "/brand/makan-icon.svg", type: "image/svg+xml", sizes: "any" }, apple: "/brand/makan-logo.png" },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

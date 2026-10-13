@@ -27,8 +27,11 @@ from app.models.learning import (
     RevisionTag,
     SeriesItem,
 )
+from app.models.otp import AdminOtp, SmsConfiguration
 
 __all__ = [
+    "AdminOtp",
+    "SmsConfiguration",
     "AnalyticsEvent",
     "Lead",
     "LeadHistory",

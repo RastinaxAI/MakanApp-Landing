@@ -1,6 +1,7 @@
 """Check known local credentials in Git-visible files without printing their values."""
 
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -12,6 +13,7 @@ def main():
     keys = set()
     environments = [ROOT / ".env", ROOT / ".env.test"]
     environments.extend((ROOT / ".preview/step10").glob("*.env"))
+    environments.extend((ROOT / ".preview/admin-refresh").glob("*.env"))
     for path in environments:
         if not path.exists():
             continue
@@ -24,6 +26,9 @@ def main():
     password = ROOT / ".preview/step10/admin-password.txt"
     if password.exists():
         keys.add(password.read_bytes().strip())
+    owner_phone = ROOT / ".preview/admin-refresh/owner-phone.txt"
+    if owner_phone.exists():
+        keys.add(owner_phone.read_bytes().strip())
     files = (
         subprocess.check_output(
             ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
@@ -54,7 +59,12 @@ def main():
         "affected_files": found,
         "scope": "Known local credentials; not a general entropy or image OCR scan",
     }
-    target = ROOT / "docs/qa/step10/secret-scan.json"
+    target = (
+        ROOT
+        / "docs/qa"
+        / os.environ.get("MAKAN_QA_PHASE", "step10")
+        / "secret-scan.json"
+    )
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result))

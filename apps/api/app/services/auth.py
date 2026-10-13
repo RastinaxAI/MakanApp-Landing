@@ -126,11 +126,13 @@ def principal(
     return admin, item, token
 
 
-def profile(session: Session, admin: Admin) -> Profile:
+def profile(session: Session, admin: Admin, legacy: bool = False) -> Profile:
     mfa = session.get(AdminMfa, admin.id)
     return Profile(
         id=admin.id,
         email=admin.email,
+        phone=admin.phone,
+        login_method="password" if legacy else "otp",
         role=admin.role,
         capabilities=CAPABILITIES[admin.role],
         mfa_enabled=bool(mfa and mfa.enabled_at),
@@ -191,7 +193,7 @@ def csrf_challenge(request: Request, session: Session) -> tuple[str, str | None]
     return csrf, challenge_token
 
 
-def verify_challenge(request: Request, session: Session) -> None:
+def verify_challenge(request: Request, session: Session, consume: bool = True) -> None:
     config, security = request.app.state.settings, request.app.state.security
     token = request.cookies.get(config.challenge_cookie)
     csrf = request.headers.get("x-csrf-token", "")
@@ -210,13 +212,21 @@ def verify_challenge(request: Request, session: Session) -> None:
         or not hmac.compare_digest(row.csrf_digest, security.digest("csrf-digest", csrf))
     ):
         raise ApiProblem(403, "CSRF_REJECTED", "درخواست ورود یا تغییر معتبر نیست.")
-    row.used_at = now_utc()
+    if consume:
+        row.used_at = now_utc()
 
 
 def login(request: Request, session: Session, data: LoginInput) -> tuple[Profile, str]:
     from app.services.mfa import verify_second_factor
 
     origin_guard(request)
+    if (
+        not request.app.state.settings.auth_legacy_password_login
+        or request.app.state.settings.app_env != "test"
+    ):
+        raise ApiProblem(
+            410, "PHONE_LOGIN_REQUIRED", "برای ورود از شماره همراه و کد پیامکی استفاده کنید."
+        )
     config, security = request.app.state.settings, request.app.state.security
     result, new_token, problem = None, None, None
     with session.begin():
@@ -282,7 +292,7 @@ def login(request: Request, session: Session, data: LoginInput) -> tuple[Profile
                 )
                 admin.last_login_at = now
                 audit(session, request, "auth.login", admin.id, admin.id)
-                result = profile(session, admin)
+                result = profile(session, admin, legacy=True)
     if problem:
         raise problem
     return result, new_token
@@ -306,7 +316,14 @@ def reauthenticate(
         )
     if retry:
         raise ApiProblem(429, "RATE_LIMITED", "کمی بعد دوباره تلاش کنید.", retry)
-    if not security.password_matches(admin.password_hash, password) or (
+    if not config.auth_legacy_password_login or config.app_env != "test":
+        from app.services.otp import verify_reauthentication
+
+        verify_reauthentication(request, admin, password)
+        if verify_mfa and not verify_second_factor(session, security, admin, code):
+            raise unauthorized()
+        return
+    if not security.password_matches(admin.password_hash or "", password) or (
         verify_mfa and not verify_second_factor(session, security, admin, code)
     ):
         raise unauthorized()

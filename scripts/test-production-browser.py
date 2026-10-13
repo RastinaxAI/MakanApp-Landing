@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import runpy
 import subprocess
 from pathlib import Path
 
@@ -15,12 +16,18 @@ def main():
     operator = Operator(args.env_file)
     if not operator.project.startswith("makan-landing-acceptance-"):
         raise ValueError("Isolated acceptance project required")
+    helpers = runpy.run_path(
+        str(ROOT / "scripts/test-production.py"), run_name="production_test_helpers"
+    )
+    with helpers["client"](
+        operator, ROOT / ".preview" / os.environ.get("MAKAN_QA_PHASE", "step10")
+    ) as browser:
+        helpers["login"](browser, None)
+        session_token = browser.cookies.get("__Host-makan_session")
     environment = {
         **os.environ,
         "PRODUCTION_TEST_ORIGIN": operator.values["PUBLIC_ORIGIN"],
-        "PRODUCTION_TEST_PASSWORD": (ROOT / ".preview/step10/admin-password.txt")
-        .read_text()
-        .strip(),
+        "PRODUCTION_TEST_SESSION": session_token,
     }
     if os.name == "nt":
         command = ["npm.cmd", "exec", "--offline", "--package=node@24", "--", "node"]

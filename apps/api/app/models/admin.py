@@ -13,9 +13,11 @@ class Admin(UUIDPrimaryKey, Timestamps, Base):
     __table_args__ = (
         CheckConstraint("role IN ('owner', 'editor', 'sales')", name="role"),
         CheckConstraint("email = lower(email) AND length(email) > 3", name="email_normalized"),
+        CheckConstraint("phone IS NULL OR phone ~ '^09[0-9]{9}$'", name="phone_normalized"),
     )
-    email: Mapped[str] = mapped_column(String(254), unique=True)
-    password_hash: Mapped[str] = mapped_column(String(512))
+    email: Mapped[str | None] = mapped_column(String(254), unique=True)
+    password_hash: Mapped[str | None] = mapped_column(String(512))
+    phone: Mapped[str | None] = mapped_column(String(11), unique=True)
     role: Mapped[str] = mapped_column(String(16))
     is_active: Mapped[bool] = mapped_column(Boolean, server_default="true")
     last_login_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

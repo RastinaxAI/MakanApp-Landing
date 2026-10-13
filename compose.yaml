@@ -24,6 +24,7 @@ services:
     command: [alembic, upgrade, head]
     environment:
       APP_ENV: development
+      AUTH_OTP_DEBUG: ${AUTH_OTP_DEBUG:-true}
       AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
       AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Run setup-development.ps1}
       DATABASE_URL: postgresql+psycopg://makan_migrator:${MIGRATION_DB_PASSWORD:?Set migration credential}@db:5432/makan_landing
@@ -35,6 +36,7 @@ services:
     build: {context: ./apps/api}
     environment:
       APP_ENV: development
+      AUTH_OTP_DEBUG: ${AUTH_OTP_DEBUG:-true}
       AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
       AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Run setup-development.ps1}
       AUTH_ALLOWED_ORIGINS: '${AUTH_ALLOWED_ORIGINS:-["http://127.0.0.1:3000","http://127.0.0.1:3100"]}'

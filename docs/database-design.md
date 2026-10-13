@@ -196,3 +196,7 @@ migration افزایشی `0007_analytics` فقط جدول analytics_events و م
 # الحاق مرحله۱۰
 
 جدول تازه یا migration مخرب ایجاد نشده؛ head برابر `0007_analytics` باقی می‌ماند. worker از index/ستون‌های انقضای موجود auth/learning/leads/analytics با batch محدود استفاده می‌کند. lockهای migration/maintenance/operator مستقل‌اند. بازیابی dump فقط در namespace خالی، سپس migration رو به جلو و ابطال session/challenge/PII منقضی قبل از exposure انجام می‌شود. [راهنمای backup/restore](backup-restore-runbook.md).
+
+## الحاق schema0008_phone_otp
+
+admins.phone یکتا و با قید ^09[0-9]{9}$؛ email/password_hash nullable شدند تا حساب phone-only بدون داده ساختگی ثبت شود، و داده قدیمی حفظ می‌شود. admin_otps شامل FK اختیاری admin، HMAC شماره/کد/binding، purpose، attempts<=5، delivered/debug_code، expires/used و زمان‌هاست؛ index روی binding+purpose+created و expiry. sms_configuration singleton1 با enabled/debug، credential رمز‌شده، body_id و row_version است. فقط از API مالک خوانده می‌شود؛ عمومی SiteSettings شامل آن نیست. migration forward-only، grant دقیق runtime و پاکسازی محدود OTP برقرار است. restore همه OTPها را پیش از دسترسی باطل می‌کند.

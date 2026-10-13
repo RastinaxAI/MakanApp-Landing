@@ -29,6 +29,8 @@ def administrator():
 def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
     with database_factory() as (_, _, engine):
         assert {
+            "admin_otps",
+            "sms_configuration",
             "admin_sessions",
             "auth_challenges",
             "admin_mfa",
@@ -68,11 +70,15 @@ def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
 def test_seeded_prior_revision_upgrade_preserves_data(database_factory):
     with database_factory("0001_admin_core") as (_, _, engine):
         with Session(engine) as session, transaction(session):
-            admin = administrator()
-            session.add(admin)
-            session.flush()
-            admin_id = admin.id
-            admin_email = admin.email
+            admin_id = uuid4()
+            admin_email = f"{uuid4().hex}@example.test"
+            session.execute(
+                text(
+                    "INSERT INTO admins (id,email,password_hash,role) "
+                    "VALUES (:id,:email,:hash,'owner')"
+                ),
+                {"id": admin_id, "email": admin_email, "hash": "test-only-hash"},
+            )
         assert "pages" not in inspect(engine).get_table_names()
         migrate(engine)
         with Session(engine) as session:

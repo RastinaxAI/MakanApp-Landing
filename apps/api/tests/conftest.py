@@ -6,6 +6,8 @@ import pytest
 
 @pytest.fixture(autouse=True)
 def auth_test_environment(monkeypatch):
+    monkeypatch.setenv("APP_ENV", "test")
+    monkeypatch.setenv("AUTH_LEGACY_PASSWORD_LOGIN", "false")
     monkeypatch.setenv("AUTH_SECRET", secrets.token_hex(32))
     monkeypatch.setenv("AUTH_MFA_KEY", secrets.token_hex(32))
     monkeypatch.setenv("PROXY_SHARED_SECRET", secrets.token_hex(32))

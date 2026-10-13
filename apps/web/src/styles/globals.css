@@ -80,3 +80,16 @@ body .brand-cta :focus-visible { outline-color: white; }
 .cms-rich-text img { max-width: 100%; height: auto; border-radius: var(--radius); }
 .cms-rich-text a { color: var(--color-primary-hover); text-decoration: underline; }
 .cms-rich-text blockquote { border-inline-start: 3px solid var(--color-primary); padding-inline-start: 1rem; }
+
+/* Tailwind owns the layouts; these scoped rules normalize existing CMS controls. */
+@layer components {
+  .admin-workspace :is(input, select, textarea) { border-radius: .5rem; }
+  .admin-workspace :is(input, select) { min-height: 2.75rem; }
+  .admin-workspace :is(section, fieldset, form).bg-card { border-radius: .75rem; box-shadow: 0 1px 3px rgb(15 23 42 / .04); }
+  .admin-workspace h1 { font-size: clamp(1.5rem, 1.1rem + 1vw, 1.875rem); line-height: 1.5; }
+  .admin-workspace table { width: 100%; border-collapse: collapse; text-align: start; }
+  .admin-workspace th { background: #f8fafc; font-weight: 600; }
+  .admin-workspace :is(th, td) { padding: .875rem 1rem; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
+  .admin-workspace input[type="checkbox"] { min-height: auto; }
+}
+.admin-workspace header :focus-visible, .admin-workspace aside :focus-visible { outline-color: #fff; }

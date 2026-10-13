@@ -57,6 +57,9 @@ try:
     settings = Settings(
         database_url=runtime.render_as_string(hide_password=False),
         app_env="test",
+        auth_otp_debug=True,
+        auth_otp_resend_seconds=1,
+        auth_legacy_password_login=os.environ.get("E2E_OTP_ONLY") != "1",
         auth_allowed_origins=["http://127.0.0.1:3100"],
         auth_login_ip_limit=1000,
         auth_login_account_limit=200,
@@ -74,7 +77,7 @@ try:
     security = Security(settings)
     with Session(engine) as session, session.begin():
         import_initial(session)
-        for role in ("owner", "editor", "sales"):
+        for role_index, role in enumerate(("owner", "editor", "sales")):
             for suffix in (
                 "",
                 *(
@@ -86,6 +89,9 @@ try:
                 session.add(
                     Admin(
                         email=f"{role}{suffix}@example.com",
+                        phone=f"0912000000{role_index + 1}"
+                        if not suffix and os.environ.get("E2E_OTP_ONLY") == "1"
+                        else None,
                         role=role,
                         password_hash=security.hasher.hash(os.environ["E2E_ADMIN_PASSWORD"]),
                     )

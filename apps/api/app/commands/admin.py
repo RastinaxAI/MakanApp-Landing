@@ -16,9 +16,57 @@ from app.services.auth import audit, revoke_all
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["bootstrap", "recover"])
-    parser.add_argument("--email", required=True)
+    parser.add_argument("action", choices=["bootstrap", "recover", "bind-phone"])
+    parser.add_argument("--email")
+    parser.add_argument("--phone")
     args = parser.parse_args()
+    if args.phone or not args.email or args.action == "bind-phone":
+        from app.schemas.otp import normalize_phone
+
+        phone = normalize_phone(args.phone or input("Administrator phone: "))
+        email = (
+            str(TypeAdapter(EmailStr).validate_python(args.email.strip().lower()))
+            if args.email
+            else None
+        )
+        config = Settings()
+        engine = build_engine(config)
+        try:
+            with Session(engine) as session, session.begin():
+                session.execute(text("SELECT pg_advisory_xact_lock(74120500)"))
+                if args.action == "bootstrap":
+                    if session.scalar(select(Admin.id).limit(1)):
+                        raise SystemExit(
+                            "An owner already exists; use bind-phone for an existing account."
+                        )
+                    row = Admin(phone=phone, email=email, role="owner", password_hash=None)
+                    session.add(row)
+                    session.flush()
+                    audit(session, None, "admin.phone_bootstrap", None, row.id)
+                else:
+                    row = session.scalar(
+                        select(Admin)
+                        .where(Admin.email == email if email else Admin.phone == phone)
+                        .with_for_update()
+                    )
+                    if not row or not row.is_active:
+                        raise SystemExit("An active administrator is required.")
+                    if session.scalar(
+                        select(Admin.id).where(Admin.phone == phone, Admin.id != row.id)
+                    ):
+                        raise SystemExit("The phone already belongs to another account.")
+                    row.phone = phone
+                    revoke_all(session, row.id)
+                    if args.action == "recover":
+                        session.execute(
+                            delete(AdminRecoveryCode).where(AdminRecoveryCode.admin_id == row.id)
+                        )
+                        session.execute(delete(AdminMfa).where(AdminMfa.admin_id == row.id))
+                    audit(session, None, "admin.phone_" + args.action, None, row.id)
+            print("Administrator phone operation completed and audited.")
+        finally:
+            engine.dispose()
+        return
     email = str(TypeAdapter(EmailStr).validate_python(args.email.strip().lower()))
     password = getpass("New password (15-128 characters): ")
     confirmation = getpass("Repeat password: ")

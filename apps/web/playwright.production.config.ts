@@ -10,7 +10,7 @@ export default defineConfig({
   timeout: 120_000,
   retries: 0,
   forbidOnly: true,
-  reporter: [["list"], ["json", { outputFile: "../../docs/qa/step10/production-browser.json" }]],
+  reporter: [["list"], ["json", { outputFile: `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}/production-browser.json` }]],
   use: { baseURL, ignoreHTTPSErrors: true, trace: "off", screenshot: "off" },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"], channel: process.env.PLAYWRIGHT_CHROMIUM_CHANNEL } },

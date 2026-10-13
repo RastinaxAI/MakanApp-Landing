@@ -5,7 +5,7 @@ from datetime import datetime
 from sqlalchemy import delete, select, tuple_
 from sqlalchemy.orm import Session
 
-from app.models import AuthChallenge, RateLimitBucket
+from app.models import AdminOtp, AuthChallenge, RateLimitBucket
 
 
 def cleanup_expired(session: Session, cutoff: datetime, batch_size: int = 1000) -> dict[str, int]:
@@ -20,4 +20,6 @@ def cleanup_expired(session: Session, cutoff: datetime, batch_size: int = 1000) 
     removed_buckets = session.execute(
         delete(RateLimitBucket).where(tuple_(*columns).in_(buckets))
     ).rowcount
-    return {"challenges": removed_challenges, "rate_buckets": removed_buckets}
+    otps = select(AdminOtp.id).where(AdminOtp.expires_at < cutoff).limit(batch_size)
+    removed_otps = session.execute(delete(AdminOtp).where(AdminOtp.id.in_(otps))).rowcount
+    return {"challenges": removed_challenges, "rate_buckets": removed_buckets, "otps": removed_otps}

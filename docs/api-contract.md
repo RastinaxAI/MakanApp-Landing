@@ -264,3 +264,9 @@ API0.9.0 شش endpoint SEO و analytics می‌افزاید؛ مسیرهای ق�
 # الحاق مرحله۱۰
 
 نسخه۰.۱۰.۰ و [قرارداد عملیاتی](step-10-contract.md): ready/live وب، edge احرازشده برای IP، محدودیت اندازه واقعی analytics و worker نگهداری. در Production `/api/v1/*` مستقیم پشت Caddy به FastAPI می‌رسد؛ BFF توسعه حفظ شده است. هیچ API برای Backend اصلی محصول اضافه نشده است.
+
+## الحاق ورود مدیر با OTP
+
+GET /api/v1/admin/auth/config وضعیت دیباگ غیرحساس را می‌دهد. POST auth/otp/request با phone نرمال‌شده و Origin/CSRF؛ POST auth/otp/verify با phone/code و mfa_code اختیاری نشست امن می‌سازد. POST auth/otp/reauth با نشست/CSRF کد حساس همان نشست را می‌فرستد. خطاهای401 OTP_INVALID/MFA_REQUIRED،403 CSRF،429 quota و503 SMS_* استانداردند. POST auth/login قدیمی در محیط واقعی410 است؛ fixture تست مستقل است.
+
+GET/PATCH /api/v1/admin/settings/sms مخصوص مالک؛ PATCH با If-Match، confirmation_code و MFA در صورت فعال، enabled/debug_mode، username/password اختیاری برای حفظ مقدار ذخیره‌شده، body_id. پاسخ فقط flag تنظیم‌شدن credential دارد و مقدارش را نمایش نمی‌دهد. POST settings/sms/check فقط GetCredit و بدون ارسال پیامک؛ موفقیت connected=true. accountCreate در محیط واقعی phone/role/confirmation_code دارد؛ افزودن مدیر ثبت واقعی است و ورود شماره دلخواه مالکیت نمی‌دهد.

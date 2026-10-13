@@ -1,4 +1,7 @@
 // Authentication changes replace the document to discard private route cache and history.
+export class AdminRequestError extends Error {
+  constructor(message: string, public code: string, public status: number, public retryAfter: number = 0) { super(message); }
+}
 export function resetAdminNavigation(destination: "/admin" | "/admin/login") {
   window.location.replace(destination);
 }
@@ -34,9 +37,7 @@ export async function adminRequest<T>(
   });
   if (!response.ok) {
     const result = await response.json().catch(() => null);
-    throw new Error(
-      result?.error?.message ?? "درخواست انجام نشد. دوباره تلاش کنید.",
-    );
+    throw new AdminRequestError(result?.error?.message ?? "درخواست انجام نشد. دوباره تلاش کنید.", result?.error?.code || "REQUEST_FAILED", response.status, Number(response.headers.get("retry-after") || 0));
   }
   return (response.status === 204 ? undefined : await response.json()) as T;
 }

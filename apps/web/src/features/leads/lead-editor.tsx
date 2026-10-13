@@ -119,7 +119,7 @@ export function LeadEditor({
               <option value="">بدون مسئول</option>
               {assignees.map((item) => (
                 <option key={item.id} value={item.id}>
-                  {item.email}
+                  {item.phone || item.email}
                 </option>
               ))}
             </select>

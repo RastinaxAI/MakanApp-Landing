@@ -3,7 +3,7 @@ from enum import StrEnum
 from typing import Literal
 from uuid import UUID
 
-from pydantic import EmailStr, Field, field_validator
+from pydantic import AliasChoices, EmailStr, Field, field_validator, model_validator
 
 from app.schemas.common import StrictSchema
 
@@ -26,14 +26,32 @@ class LoginInput(StrictSchema):
 
 
 class Reauthentication(StrictSchema):
-    current_password: str = Field(min_length=1, max_length=128)
+    current_password: str = Field(
+        min_length=1,
+        max_length=128,
+        validation_alias=AliasChoices("confirmation_code", "current_password"),
+    )
     mfa_code: str | None = Field(default=None, max_length=48)
 
 
 class AccountCreate(Reauthentication):
-    email: EmailStr = Field(max_length=254)
-    password: str = Field(min_length=15, max_length=128)
+    email: EmailStr | None = Field(default=None, max_length=254)
+    password: str | None = Field(default=None, min_length=15, max_length=128)
+    phone: str | None = Field(default=None, max_length=24)
     role: Role
+
+    @field_validator("phone")
+    @classmethod
+    def normalize_phone(cls, value):
+        from app.schemas.otp import normalize_phone
+
+        return normalize_phone(value) if value else value
+
+    @model_validator(mode="after")
+    def identity(self):
+        if not self.phone and not (self.email and self.password):
+            raise ValueError("شماره همراه مدیر را وارد کنید.")
+        return self
 
     @field_validator("email", mode="before")
     @classmethod
@@ -56,7 +74,9 @@ class MfaConfirm(StrictSchema):
 
 class Profile(StrictSchema):
     id: UUID
-    email: str
+    email: str | None
+    phone: str | None = None
+    login_method: Literal["otp", "password"] = "otp"
     role: Role
     capabilities: list[str]
     mfa_enabled: bool
@@ -64,7 +84,8 @@ class Profile(StrictSchema):
 
 class Account(StrictSchema):
     id: UUID
-    email: str
+    email: str | None
+    phone: str | None = None
     role: Role
     is_active: bool
     created_at: datetime

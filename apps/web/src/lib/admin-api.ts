@@ -4,7 +4,9 @@ import { redirect } from "next/navigation";
 
 export type AdminProfile = {
   id: string;
-  email: string;
+  email: string | null;
+  phone: string | null;
+  login_method: "otp" | "password";
   role: "owner" | "editor" | "sales";
   capabilities: string[];
   mfa_enabled: boolean;

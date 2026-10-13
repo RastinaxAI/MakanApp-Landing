@@ -19,7 +19,7 @@ export type LeadDetail = Lead & {
   consent_version: string;
   consent_at: string;
 };
-export type Assignee = { id: string; email: string };
+export type Assignee = { id: string; email: string | null; phone: string | null };
 export type Note = {
   id: string;
   actor_id: string;

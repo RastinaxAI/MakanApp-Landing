@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { adminRequest, resetAdminNavigation } from "./client";
+import { OtpConfirmation } from "./otp-confirmation";
 
 type SessionItem = {
   id: string;
@@ -15,8 +16,10 @@ type SessionItem = {
 export function SecurityPanel({
   enabled,
   initialSessions,
+  legacy = false,
 }: {
   enabled: boolean;
+  legacy?: boolean;
   initialSessions: SessionItem[];
 }) {
   const [sessions, setSessions] = useState(initialSessions);
@@ -104,8 +107,7 @@ export function SecurityPanel({
     <div className="space-y-6">
       <h1 className="text-3xl font-semibold">امنیت حساب</h1>
       <p className="leading-8 text-muted-foreground">
-        نشست‌ها و تنظیمات ورود خود را کنترل کنید. تغییر رمز یا فعال‌سازی و
-        غیرفعال‌سازی MFA، همه نشست‌ها را می‌بندد.
+        نشست‌ها و ورود دومرحله‌ای را مدیریت کنید. فعال‌سازی و غیرفعال‌سازی MFA نشست‌های قبلی را می‌بندد.
       </p>
       {message && (
         <p
@@ -140,6 +142,7 @@ export function SecurityPanel({
         </section>
       ) : (
         <>
+          {legacy ? (
           <section className="space-y-5 rounded-2xl border border-border bg-card p-6">
             <h2 className="text-xl font-semibold">تأیید تغییرات حساس</h2>
             <div className="grid gap-5 tablet:grid-cols-2">
@@ -172,11 +175,12 @@ export function SecurityPanel({
               </div>
             </div>
           </section>
+          ) : <OtpConfirmation value={password} onChange={setPassword} mfa={mfaCode} onMfaChange={setMfaCode} prefix="security" />}
           <section className="space-y-5 rounded-2xl border border-border bg-card p-6">
             <h2 className="text-xl font-semibold">ورود دومرحله‌ای</h2>
             <p className="leading-8 text-muted-foreground">
               وضعیت: {enabled ? "فعال" : "غیرفعال"}. از یک برنامه Authenticator
-              استفاده کنید؛ این وب‌سایت کد را با پیامک یا ایمیل ارسال نمی‌کند.
+              استفاده کنید؛ کد برنامه تأییدکننده علاوه بر کد ورود پیامکی بررسی می‌شود.
             </p>
             {secret ? (
               <div className="space-y-4">
@@ -237,6 +241,7 @@ export function SecurityPanel({
               </div>
             )}
           </section>
+          {legacy && (
           <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
             <h2 className="text-xl font-semibold">تغییر رمز</h2>
             <Label htmlFor="new-password">رمز جدید، حداقل ۱۵ نویسه</Label>
@@ -256,6 +261,7 @@ export function SecurityPanel({
               تغییر رمز و بستن نشست‌ها
             </Button>
           </section>
+          )}
           <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
             <h2 className="text-xl font-semibold">نشست‌های فعال</h2>
             <ul className="space-y-4">

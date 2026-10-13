@@ -179,3 +179,7 @@ flowchart LR
 # الحاق مرحله۱۰
 
 Compose تولید مستقل با Caddy/TLS و API مستقیم، Next standalone، PostgreSQL خصوصی و worker نگهداری اضافه شد. دو شبکه داخلی application/database و شبکه خروجی edge فقط برای Caddy وجود دارند. runtime secrets در محیط سرویس و role migration جدا از API هستند. [راهنمای استقرار](production-runbook.md)، [قرارداد](step-10-contract.md) و [backup](backup-restore-runbook.md) مرجع عملیات هستند. Backend اصلی ماکان دست‌نخورده است.
+
+## الحاق ورود پیامکی و پیشخوان
+
+با درخواست مستقیم مالک در۱۴اکتبر۲۰۲۶، ورود عمومی مدیریت از ایمیل/رمز به phone OTP تغییر می‌کند. Backend اپلیکیشن اصلی دست‌نخورده است. ADR و قرارداد عملیاتی در [گزارش تغییر](admin-refresh-report.md)، دستور bootstrap و SMS در README آمده‌اند. نسخه‌های قدیمی فقط در fixture تست سازگاری فعال‌اند؛ دیباگ111111 در development/test محدود است. تنظیمات پیامک مستقل، خصوصی و رمزگذاری‌شده‌اند؛ شبکه sms_egress فقط به API خروجیHTTPS می‌دهد. استقرار عمومی و اعتبارسنجی SMS واقعی همچنان نیازمند مشخصات ارائه‌دهنده و مقصد هستند.

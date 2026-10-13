@@ -43,7 +43,7 @@ def database_factory(test_control_url):
         )
         runtime = owner.set(username="makan_api", password=os.environ["TEST_API_DB_PASSWORD"])
         with psycopg.connect(
-            control.render_as_string(hide_password=False), autocommit=True
+            control.render_as_string(hide_password=False), autocommit=True, connect_timeout=5
         ) as connection:
             connection.execute(
                 sql.SQL("CREATE DATABASE {} OWNER makan_migrator").format(sql.Identifier(name))

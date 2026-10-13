@@ -55,7 +55,7 @@ def main():
         "--project", choices=["chromium", "firefox", "webkit"], default="chromium"
     )
     parser.add_argument(
-        "--spec", choices=["acceptance", "seo", "cms", "all"], default="acceptance"
+        "--spec", choices=["acceptance", "seo", "cms", "otp", "all"], default="acceptance"
     )
     args = parser.parse_args()
     qa = ROOT / "docs/qa/step10"
@@ -78,6 +78,9 @@ def main():
                 file.write(f"{key}={secrets.token_hex(32)}\n")
         return
     env = environment()
+    if args.gate == "browser" and args.spec == "otp":
+        env["E2E_OTP_ONLY"] = "1"
+        env["MAKAN_QA_PHASE"] = "admin-refresh"
     if args.gate == "backend":
         run(
             [str(PYTHON), "-m", "pytest", "--junitxml=../../docs/qa/step10/pytest.xml"],
@@ -126,6 +129,7 @@ def main():
             "seo": ["seo.spec.ts"],
             "cms": ["cms.spec.ts"],
             "all": [],
+            "otp": ["otp-admin.spec.ts"],
         }[args.spec]
         run(
             [

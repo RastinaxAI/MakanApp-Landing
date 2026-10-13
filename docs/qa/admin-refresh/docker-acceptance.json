@@ -1,0 +1,129 @@
+{
+  "checks": [
+    "verified_internal_ca_https_headers_private_docs_guest_denial",
+    "persistent_demo_idempotency_crm_note_csrf_secure_cookie",
+    "https_rbac_editor_crm_sales_accounts_denied",
+    "nonroot_readonly_capabilities_private_ports",
+    "encrypted_backup_fresh_restore_db_notes_media_old_sessions_revoked",
+    "restore_existing_target_rejected_before_mutation",
+    "recreate_persistence_dependency_failure_readiness"
+  ],
+  "public_deployment": false,
+  "sms_delivery": "Controlled delivery fixture; no live SMS sent or claimed",
+  "runtime": [
+    {
+      "service": "api",
+      "image_id": "sha256:89e1733804689d62ed611fc5ba4399731c0e3ec613044b99174cb919bd9e5ed2",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "published_ports": {}
+    },
+    {
+      "service": "caddy",
+      "image_id": "sha256:0d0779c1ce9c3d4cc5e33bfa66819826320e65af0870fdcce026c8079da95c49",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "published_ports": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18080"
+          }
+        ],
+        "8443/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "18443"
+          }
+        ]
+      }
+    },
+    {
+      "service": "db",
+      "image_id": "sha256:5b100044e1a92d7da731f4410259d1a93a65fcb2a7ad2ee6cbe75004bf04a115",
+      "user": "postgres:postgres",
+      "read_only": false,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "published_ports": {}
+    },
+    {
+      "service": "maintenance",
+      "image_id": "sha256:89e1733804689d62ed611fc5ba4399731c0e3ec613044b99174cb919bd9e5ed2",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "published_ports": {}
+    },
+    {
+      "service": "web",
+      "image_id": "sha256:193bc22f7c31b7a5f27bad93545ea73ea96207f092426f5cd4902b9f54c7c5f7",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_options": [
+        "no-new-privileges:true"
+      ],
+      "published_ports": {}
+    }
+  ],
+  "backup": {
+    "status": "ok",
+    "last_success": "2026-10-13T23:08:42.636122+00:00",
+    "sha256": "83f075d1794dcf583a1a0148411e10ac79ac42d19915677d9c6aec06006b050d",
+    "media_files": 1,
+    "duration_seconds": 4.112561
+  },
+  "restore": {
+    "status": "ok",
+    "migration_head_from_backup": "0008_phone_otp",
+    "media_files": 1,
+    "privacy_preparation": {
+      "revoked_sessions": 3,
+      "retention": {
+        "auth": {
+          "challenges": 0,
+          "rate_buckets": 0,
+          "otps": 0
+        },
+        "learning": {
+          "deleted": 0
+        },
+        "leads": {
+          "purged": 0,
+          "expired_receipts": 0,
+          "expired_rate_buckets": 0
+        },
+        "analytics": {
+          "expired_events": 0,
+          "expired_rate_buckets": 0
+        }
+      }
+    }
+  },
+  "backup_and_restore_seconds": 93.06,
+  "status": "passed"
+}

@@ -408,7 +408,7 @@ def assignees(request, session):
             .where(Admin.is_active.is_(True), Admin.role.in_(("owner", "sales")))
             .order_by(Admin.email)
         ).all()
-        return [Assignee(id=row.id, email=row.email) for row in rows]
+        return [Assignee(id=row.id, email=row.email, phone=row.phone) for row in rows]
 
 
 def metrics(request, session, query):

@@ -15,6 +15,8 @@ param(
     [switch]$PublicOnly,
     [switch]$FoundationChecks,
     [switch]$BrandOnly,
+    [switch]$OtpOnly,
+    [string]$TestFilter = '',
     [ValidateSet('all','chromium','firefox','webkit')][string]$BrowserProject = 'all',
     [switch]$FailFast
 )
@@ -23,13 +25,15 @@ $taskRoot=Split-Path -Parent $PSScriptRoot
 $taskValues=@{}
 foreach ($line in [IO.File]::ReadAllLines((Join-Path $taskRoot '.env.test'))) {if ($line -match '^([A-Z_]+)=([a-f0-9]{64})$') {$taskValues[$matches[1]]=$matches[2]}}
 $taskPrevious=@{}
-foreach ($key in @('TEST_DATABASE_ADMIN_URL','TEST_MIGRATION_DB_PASSWORD','TEST_API_DB_PASSWORD','AUTH_SECRET','AUTH_MFA_KEY','E2E_ADMIN_PASSWORD','API_INTERNAL_URL','PLAYWRIGHT_CHROMIUM_CHANNEL','E2E_SEO_FIXTURES')) {$taskPrevious[$key]=[Environment]::GetEnvironmentVariable($key,'Process')}
+foreach ($key in @('TEST_DATABASE_ADMIN_URL','TEST_MIGRATION_DB_PASSWORD','TEST_API_DB_PASSWORD','AUTH_SECRET','AUTH_MFA_KEY','E2E_ADMIN_PASSWORD','API_INTERNAL_URL','PLAYWRIGHT_CHROMIUM_CHANNEL','E2E_SEO_FIXTURES','E2E_OTP_ONLY','MAKAN_QA_PHASE')) {$taskPrevious[$key]=[Environment]::GetEnvironmentVariable($key,'Process')}
 $env:TEST_DATABASE_ADMIN_URL="postgresql+psycopg://postgres:$($taskValues.POSTGRES_PASSWORD)@127.0.0.1:15432/makan_test_control"
 $env:TEST_MIGRATION_DB_PASSWORD=$taskValues.MIGRATION_DB_PASSWORD
 $env:TEST_API_DB_PASSWORD=$taskValues.API_DB_PASSWORD
 $env:AUTH_SECRET=$taskValues.AUTH_SECRET
 $env:AUTH_MFA_KEY=$taskValues.AUTH_MFA_KEY
 $env:E2E_ADMIN_PASSWORD=[Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(24))
+$env:E2E_OTP_ONLY=if($OtpOnly){'1'}else{$null}
+$env:MAKAN_QA_PHASE=if($OtpOnly){'admin-refresh'}else{$env:MAKAN_QA_PHASE}
 $env:API_INTERNAL_URL='http://127.0.0.1:8100'
 $env:E2E_SEO_FIXTURES=if($SeoOnly -or $LighthouseOnly){'1'}else{$null}
 $env:PLAYWRIGHT_CHROMIUM_CHANNEL=if ($ChromiumChannel -eq 'bundled') {$null} else {$ChromiumChannel}
@@ -62,6 +66,8 @@ try {
         if ($SeoOnly) {$taskBrowserArguments+=@('seo.spec.ts')}
         if ($PublicOnly) {$taskBrowserArguments+=@('public-pages.spec.ts')}
         if ($BrandOnly) {$taskBrowserArguments+=@('brand.spec.ts')}
+        if ($OtpOnly) {$taskBrowserArguments+=@('otp-admin.spec.ts')}
+        if ($TestFilter) {$taskBrowserArguments+=@('--grep',$TestFilter)}
         if ($FoundationChecks) {$taskBrowserArguments+=@('layout.spec.ts','leads-layout.spec.ts','--grep','missing route|reduced motion|200 percent|CRM list')}
         if ($Step9Acceptance) {$taskBrowserArguments+=@('leads.spec.ts','public-pages.spec.ts','admin.spec.ts','learning.spec.ts','learning-category.spec.ts')}
         if ($LighthouseOnly) {$taskBrowserArguments=@('../../scripts/lighthouse-step9.mjs')}

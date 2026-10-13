@@ -7,4 +7,4 @@ class ApiProblem(Exception):
 
 
 def unauthorized() -> ApiProblem:
-    return ApiProblem(401, "UNAUTHORIZED", "ورود معتبر نیست. ایمیل، رمز و کد ورود را بررسی کنید.")
+    return ApiProblem(401, "UNAUTHORIZED", "ورود معتبر نیست؛ شماره همراه و کد تأیید را بررسی کنید.")

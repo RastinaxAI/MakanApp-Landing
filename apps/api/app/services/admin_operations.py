@@ -122,6 +122,7 @@ def accounts(request: Request, query: PaginationQuery, session: Session):
                 Account(
                     id=row.id,
                     email=row.email,
+                    phone=row.phone,
                     role=row.role,
                     is_active=row.is_active,
                     created_at=row.created_at,
@@ -144,11 +145,18 @@ def create_account(data: AccountCreate, request: Request, session: Session):
         admin, _, _ = principal(request, session, True)
         require_capability(admin, "accounts")
         reauthenticate(request, session, admin, data.current_password, data.mfa_code)
-        if session.scalar(select(Admin.id).where(Admin.email == str(data.email))):
-            raise ApiProblem(409, "ACCOUNT_EXISTS", "حساب با این ایمیل وجود دارد.")
+        if not request.app.state.settings.auth_legacy_password_login and not data.phone:
+            raise ApiProblem(422, "PHONE_REQUIRED", "شماره همراه مدیر الزامی است.")
+        if (data.phone and session.scalar(select(Admin.id).where(Admin.phone == data.phone))) or (
+            data.email and session.scalar(select(Admin.id).where(Admin.email == str(data.email)))
+        ):
+            raise ApiProblem(409, "ACCOUNT_EXISTS", "حساب مدیر با این مشخصات وجود دارد.")
         row = Admin(
-            email=str(data.email),
-            password_hash=request.app.state.security.hasher.hash(data.password),
+            email=str(data.email) if data.email else None,
+            phone=data.phone,
+            password_hash=request.app.state.security.hasher.hash(data.password)
+            if data.password
+            else None,
             role=data.role,
         )
         session.add(row)
@@ -157,6 +165,7 @@ def create_account(data: AccountCreate, request: Request, session: Session):
         result = Account(
             id=row.id,
             email=row.email,
+            phone=row.phone,
             role=row.role,
             is_active=row.is_active,
             created_at=row.created_at,
@@ -201,6 +210,7 @@ def change_account(account_id: UUID, data: AccountUpdate, request: Request, sess
         return Account(
             id=row.id,
             email=row.email,
+            phone=row.phone,
             role=row.role,
             is_active=row.is_active,
             created_at=row.created_at,
@@ -251,6 +261,10 @@ def dashboard(request: Request, session: Session):
             metrics["pages"] = session.scalar(
                 select(func.count()).select_from(Page).where(Page.is_archived.is_(False))
             )
+        if "leads" in profile(session, admin).capabilities:
+            from app.models import Lead
+
+            metrics["leads"] = session.scalar(select(func.count()).select_from(Lead))
         return {"metrics": metrics, "modules": {"content": "ready", "leads": "ready"}}
 
 
@@ -269,7 +283,9 @@ def enroll(data: Reauthentication, request: Request, session: Session):
         existing.pending_expires_at = now_utc() + timedelta(minutes=5)
         existing.last_used_step = -1
         audit(session, request, "mfa.enrollment_started", admin.id, admin.id)
-        return MfaEnrollment(secret=secret, otpauth_url=enrollment_uri(admin.email, secret))
+        return MfaEnrollment(
+            secret=secret, otpauth_url=enrollment_uri(admin.phone or admin.email, secret)
+        )
 
 
 def confirm(data: MfaConfirm, request: Request, session: Session):

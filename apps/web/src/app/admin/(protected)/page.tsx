@@ -1,81 +1,10 @@
 import Link from "next/link";
+import { FileText, GraduationCap, Users, ImageIcon, Settings, ShieldCheck, ArrowLeft } from "lucide-react";
 import { adminGet, requireAdmin } from "@/lib/admin-api";
 export default async function DashboardPage() {
-  const profile = await requireAdmin();
-  const data = await adminGet<{
-    metrics: Record<string, number>;
-    modules: Record<string, string>;
-  }>("dashboard");
-  const labels: Record<string, string> = {
-    active_admins: "مدیر فعال",
-    pages: "محتوای ثبت‌شده",
-  };
-  return (
-    <>
-      <h1 className="text-3xl font-semibold">داشبورد مدیریت</h1>
-      <p className="mt-3 leading-8 text-muted-foreground">
-        حساب، نشست‌های ورود و دسترسی مدیران وب‌سایت را مدیریت کنید.
-      </p>
-      <div className="my-8 grid gap-4 tablet:grid-cols-2">
-        {Object.entries(data?.metrics ?? {}).map(([key, value]) => (
-          <section
-            key={key}
-            className="rounded-2xl border border-border bg-card p-6"
-          >
-            <h2 className="text-sm text-muted-foreground">
-              {labels[key] ?? key}
-            </h2>
-            <p className="mt-3 text-3xl font-semibold">
-              {value.toLocaleString("fa-IR")}
-            </p>
-          </section>
-        ))}
-      </div>
-      <section className="rounded-2xl border border-border bg-card p-6">
-        <h2 className="text-xl font-semibold">امنیت حساب شما</h2>
-        <p className="mt-3 leading-8 text-muted-foreground">
-          ورود دومرحله‌ای را فعال کنید، نشست‌های اضافی را ببندید و رمز عبور خود
-          را تغییر دهید.
-        </p>
-        <Link
-          href="/admin/security"
-          prefetch={false}
-          className="mt-4 inline-flex min-h-11 items-center rounded-lg font-medium text-primary-hover"
-        >
-          مدیریت امنیت حساب
-        </Link>
-      </section>
-      {profile.capabilities.includes("content") && (
-        <section className="mt-6 rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-xl font-semibold">مرکز آموزش و وبلاگ</h2>
-          <p className="mt-3 leading-8 text-muted-foreground">
-            راهنماهای متنی، ویدیوهای آپارات و مجموعه‌ها را ایجاد، بازبینی و
-            منتشر کنید.
-          </p>
-          <Link
-            href="/admin/learn"
-            prefetch={false}
-            className="mt-4 inline-flex min-h-11 items-center text-primary-hover"
-          >
-            مدیریت آموزش و وبلاگ
-          </Link>
-        </section>
-      )}
-      {profile.capabilities.includes("leads") && (
-        <section className="mt-6 rounded-2xl border border-border p-6">
-          <h2 className="text-xl font-semibold">درخواست‌ها و پیگیری</h2>
-          <p className="mt-3 leading-8 text-muted-foreground">
-            درخواست‌های دمو و پیام‌های تماس را بررسی و نتیجه پیگیری را ثبت کنید.
-          </p>
-          <Link
-            href="/admin/leads"
-            prefetch={false}
-            className="mt-4 inline-flex min-h-11 items-center text-primary-hover"
-          >
-            مدیریت درخواست‌ها
-          </Link>
-        </section>
-      )}
-    </>
-  );
+  const profile=await requireAdmin();
+  const data=await adminGet<{metrics:Record<string,number>;modules:Record<string,string>}>("dashboard");
+  const labels:Record<string,string>={active_admins:"مدیر فعال",pages:"محتوای ثبت‌شده",leads:"درخواست ثبت‌شده"};
+  const actions=[...(profile.capabilities.includes("content")?[{href:"/admin/content",label:"ویرایش محتوای سایت",description:"صفحه اصلی، امکانات و پرسش‌ها",icon:FileText},{href:"/admin/learn",label:"آموزش و وبلاگ",description:"مقاله، ویدیو و مجموعه آموزشی",icon:GraduationCap},{href:"/admin/media",label:"کتابخانه رسانه",description:"تصاویر و فایل‌های سایت",icon:ImageIcon}]:[]),...(profile.capabilities.includes("leads")?[{href:"/admin/leads",label:"درخواست‌ها و پیگیری",description:"بررسی دمو و پیام‌های تماس",icon:Users}]:[]),...(profile.role==="owner"?[{href:"/admin/settings/sms",label:"اتصال پنل پیامکی",description:"ملی‌پیامک و کد ورود مدیران",icon:Settings}]:[]),{href:"/admin/security",label:"امنیت حساب",description:"نشست‌ها و ورود دومرحله‌ای",icon:ShieldCheck}];
+  return <div className="space-y-7"><div className="flex flex-wrap items-end justify-between gap-4"><div><p className="mb-1 text-sm text-muted-foreground">به پیشخوان ماکان خوش آمدید</p><h1 className="font-semibold">داشبورد مدیریت</h1></div><Link href="/" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm">مشاهده وب‌سایت<ArrowLeft className="size-4" aria-hidden="true"/></Link></div><div className="grid gap-4 tablet:grid-cols-2 desktop:grid-cols-3">{Object.entries(data?.metrics??{}).map(([key,value])=><section key={key} className="rounded-xl border border-slate-200 bg-white p-5"><h2 className="text-sm text-muted-foreground">{labels[key]??key}</h2><p className="mt-3 text-3xl font-semibold tabular-nums">{value.toLocaleString("fa-IR")}</p><p className="mt-2 text-xs text-muted-foreground">وضعیت فعلی وب‌سایت</p></section>)}</div><section className="overflow-hidden rounded-xl border border-slate-200 bg-white"><div className="border-b border-slate-200 px-5 py-4"><h2 className="font-semibold">دسترسی سریع</h2><p className="mt-1 text-xs text-muted-foreground">بخش موردنیاز را انتخاب کنید.</p></div><div className="grid gap-px bg-slate-200 tablet:grid-cols-2">{actions.map(action=><Link key={action.href} href={action.href} prefetch={false} className="flex min-h-28 items-center gap-4 bg-white px-5 py-5 hover:bg-slate-50"><span className="flex size-11 shrink-0 items-center justify-center rounded-[9px] bg-blue-50 text-primary"><action.icon className="size-5" aria-hidden="true"/></span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{action.label}</span><span className="mt-1 block text-xs leading-6 text-muted-foreground">{action.description}</span></span><ArrowLeft className="size-4 text-slate-400" aria-hidden="true"/></Link>)}</div></section><p className="text-xs leading-7 text-muted-foreground">این پیشخوان برای مدیریت وب‌سایت ماکان است. دسترسی هر مدیر بر اساس نقش او تعیین می‌شود.</p></div>;
 }

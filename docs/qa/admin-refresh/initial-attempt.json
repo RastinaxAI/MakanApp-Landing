@@ -1,0 +1,5 @@
+{
+  "passed": false,
+  "cause": "Dedicated test PostgreSQL was stopped; no assertions completed",
+  "test_admin_credential_rotated_after_diagnostic_output": true
+}

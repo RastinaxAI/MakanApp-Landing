@@ -2,6 +2,8 @@ name: ${COMPOSE_PROJECT_NAME:-makan-landing-prod}
 
 x-api-environment: &api-environment
   APP_ENV: ${APP_ENV:-production}
+  AUTH_OTP_DEBUG: 'false'
+  AUTH_LEGACY_PASSWORD_LOGIN: 'false'
   AUTH_SECRET: ${AUTH_SECRET:?Set an independent authentication key}
   AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Set an independent MFA key}
   PROXY_SHARED_SECRET: ${PROXY_SHARED_SECRET:?Set an independent edge key}
@@ -72,7 +74,7 @@ services:
     image: ${API_IMAGE:-makan-landing-api:0.10.0}
     build: {context: ./apps/api}
     environment: *api-environment
-    networks: [application, database]
+    networks: [application, database, sms_egress]
     volumes: [media_data:/srv/media]
     read_only: true
     tmpfs: [/tmp]
@@ -145,6 +147,7 @@ services:
 
 networks:
   edge:
+  sms_egress:
   application: {internal: true}
   database: {internal: true}
 volumes:

@@ -25,6 +25,9 @@ class Settings(BaseSettings):
     auth_login_ip_limit: int = Field(default=20, ge=1, le=1000)
     auth_login_account_limit: int = Field(default=5, ge=1, le=200)
     auth_challenge_limit: int = Field(default=30, ge=1, le=1000)
+    auth_otp_debug: bool = False
+    auth_otp_resend_seconds: int = Field(default=60, ge=1, le=300)
+    auth_legacy_password_login: bool = False
     media_root: Path = Path(".media")
     forms_token_limit: int = Field(default=40, ge=1, le=1000)
     forms_submit_limit: int = Field(default=20, ge=1, le=1000)
@@ -49,6 +52,12 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def secure_auth_configuration(self):
+        if self.auth_otp_debug and self.app_env not in ("development", "test"):
+            raise ValueError("Fixed OTP codes are restricted to local development and test")
+        if self.app_env != "test" and self.auth_otp_resend_seconds < 60:
+            raise ValueError("SMS resend interval must be at least sixty seconds")
+        if self.auth_legacy_password_login and self.app_env != "test":
+            raise ValueError("Legacy password authentication is restricted to regression tests")
         if self.auth_secret.get_secret_value() == self.auth_mfa_key.get_secret_value():
             raise ValueError("Authentication and MFA encryption keys must differ")
         if self.proxy_shared_secret is not None:

@@ -30,6 +30,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.anyio]
 def auth_context(database_factory):
     with database_factory() as (_, runtime, engine):
         config = Settings(
+            auth_legacy_password_login=True,
             database_url=runtime.render_as_string(hide_password=False),
             auth_login_ip_limit=1000,
             auth_login_account_limit=200,
@@ -119,21 +120,18 @@ async def test_owner_can_revoke_another_administrators_session(auth_context):
             assert (await editor.get("/api/v1/admin/auth/me")).status_code == 401
 
 
-async def test_production_cookie_flags(auth_context):
+async def test_production_rejects_legacy_password_login(auth_context):
     config, _, password, _ = auth_context
     config = config.model_copy(
-        update={"app_env": "production", "auth_allowed_origins": ["https://testserver"]}
+        update={
+            "app_env": "production",
+            "auth_allowed_origins": ["https://testserver"],
+            "auth_legacy_password_login": False,
+        }
     )
     async with api_client(create_app(config), "https://testserver") as client:
         response = await sign_in(client, password)
-        assert response.status_code == 200
-        cookie = response.headers.get_list("set-cookie")[0]
-        assert (
-            cookie.startswith("__Host-makan_session=")
-            and "Secure" in cookie
-            and "HttpOnly" in cookie
-            and "Domain=" not in cookie
-        )
+        assert response.status_code == 410
 
 
 async def test_login_csrf_origin_consumption_and_expiry(auth_context):
@@ -523,7 +521,12 @@ async def test_operator_bootstrap_and_recovery_are_audited(database_factory, mon
             assert session.scalar(select(AuditLog.action)) == "admin.bootstrap"
         with pytest.raises(SystemExit):
             command.main()
-        app = create_app(Settings(database_url=runtime.render_as_string(hide_password=False)))
+        app = create_app(
+            Settings(
+                database_url=runtime.render_as_string(hide_password=False),
+                auth_legacy_password_login=True,
+            )
+        )
         async with api_client(app) as client:
             csrf = (await client.get("/api/v1/admin/auth/csrf")).json()["csrf_token"]
             response = await client.post(
@@ -609,7 +612,7 @@ async def test_cleanup_is_bounded_and_keeps_live_authentication_and_audit(auth_c
         with Session(engine) as session, session.begin():
             audit_count = session.scalar(select(func.count()).select_from(AuditLog))
             result = cleanup_expired(session, now, 1)
-            assert result == {"challenges": 1, "rate_buckets": 1}
+            assert result == {"challenges": 1, "rate_buckets": 1, "otps": 0}
             assert session.scalar(select(func.count()).select_from(AuditLog)) == audit_count
             with pytest.raises(ValueError):
                 cleanup_expired(session, now, 0)

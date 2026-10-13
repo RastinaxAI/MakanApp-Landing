@@ -1,0 +1,7 @@
+{
+  "readiness": 200,
+  "final_web_image_matches_build": true,
+  "phone_only_login": true,
+  "debug_code_visible_locally": true,
+  "image_id": "sha256:78746873d7f06a779e0765c933f15cfef201d4949bff1e35f810ca5169e96912"
+}

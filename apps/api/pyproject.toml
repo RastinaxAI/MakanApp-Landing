@@ -17,10 +17,11 @@ dependencies = [
   "nh3==0.3.7",
   "pillow==12.3.0",
   "python-multipart==0.0.32",
+  "httpx==0.28.1",
 ]
 
 [dependency-groups]
-dev = ["pytest==9.1.1", "httpx==0.28.1", "ruff==0.17.0"]
+dev = ["pytest==9.1.1", "ruff==0.17.0"]
 
 [build-system]
 requires = ["hatchling==1.29.0"]
@@ -31,7 +32,7 @@ packages = ["app"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers --tb=short"
 markers = ["integration: requires dedicated real PostgreSQL test databases"]
 
 [tool.ruff]

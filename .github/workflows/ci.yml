@@ -66,13 +66,16 @@ jobs:
       - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec acceptance
       - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec cms
       - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec seo
+      - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec otp
       - if: always()
         run: docker compose -f compose.test.yaml --env-file .env.test down
       - if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: browser-${{ matrix.browser }}
-          path: docs/qa/step10
+          path: |
+            docs/qa/step10
+            docs/qa/admin-refresh
           retention-days: 7
   docker:
     needs: [checks, browsers]

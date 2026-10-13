@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.commands.maintenance import cycle
 from app.core.config import Settings
 from app.db.session import build_engine
-from app.models import AdminSession, AuthChallenge
+from app.models import AdminOtp, AdminSession, AuthChallenge
 from app.services.auth import audit, now_utc
 
 
@@ -20,6 +20,7 @@ def prepare(engine):
             .values(revoked_at=now_utc())
         ).rowcount
         session.execute(delete(AuthChallenge))
+        session.execute(delete(AdminOtp))
         audit(
             session, None, "operations.restore_prepared", None, None, {"revoked_sessions": revoked}
         )

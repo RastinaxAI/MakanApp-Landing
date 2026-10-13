@@ -77,7 +77,10 @@ def sign_in(data: LoginInput, request: Request, response: Response, session: Ses
 def me(request: Request, session: SessionDep):
     with session.begin():
         admin, _, _ = principal(request, session)
-        return profile(session, admin)
+        config = request.app.state.settings
+        return profile(
+            session, admin, legacy=config.auth_legacy_password_login and config.app_env == "test"
+        )
 
 
 @router.post("/auth/logout", status_code=204)

@@ -124,7 +124,7 @@ export default async function LeadsPage({
         {select(
           "assigned_to",
           "مسئول پیگیری",
-          Object.fromEntries(assignees.map((a) => [a.id, a.email])),
+          Object.fromEntries(assignees.map((a) => [a.id, a.phone || a.email || "مدیر"])),
         )}
         {[
           ["date_from", "تاریخ ایجاد از"],

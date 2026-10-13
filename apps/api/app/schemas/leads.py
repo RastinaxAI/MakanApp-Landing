@@ -195,7 +195,8 @@ class History(StrictSchema):
 
 class Assignee(StrictSchema):
     id: UUID
-    email: str
+    email: str | None
+    phone: str | None = None
 
 
 class LeadMetrics(StrictSchema):

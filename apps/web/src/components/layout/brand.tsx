@@ -13,7 +13,7 @@ export function Brand({ name = "ماکان", logo }: { name?: string; logo?: Cms
         <Image src={`/api/v1/media/${logo.id}/file`} alt={logo.alt_text} width={logo.width} height={logo.height} className="h-14 w-auto max-w-44 object-contain" />
       ) : (
         <>
-          <Image src="/brand/makan-logo.png" alt="" width={52} height={52} sizes="52px" className="size-13 rounded-2xl shadow-soft" />
+          <Image src="/brand/makan-logo.png" alt="" width={52} height={52} sizes="52px" className="size-13 rounded-[12px] shadow-soft" />
           <span className="flex flex-col gap-1">
             <span className="text-[1.6rem] font-bold tracking-tight text-foreground">{name}</span>
             <span className="text-xs font-medium text-muted-foreground" dir="ltr">MakanApp</span>

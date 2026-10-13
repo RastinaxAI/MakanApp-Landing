@@ -26,9 +26,9 @@ class Security:
     def csrf(self, kind: str, token: str) -> str:
         return self.digest(f"csrf-{kind}", token)
 
-    def password_matches(self, stored: str, password: str) -> bool:
+    def password_matches(self, stored: str | None, password: str) -> bool:
         try:
-            return self.hasher.verify(stored, password)
+            return self.hasher.verify(stored or "", password)
         except (VerificationError, InvalidHashError):
             return False
 
