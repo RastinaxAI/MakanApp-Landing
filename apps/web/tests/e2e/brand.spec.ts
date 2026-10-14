@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 
-const output = path.resolve("../../docs/qa/brand-refresh");
+const output = path.resolve(`../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "brand-refresh"}`);
 
 for (const width of [390, 768, 1440]) {
   test(`branded homepage is accessible and fits ${width}px`, async ({ page }, testInfo) => {

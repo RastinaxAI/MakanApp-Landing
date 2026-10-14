@@ -40,7 +40,7 @@ test("preserved public URLs, metadata, one main heading and responsive premium s
     titles.add(title!);
     expect(html).toContain("noindex");
   }
-  const dir = path.resolve("../../docs/qa/v2-step4", info.project.name);
+  const dir = path.resolve("../../docs/qa", process.env.MAKAN_QA_PHASE || "v2-step4", info.project.name);
   await mkdir(dir, { recursive: true });
   for (const width of [1440, 768, 360]) {
     await page.setViewportSize({ width, height: 960 });

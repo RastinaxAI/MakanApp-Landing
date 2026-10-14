@@ -90,7 +90,7 @@ test("homepage follows PRD order and handles ready vs roadmap product tabs", asy
     "مدرسه هوشمندتر",
   );
   await expect(
-    page.getByRole("link", { name: "مشاهده امکانات", exact: true }),
+    page.getByRole("link", { name: "ماکان را بشناسید", exact: true }),
   ).toHaveAttribute("href", "/features");
   await expect(
     page.getByRole("tab", { name: "پیام‌رسان", exact: true }),
@@ -101,7 +101,7 @@ test("homepage follows PRD order and handles ready vs roadmap product tabs", asy
     page.getByRole("tab", { name: "مدرسه", exact: true }),
   ).toBeFocused();
   await page.getByRole("tab", { name: "هوش مصنوعی", exact: true }).click();
-  const panel = page.getByRole("tabpanel");
+  const panel = page.locator("[data-feature-preview]").getByRole("tabpanel");
   await expect(panel.getByText("در نقشه راه", { exact: true })).toBeVisible();
   await expect(panel).toContainText("این بخش دموی هوش مصنوعی نیست");
   await expect(panel.getByRole("link")).toHaveAttribute("href", "/features/ai");
@@ -132,11 +132,14 @@ test("feature pages honor user confirmation and never present an operational AI 
   await page.goto("/features/ai");
   await expect(page.getByText("در نقشه راه", { exact: true })).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "در نقشه راه؛ بدون دموی فعال" }),
+    page.getByText(
+      "تصویرسازی مسیر توسعه؛ برای این قابلیت هنوز دموی عملیاتی تأیید نشده است.",
+      { exact: true },
+    ),
   ).toBeVisible();
   await expect(page.locator("textarea, input, iframe")).toHaveCount(0);
   await expect(
-    page.getByRole("link", { name: "مشاهده امکانات آماده" }),
+    page.getByRole("link", { name: "امکانات آمادهٔ ماکان", exact: true }),
   ).toHaveAttribute("href", "/features");
 });
 
@@ -251,7 +254,7 @@ for (const width of [360, 768, 1440]) {
         [360, 1440].includes(width)
       ) {
         const directory = path.resolve(
-          "../../docs/qa/step10",
+          `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
           testInfo.project.name,
         );
         await mkdir(directory, { recursive: true });

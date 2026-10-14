@@ -164,7 +164,7 @@ test("real lead, school, contacts, qualification, drag pipeline, demo outcome, f
   expect(data.demos.items[0].status).toBe("completed");
   expect(data.opportunities.items[0].stage).toBe("demo_scheduled");
   expect(data.profile.tags).toContain("اولویت");
-  const dir = path.resolve("../../docs/qa/v2-step5", info.project.name);
+  const dir = path.resolve("../../docs/qa", process.env.MAKAN_QA_PHASE || "v2-step5", info.project.name);
   await mkdir(dir, { recursive: true });
   for (const width of [1440, 768, 360]) {
     await page.setViewportSize({ width, height: 960 });

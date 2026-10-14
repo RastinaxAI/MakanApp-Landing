@@ -70,7 +70,7 @@ test("reusable sections, undo redo, viewport resize and autosave survive refresh
     (element) => element.getBoundingClientRect().width,
   );
   await canvas
-    .getByRole("button", { name: "تغییر عرض عنصر", exact: true })
+    .locator('button[aria-label="تغییر عرض عنصر"]')
     .focus();
   await page.keyboard.press("ArrowLeft");
   await expect
@@ -104,10 +104,10 @@ test("reusable sections, undo redo, viewport resize and autosave survive refresh
     page.getByRole("status").filter({ hasText: "ذخیره و منتشر شد" }),
   ).toBeVisible();
   expect((await page.request.get(`/${saved.slug}`)).status()).toBe(404);
-  await mkdir(path.resolve("../../docs/qa/v2-step3"), { recursive: true });
+  await mkdir(path.resolve("../../docs/qa/v2-step6"), { recursive: true });
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/v2-step3/canvas-${info.project.name}.png`,
+      `../../docs/qa/v2-step6/canvas-${info.project.name}.png`,
     ),
     fullPage: true,
   });

@@ -47,7 +47,7 @@ export const statuses: Record<string, string> = {
   closed: "بسته‌شده",
 };
 export const outcomes: Record<string, string> = {
-  won: "قرارداد ثبت‌شده",
+  won: "نتیجهٔ موفق ثبت‌شده",
   lost: "عدم توافق",
   no_response: "بدون پاسخ",
   duplicate: "تکراری",

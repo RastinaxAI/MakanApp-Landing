@@ -128,7 +128,9 @@ test("real metadata produces matching safe JSON-LD and no player request before 
   );
   expect(thirdParty).toEqual([]);
   await expect(page.locator("iframe")).toHaveCount(0);
-  const dir = path.resolve("../../docs/qa/step10");
+  const dir = path.resolve(
+    `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
+  );
   await mkdir(dir, { recursive: true });
   for (const width of [360, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });
@@ -281,7 +283,7 @@ test("privacy signals block collection and admin page is noindex", async ({
   page.on("request", (r) => {
     if (r.url().endsWith("/analytics/events")) events.push(r.url());
   });
-  await page.goto("http://127.0.0.1:3100/");
+  await page.goto((process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100") + "/");
   await expect(
     page.getByRole("button", { name: "تنظیم اندازه‌گیری اختیاری" }),
   ).toBeVisible();
@@ -296,7 +298,7 @@ test("privacy signals block collection and admin page is noindex", async ({
   for (const signal of ["DNT", "Sec-GPC"]) {
     const response = await request.post("/api/v1/analytics/events", {
       headers: {
-        Origin: "http://127.0.0.1:3100",
+        Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100",
         "User-Agent": "Mozilla/5.0 browser acceptance",
         [signal]: "1",
       },

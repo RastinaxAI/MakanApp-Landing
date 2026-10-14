@@ -8,6 +8,11 @@ const config: NextConfig = {
     localPatterns: [{ pathname: "/api/v1/media/**", search: "" }, { pathname: "/brand/**", search: "" }],
   },
   reactStrictMode: true,
+  experimental: {
+    webpackMemoryOptimizations: true,
+    cpus: 1,
+    optimizePackageImports: ["radix-ui", "zod"],
+  },
   // Resolve CMS metadata before sending headers, so missing/mismatched content stays a real 404.
   htmlLimitedBots: /.*/,
 };

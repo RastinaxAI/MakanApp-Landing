@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+env:
+  MAKAN_QA_PHASE: v2-step6
 concurrency:
   group: quality-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,23 +26,24 @@ jobs:
       - run: npm ci
       - run: uv sync --locked --project apps/api
       - run: npm run lint
+      - run: node --test apps/web/tests/unit/backend-read.test.mjs
       - run: npm run build
       - run: npm run typecheck
       - run: uv run --project apps/api ruff check apps/api scripts
       - run: npm audit --omit=dev --audit-level=high
       - run: uv run --project apps/api python scripts/run-quality.py prepare-test
       - run: docker compose -f compose.test.yaml --env-file .env.test up -d --wait
-      - run: uv run --project apps/api python scripts/run-quality.py backend
+      - run: uv run --project apps/api python scripts/run-v2-quality.py backend --phase v2-step6
       - run: uv run --project apps/api python scripts/check-secrets.py
       - name: API dependency scan
         run: |
           uv export --project apps/api --no-dev --no-emit-project --no-hashes --format requirements-txt > .preview/runtime-requirements.txt
-          uvx --from pip-audit==2.10.0 pip-audit -r .preview/runtime-requirements.txt --format json --output docs/qa/step10/pip-audit.json
+          uvx --from pip-audit==2.10.0 pip-audit -r .preview/runtime-requirements.txt --format json --output docs/qa/v2-step6/pip-audit.json
       - if: always()
         run: docker compose -f compose.test.yaml --env-file .env.test down
       - if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with: {name: checks, path: docs/qa/step10, retention-days: 7}
+        with: {name: checks, path: docs/qa, retention-days: 7}
   browsers:
     needs: checks
     runs-on: ubuntu-24.04
@@ -63,10 +66,10 @@ jobs:
       - run: npx playwright install --with-deps ${{ matrix.browser }}
       - run: uv run --project apps/api python scripts/run-quality.py prepare-test
       - run: docker compose -f compose.test.yaml --env-file .env.test up -d --wait
-      - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec acceptance
-      - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec cms
-      - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec seo
-      - run: uv run --project apps/api python scripts/run-quality.py browser --project ${{ matrix.browser }} --spec otp
+      - run: uv run --project apps/api python scripts/run-v2-quality.py browser --phase v2-step6 --project ${{ matrix.browser }}
+      - run: uv run --project apps/api python scripts/run-v2-quality.py browser --phase v2-step6 --suite legacy --project ${{ matrix.browser }} --spec cms
+      - run: uv run --project apps/api python scripts/run-v2-quality.py browser --phase v2-step6 --suite legacy-seo --project ${{ matrix.browser }} --spec seo
+      - run: uv run --project apps/api python scripts/run-v2-quality.py browser --phase v2-step6 --suite legacy-otp --project ${{ matrix.browser }} --spec otp-admin
       - if: always()
         run: docker compose -f compose.test.yaml --env-file .env.test down
       - if: always()
@@ -76,28 +79,65 @@ jobs:
           path: |
             docs/qa/step10
             docs/qa/admin-refresh
+            docs/qa/v2-step6
           retention-days: 7
   docker:
     needs: [checks, browsers]
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with: {python-version: '3.13.16'}
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with: {node-version: '24.21.0', cache: npm}
       - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
         with: {version: '0.13.0'}
       - run: uv sync --locked --project apps/api
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
       - run: uv run --project apps/api python scripts/production.py --env-file .preview/ci-production.env init --local-test
-      - run: docker compose -f compose.production.yaml --env-file .preview/ci-production.env --profile tools build db web api migrate caddy
-      - run: uv run --project apps/api python scripts/test-production.py --env-file .preview/ci-production.env
+      - name: Enable crawl only in the disposable HTTPS fixture
+        run: |
+          uv run --project apps/api python - <<'PY'
+          from pathlib import Path
+          path = Path('.preview/ci-production.env')
+          text = path.read_text(encoding='utf-8')
+          assert 'COMPOSE_PROJECT_NAME=makan-landing-acceptance-' in text
+          assert 'SITE_DOMAIN=localhost' in text
+          path.write_text(text.replace('SEO_INDEXING_ENABLED=false', 'SEO_INDEXING_ENABLED=true'), encoding='utf-8')
+          PY
+      - run: uv run --project apps/api python scripts/production.py --env-file .preview/ci-production.env build
+      - run: uv run --project apps/api python scripts/test-production.py --env-file .preview/ci-production.env --keep
+        env: {MAKAN_QA_PHASE: v2-step6}
+      - run: uv run --project apps/api python scripts/test-production-browser.py --env-file .preview/ci-production.env
+      - name: Mobile Lighthouse, three runs per route
+        run: |
+          export PRODUCTION_TEST_ORIGIN=https://localhost:18443
+          export CHROME_PATH="$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')"
+          node scripts/lighthouse-production.mjs
       - name: Runtime image scan
         run: |
-          mkdir -p docs/qa/step10
+          mkdir -p docs/qa/v2-step6 .preview/trivy-cache
           for image in makan-landing-api:0.10.0 makan-landing-web:0.10.0 makan-landing-caddy:2.11.7 makan-landing-postgres:17.11; do
             safe_name=$(printf '%s' "$image" | tr ':/' '--')
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD/docs/qa/step10:/out" -v "$PWD/infrastructure/security:/policy:ro" aquasec/trivy:0.75.0@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa image --db-repository ghcr.io/aquasecurity/trivy-db:2 --ignorefile /policy/trivy-ignore.yaml --scanners vuln --severity CRITICAL --exit-code 1 --format json --output "/out/$safe_name.json" "$image"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD/docs/qa/v2-step6:/out" -v "$PWD/infrastructure/security:/policy:ro" -v "$PWD/.preview/trivy-cache:/root/.cache/trivy" aquasec/trivy:0.75.0@sha256:af6acf9a6b85dfe389a1941505c0ce9efef52a4719635e1a962f022a3d855daa image --parallel 1 --no-progress --db-repository ghcr.io/aquasecurity/trivy-db:2 --ignorefile /policy/trivy-ignore.yaml --scanners vuln --severity CRITICAL --exit-code 1 --format json --output "/out/$safe_name.json" "$image"
           done
+      - name: Remove only the owned acceptance stack
+        if: always()
+        run: |
+          uv run --project apps/api python - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'scripts')
+          from production import Operator
+          path = Path('.preview/ci-production.env')
+          if path.exists():
+              operator = Operator(path)
+              assert operator.project.startswith('makan-landing-acceptance-')
+              assert operator.values['SITE_DOMAIN'] == 'localhost'
+              operator.run('down', '--volumes', '--remove-orphans', check=False)
+          PY
       - if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
-        with: {name: docker-production, path: docs/qa/step10, retention-days: 7}
+        with: {name: docker-production, path: docs/qa/v2-step6, retention-days: 7}

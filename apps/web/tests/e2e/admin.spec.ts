@@ -30,7 +30,7 @@ async function mutation(
   return page.request.fetch(`/api/v1/admin/${endpoint}`, {
     method,
     headers: {
-      Origin: "http://127.0.0.1:3100",
+      Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100",
       "X-CSRF-Token": (await csrf.json()).csrf_token,
     },
     data: body,
@@ -54,12 +54,24 @@ function totp(secret: string) {
   );
 }
 
-test.beforeEach(() => { test.setTimeout(90000); });
+test.beforeEach(() => {
+  test.setTimeout(90000);
+});
 
 test("guest pages redirect, API rejects guest and hostile CSRF", async ({
-  page, browser,
+  page,
+  browser,
 }, testInfo) => {
-  await testInfo.attach("runtime-versions", { body: JSON.stringify({ node: process.version, engine: browser.browserType().name(), browser: browser.version(), platform: process.platform, workers: testInfo.config.workers }), contentType: "application/json" });
+  await testInfo.attach("runtime-versions", {
+    body: JSON.stringify({
+      node: process.version,
+      engine: browser.browserType().name(),
+      browser: browser.version(),
+      platform: process.platform,
+      workers: testInfo.config.workers,
+    }),
+    contentType: "application/json",
+  });
   await page.goto("/admin/accounts");
   await expect(page).toHaveURL(/\/admin\/login$/);
   expect((await page.request.get("/api/v1/admin/accounts")).status()).toBe(401);
@@ -189,7 +201,9 @@ test("owner creates and deactivates an account with a real audit event", async (
     .click();
   await expect(page.getByRole("status")).toContainText("حساب مدیر ذخیره شد.");
   // The real fixture has more than one page; new accounts are ordered last.
-  await expect(page.getByRole("button", { name: "صفحه بعد", exact: true })).toBeEnabled();
+  await expect(
+    page.getByRole("button", { name: "صفحه بعد", exact: true }),
+  ).toBeEnabled();
   await page.getByRole("button", { name: "صفحه بعد", exact: true }).click();
   await expect(page.getByText(email, { exact: true })).toBeVisible();
   await page.getByLabel("رمز فعلی شما", { exact: true }).fill(password!);
@@ -201,12 +215,25 @@ test("owner creates and deactivates an account with a real audit event", async (
   await page
     .getByRole("link", { name: "رویدادهای مدیریت", exact: true })
     .click();
-  await expect(page.getByText("ایجاد حساب", { exact: true }).first()).toBeVisible();
-  const events = await page.request.get("/api/v1/admin/audit-logs?page_size=100");
-  const accounts = await page.request.get("/api/v1/admin/accounts?page_size=100");
-  const created = (await accounts.json()).items.find((item: { email: string }) => item.email === email);
+  await expect(
+    page.getByText("ایجاد حساب", { exact: true }).first(),
+  ).toBeVisible();
+  const events = await page.request.get(
+    "/api/v1/admin/audit-logs?page_size=100",
+  );
+  const accounts = await page.request.get(
+    "/api/v1/admin/accounts?page_size=100",
+  );
+  const created = (await accounts.json()).items.find(
+    (item: { email: string }) => item.email === email,
+  );
   expect(created).toBeDefined();
-  expect((await events.json()).items.some((event: { action: string; entity_id: string }) => event.action === "admin.created" && event.entity_id === created.id)).toBe(true);
+  expect(
+    (await events.json()).items.some(
+      (event: { action: string; entity_id: string }) =>
+        event.action === "admin.created" && event.entity_id === created.id,
+    ),
+  ).toBe(true);
 });
 
 test("MFA enrollment, recovery login and disabling are real", async ({
@@ -224,7 +251,11 @@ test("MFA enrollment, recovery login and disabling are real", async ({
     .inputValue();
   expect(secret).toHaveLength(32);
   await page.getByLabel("کد تأیید برنامه", { exact: true }).fill(totp(secret));
-  const confirmation = page.waitForResponse(response => response.url().endsWith("/auth/mfa/confirm") && response.request().method() === "POST");
+  const confirmation = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/auth/mfa/confirm") &&
+      response.request().method() === "POST",
+  );
   await page
     .getByRole("button", { name: "تأیید و فعال‌سازی MFA", exact: true })
     .click();
@@ -242,9 +273,7 @@ test("MFA enrollment, recovery login and disabling are real", async ({
       exact: true,
     })
     .click();
-  await page
-    .getByLabel("ایمیل مدیر", { exact: true })
-    .fill(email);
+  await page.getByLabel("ایمیل مدیر", { exact: true }).fill(email);
   await page.getByLabel("رمز عبور", { exact: true }).fill(password!);
   await page
     .getByLabel("کد دومرحله‌ای یا کد بازیابی", { exact: true })
@@ -316,7 +345,7 @@ for (const width of [360, 768, 1440])
       expect(audit.violations, route).toEqual([]);
       if ([360, 1440].includes(width)) {
         const directory = path.resolve(
-          "../../docs/qa/step10",
+          `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
           testInfo.project.name,
         );
         await mkdir(directory, { recursive: true });

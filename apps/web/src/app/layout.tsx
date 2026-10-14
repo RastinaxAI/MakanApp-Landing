@@ -7,7 +7,7 @@ const vazirmatn = localFont({
   src: "../../public/fonts/vazirmatn-arabic-wght-normal.woff2",
   variable: "--font-vazirmatn",
   weight: "100 900",
-  display: "optional",
+  display: "swap",
   fallback: ["Tahoma", "Arial", "sans-serif"],
 });
 

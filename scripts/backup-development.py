@@ -3,6 +3,7 @@
 Never restores or deletes a database on the source instance. Production uses production.py.
 """
 
+import argparse
 import json
 import re
 import secrets
@@ -27,21 +28,47 @@ def container(service, test=False):
     arguments = ["docker", "compose"]
     if test:
         arguments += ["--env-file", ".env.test", "-f", "compose.test.yaml"]
-    identifier = run([*arguments, "ps", "-q", service])
+    identifier = run([*arguments, "ps", "--all", "-q", service])
     if not re.fullmatch(r"[0-9a-f]{64}", identifier):
         raise RuntimeError("Expected local container is unavailable")
     facts = json.loads(run(["docker", "inspect", identifier]))[0]
     labels = facts["Config"]["Labels"]
     expected = "makan-landing-test" if test else "makan-landing-dev"
-    if labels.get("com.docker.compose.project") != expected or Path(labels.get("com.docker.compose.project.working_dir", "")).resolve() != ROOT:
+    if (
+        labels.get("com.docker.compose.project") != expected
+        or Path(labels.get("com.docker.compose.project.working_dir", "")).resolve()
+        != ROOT
+    ):
         raise RuntimeError("Container does not belong to this development workspace")
     return identifier
 
 
 class Snapshot:
     def __init__(self, identifier):
-        self.process = subprocess.Popen(["docker", "exec", "-i", identifier, "psql", "-U", "postgres", "-d", "makan_landing", "-XqAt", "-v", "ON_ERROR_STOP=1"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding="utf-8")
-        self.identifier = self.query("SET statement_timeout='15s'; SET timezone='UTC'; BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY; SELECT pg_export_snapshot()")
+        self.process = subprocess.Popen(
+            [
+                "docker",
+                "exec",
+                "-i",
+                identifier,
+                "psql",
+                "-U",
+                "postgres",
+                "-d",
+                "makan_landing",
+                "-XqAt",
+                "-v",
+                "ON_ERROR_STOP=1",
+            ],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+        )
+        self.identifier = self.query(
+            "SET statement_timeout='15s'; SET timezone='UTC'; BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY; SELECT pg_export_snapshot()"
+        )
         if not re.fullmatch(r"[0-9A-F-]+", self.identifier):
             raise RuntimeError("Snapshot identity is invalid")
 
@@ -67,6 +94,14 @@ def signature_sql(table):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--report", type=Path, default=Path("docs/qa/v2-step4/backup-verification.json")
+    )
+    args = parser.parse_args()
+    report_path = (ROOT / args.report).resolve()
+    if not report_path.is_relative_to((ROOT / "docs/qa").resolve()):
+        raise ValueError("Backup report must remain inside docs/qa")
     identifier = uuid4().hex
     stage = ROOT / ".preview" / ("backup-" + identifier)
     directory = ROOT / ".backups"
@@ -84,11 +119,36 @@ def main():
     key_file = archive.with_suffix(".key")
     environment = directory / ("v2-environment-" + identifier + ".enc")
     try:
-        tables = json.loads(snapshot.query("SELECT json_agg(tablename ORDER BY tablename)::text FROM pg_tables WHERE schemaname='public'"))
-        signatures = {table: json.loads(snapshot.query(signature_sql(table))) for table in tables}
+        tables = json.loads(
+            snapshot.query(
+                "SELECT json_agg(tablename ORDER BY tablename)::text FROM pg_tables WHERE schemaname='public'"
+            )
+        )
+        signatures = {
+            table: json.loads(snapshot.query(signature_sql(table))) for table in tables
+        }
         head = snapshot.query("SELECT version_num FROM alembic_version")
-        media = json.loads(snapshot.query("SELECT COALESCE(json_agg(json_build_object('file',storage_key,'sha',checksum_sha256,'size',size_bytes)), '[]'::json)::text FROM media_assets"))
-        run(["docker", "exec", source_db, "pg_dump", "-U", "postgres", "-d", "makan_landing", "-Fc", "--snapshot=" + snapshot.identifier, "-f", temporary])
+        media = json.loads(
+            snapshot.query(
+                "SELECT COALESCE(json_agg(json_build_object('file',storage_key,'sha',checksum_sha256,'size',size_bytes)), '[]'::json)::text FROM media_assets"
+            )
+        )
+        run(
+            [
+                "docker",
+                "exec",
+                source_db,
+                "pg_dump",
+                "-U",
+                "postgres",
+                "-d",
+                "makan_landing",
+                "-Fc",
+                "--snapshot=" + snapshot.identifier,
+                "-f",
+                temporary,
+            ]
+        )
         run(["docker", "cp", source_db + ":" + temporary, str(stage / "database.dump")])
         (stage / "media").mkdir()
         run(["docker", "cp", source_api + ":/srv/media/.", str(stage / "media")])
@@ -99,30 +159,98 @@ def main():
             if file.stat().st_size != asset["size"] or sha256(file) != asset["sha"]:
                 raise RuntimeError("Media differs from the database snapshot")
         snapshot.close()
-        metadata = {"format": 1, "created_at": datetime.now(UTC).isoformat(), "migration_head": head, "source_commit": run(["git", "rev-parse", "HEAD"])}
+        metadata = {
+            "format": 1,
+            "created_at": datetime.now(UTC).isoformat(),
+            "migration_head": head,
+            "source_commit": run(["git", "rev-parse", "HEAD"]),
+        }
         pack(stage, stage / "snapshot.tar.gz", metadata)
         with key_file.open("x", encoding="ascii") as stream:
             stream.write(key + "\n")
         encrypt(stage / "snapshot.tar.gz", archive, key)
         encrypt(ROOT / ".env", environment, key)
         decrypt(archive, stage / "verified.tar.gz", key)
-        restored_metadata, _manifest = unpack(stage / "verified.tar.gz", stage / "verified")
+        restored_metadata, _manifest = unpack(
+            stage / "verified.tar.gz", stage / "verified"
+        )
         decrypt(environment, stage / "verified.env", key)
         if (stage / "verified.env").read_bytes() != (ROOT / ".env").read_bytes():
             raise RuntimeError("Environment backup verification failed")
         run(["docker", "exec", test_db, "createdb", "-U", "postgres", database])
         created = True
-        run(["docker", "cp", str(stage / "verified/database.dump"), test_db + ":" + temporary])
-        run(["docker", "exec", test_db, "pg_restore", "-U", "postgres", "-d", database, "--exit-on-error", "--no-owner", "--no-privileges", temporary])
+        run(
+            [
+                "docker",
+                "cp",
+                str(stage / "verified/database.dump"),
+                test_db + ":" + temporary,
+            ]
+        )
+        run(
+            [
+                "docker",
+                "exec",
+                test_db,
+                "pg_restore",
+                "-U",
+                "postgres",
+                "-d",
+                database,
+                "--exit-on-error",
+                "--no-owner",
+                "--no-privileges",
+                temporary,
+            ]
+        )
         for table, expected in signatures.items():
-            value = json.loads(run(["docker", "exec", test_db, "psql", "-U", "postgres", "-d", database, "-XqAt", "-c", "SET timezone='UTC'; " + signature_sql(table)]))
+            value = json.loads(
+                run(
+                    [
+                        "docker",
+                        "exec",
+                        test_db,
+                        "psql",
+                        "-U",
+                        "postgres",
+                        "-d",
+                        database,
+                        "-XqAt",
+                        "-c",
+                        "SET timezone='UTC'; " + signature_sql(table),
+                    ]
+                )
+            )
             if value != expected:
                 raise RuntimeError("Restored data differs in relation " + table)
-        report = {"verified_at": datetime.now(UTC).isoformat(), "source_commit": metadata["source_commit"], "migration_head": restored_metadata["migration_head"], "tables_verified": len(tables), "counts": {table: item["rows"] for table, item in signatures.items()}, "media_files_verified": len(media), "authenticated_encryption": True, "checksums_verified": True, "exact_data_match": True, "fresh_test_database_restored": True, "source_database_modified": False, "archive": archive.relative_to(ROOT).as_posix(), "archive_sha256": sha256(archive), "environment_encrypted": True}
-        report_path = ROOT / "docs/qa/v2-step4/backup-verification.json"
+        report = {
+            "verified_at": datetime.now(UTC).isoformat(),
+            "source_commit": metadata["source_commit"],
+            "migration_head": restored_metadata["migration_head"],
+            "tables_verified": len(tables),
+            "counts": {table: item["rows"] for table, item in signatures.items()},
+            "media_files_verified": len(media),
+            "authenticated_encryption": True,
+            "checksums_verified": True,
+            "exact_data_match": True,
+            "fresh_test_database_restored": True,
+            "source_database_modified": False,
+            "archive": archive.relative_to(ROOT).as_posix(),
+            "archive_sha256": sha256(archive),
+            "environment_encrypted": True,
+        }
         report_path.parent.mkdir(parents=True, exist_ok=True)
         report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
-        print(json.dumps({"backup": report["archive"], "tables_verified": len(tables), "exact_data_match": True, "report": report_path.relative_to(ROOT).as_posix()}))
+        print(
+            json.dumps(
+                {
+                    "backup": report["archive"],
+                    "tables_verified": len(tables),
+                    "exact_data_match": True,
+                    "report": report_path.relative_to(ROOT).as_posix(),
+                }
+            )
+        )
     finally:
         snapshot.close()
         if created:
@@ -132,7 +260,9 @@ def main():
         run(["docker", "exec", source_db, "rm", "-f", "--", temporary])
         run(["docker", "exec", test_db, "rm", "-f", "--", temporary])
         resolved = stage.resolve()
-        if resolved.parent != (ROOT / ".preview").resolve() or not re.fullmatch(r"backup-[0-9a-f]{32}", resolved.name):
+        if resolved.parent != (ROOT / ".preview").resolve() or not re.fullmatch(
+            r"backup-[0-9a-f]{32}", resolved.name
+        ):
             raise RuntimeError("Unsafe plaintext staging cleanup target")
         shutil.rmtree(resolved)
 

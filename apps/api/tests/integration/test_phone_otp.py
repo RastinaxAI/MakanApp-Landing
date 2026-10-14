@@ -385,7 +385,7 @@ def test_forward_migration_preserves_legacy_owner_without_inventing_phone(databa
                 and row.phone is None
             )
             assert (
-                session.scalar(text("SELECT version_num FROM alembic_version")) == "0008_phone_otp"
+                session.scalar(text("SELECT version_num FROM alembic_version")) == "0009_demo_crm"
             )
 
 

@@ -3,18 +3,12 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useId } from "react";
 import { useForm } from "react-hook-form";
 import { trackEvent, type ErrorKind } from "@/features/analytics/events";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { CmsReady } from "@/features/cms/ready";
-import {
-  contactSchema,
-  demoSchema,
-  requestSchema,
-  type FormFields,
-} from "./form-schema";
+import type { FormFields } from "./form-schema";
 
 type Token = {
   token: string;
@@ -29,6 +23,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   const demo = kind === "demo";
   const instance = useId().replaceAll(":", "");
   const formId = `${kind}-${instance}`;
+  const [error, setMessage] = useState("");
   const {
     register,
     handleSubmit,
@@ -36,7 +31,19 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
     setError,
     setValue,
   } = useForm<Fields>({
-    resolver: zodResolver(requestSchema(kind)),
+    resolver: async (values, context, options) => {
+      try {
+        const [{ requestSchema }, { zodResolver }] = await Promise.all([
+          import("./form-schema"),
+          import("@hookform/resolvers/zod"),
+        ]);
+        return await zodResolver(requestSchema(kind))(values, context, options);
+      } catch {
+        const message = "اعتبارسنجی فرم آماده نشد؛ اتصال را بررسی و دوباره تلاش کنید.";
+        setMessage(message);
+        return { values: {}, errors: { root: { type: "network", message } } };
+      }
+    },
     defaultValues: {
       full_name: "",
       phone: "",
@@ -55,7 +62,6 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   });
   const [token, setToken] = useState<Token | null>(null);
   const [tokenBusy, setTokenBusy] = useState(false);
-  const [error, setMessage] = useState("");
   const [reference, setReference] = useState("");
   useEffect(() => {
     if (reference)
@@ -137,6 +143,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
     const requested =
       new URLSearchParams(window.location.search).get("source") ?? "";
     const source = allowedSources.includes(requested) ? requested : kind;
+    const { demoSchema, contactSchema } = await import("./form-schema");
     const parsed = demo ? demoSchema.parse(data) : contactSchema.parse(data);
     const payload = {
       ...parsed,
@@ -297,8 +304,8 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
           data-request-kind={kind}
           noValidate
           onSubmit={(event) => {
-            void handleSubmit(submit, () => {
-              if (demo) trackEvent("demo_form_submit_error", "validation");
+            void handleSubmit(submit, (failures) => {
+              if (demo) trackEvent("demo_form_submit_error", failures.root?.type === "network" ? "network" : "validation");
             })(event);
           }}
           className="mt-6"

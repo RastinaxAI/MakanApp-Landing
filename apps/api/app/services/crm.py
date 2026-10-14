@@ -15,7 +15,6 @@ from sqlalchemy import (
     exists,
     func,
     literal,
-    or_,
     select,
     text,
     union_all,
@@ -65,11 +64,11 @@ def values(row, schema):
     return schema.model_validate({key: getattr(row, key) for key in schema.model_fields})
 
 
-def page(session, statement, schema, query):
+def page(session, statement, schema, query, projection=None):
     total = session.scalar(select(func.count()).select_from(statement.subquery()))
     rows = session.scalars(statement.offset(query.offset).limit(query.page_size)).all()
     return PaginatedResponse(
-        items=[values(row, schema) for row in rows],
+        items=[projection(row) if projection else values(row, schema) for row in rows],
         pagination=PaginationMeta(
             page=query.page,
             page_size=query.page_size,
@@ -224,7 +223,7 @@ def ingest(session, row, backfill=False):
                     contact_method=row.contact_method,
                     contact_value=row.contact_value,
                     job_title=row.details.get("job_title", ""),
-                    is_manager=True,
+                    is_manager=False,
                     last_activity_at=row.last_activity_at,
                 )
             )
@@ -286,25 +285,11 @@ def backfill(session):
 
 
 def cohort_filters(query):
-    result = []
-    if query.source:
-        result.append(Lead.source == query.source)
-    if query.lead_status:
-        result.append(Lead.status == query.lead_status)
-    if query.tag:
-        result.append(
-            Lead.id.in_(select(LeadProfile.lead_id).where(LeadProfile.tags.contains([query.tag])))
-        )
-    if query.q:
-        term = "%" + query.q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_") + "%"
-        result.append(
-            or_(
-                Lead.full_name.ilike(term, escape="\\"),
-                Lead.contact_value.ilike(term, escape="\\"),
-                Lead.details["school_name"].astext.ilike(term, escape="\\"),
-            )
-        )
-    return result
+    from app.schemas.leads import LeadQuery
+
+    return leads.conditions(
+        LeadQuery(q=query.q, source=query.source, status=query.lead_status, tag=query.tag)
+    )
 
 
 def list_records(request, session, resource, query):
@@ -504,6 +489,7 @@ def save_record(request, session, resource, data, identifier=None):
             if not profile.converted_at:
                 profile.converted_at = now_utc()
             if old_stage != row.stage:
+                sync_lead_stage(session, lead, admin.id)
                 session.add(
                     StageHistory(
                         opportunity_id=row.id,
@@ -543,6 +529,36 @@ def save_record(request, session, resource, data, identifier=None):
         )
         session.flush()
         return values(row, schema)
+
+
+def sync_lead_stage(session, lead, actor):
+    all_stages = session.scalars(
+        select(Opportunity.stage).where(Opportunity.lead_id == lead.id)
+    ).all()
+    status, outcome = (
+        ("closed", "won" if lead.kind == "demo" else "resolved")
+        if "won" in all_stages
+        else ("closed", "lost")
+        if all(stage == "lost" for stage in all_stages)
+        else ("qualified", None)
+        if any(
+            stage in ("qualified", "demo_scheduled", "demo_completed", "proposal", "negotiation")
+            for stage in all_stages
+        )
+        else ("contacted", None)
+        if "contacted" in all_stages
+        else ("new", None)
+    )
+    changes = {}
+    for key, value in (("status", status), ("outcome", outcome)):
+        previous = getattr(lead, key)
+        if previous != value:
+            changes[key] = {"from": previous, "to": value}
+            setattr(lead, key, value)
+    if changes:
+        session.add(
+            LeadHistory(lead_id=lead.id, actor_id=actor, changes=changes, created_at=now_utc())
+        )
 
 
 def manual_lead(request, session, data):
@@ -729,11 +745,9 @@ def customer(request, session, identifier, query, school=False):
             else None
         )
         lead_ids = (
-            session.scalars(
-                select(LeadProfile.lead_id)
-                .join(Lead, Lead.id == LeadProfile.lead_id)
-                .where(LeadProfile.school_id == organization.id, Lead.purged_at.is_(None))
-            ).all()
+            select(LeadProfile.lead_id)
+            .join(Lead, Lead.id == LeadProfile.lead_id)
+            .where(LeadProfile.school_id == organization.id, Lead.purged_at.is_(None))
             if organization
             else [identifier]
         )
@@ -749,15 +763,15 @@ def customer(request, session, identifier, query, school=False):
             else {"school_id": None, "tags": [], "qualification": "", "converted_at": None},
             "school": values(organization, SchoolRecord) if organization else None,
         }
-        result["requests"] = [
-            leads.projection(row, True)
-            for row in session.scalars(
-                select(Lead)
-                .where(Lead.id.in_(lead_ids))
-                .order_by(Lead.created_at.desc())
-                .limit(100)
-            )
-        ]
+        from app.schemas.leads import LeadDetail
+
+        result["requests"] = page(
+            session,
+            select(Lead).where(Lead.id.in_(lead_ids)).order_by(Lead.created_at.desc(), Lead.id),
+            LeadDetail,
+            query,
+            lambda row: leads.projection(row, True),
+        )
         result["contacts"] = page(
             session,
             select(Contact)
@@ -1075,7 +1089,7 @@ def purge_copies(session, lead, now):
             row.version += 1
     for row in session.scalars(select(Contact).where(Contact.source_lead_id == lead.id)):
         other = session.scalar(
-            select(Lead.id)
+            select(Lead)
             .join(LeadProfile, LeadProfile.lead_id == Lead.id)
             .where(
                 Lead.id != lead.id,
@@ -1088,7 +1102,9 @@ def purge_copies(session, lead, now):
             .limit(1)
         )
         if other:
-            row.source_lead_id = other
+            row.source_lead_id = other.id
+            row.full_name = other.full_name
+            row.job_title = other.details.get("job_title", "")
             continue
         row.full_name = row.contact_value = None
         row.job_title = ""

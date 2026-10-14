@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { walkNodes } from "@/features/builder/types";
+import { visibleNodes } from "@/features/builder/types";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -64,10 +64,17 @@ export async function PublicPage({
   const dynamicData = dynamicSections
     ? await Promise.all([getFeatures(), getAudiences(), getFaqs()])
     : null;
+  const hasCatalogue =
+    content.payload.kind === "page" &&
+    content.payload.document &&
+    visibleNodes(content.payload.document.nodes).some(
+      (node) =>
+        node.type === (slug === "features" ? "FeatureIndex" : "AudienceIndex"),
+    );
   const extra =
-    slug === "features"
+    slug === "features" && !hasCatalogue
       ? await getFeatures()
-      : slug === "solutions"
+      : slug === "solutions" && !hasCatalogue
         ? await getAudiences()
         : null;
   return (
@@ -98,7 +105,19 @@ export async function PublicPage({
           </Container>
         </section>
       )}
-      {slug === "faq" && <FaqPageContent category={category} />}
+      {slug === "faq" &&
+        !(
+          content.payload.kind === "page" &&
+          content.payload.document &&
+          visibleNodes(content.payload.document.nodes).some(
+            (node) =>
+              node.type === "FAQ" ||
+              (node.type === "LegacySection" &&
+                ["faq", "trust"].includes(
+                  node.props.legacy_section?.type || "",
+                )),
+          )
+        ) && <FaqPageContent category={category} />}
       {slug === "privacy" && (
         <Container>
           <section id="analytics-policy" className="my-10 max-w-3xl space-y-4">
@@ -126,7 +145,7 @@ export async function PublicPage({
         !(
           content.payload.kind === "page" &&
           content.payload.document &&
-          walkNodes(content.payload.document.nodes).some(
+          visibleNodes(content.payload.document.nodes).some(
             (node) =>
               node.type === (slug === "demo" ? "DemoForm" : "ContactForm"),
           )

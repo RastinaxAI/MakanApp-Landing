@@ -1,0 +1,10 @@
+{
+  "url": "http://127.0.0.1:3200/learn/videos/seo-video",
+  "timestamp": "2026-10-14T13:23:12.343Z",
+  "testEngine": {
+    "name": "axe-core",
+    "version": "4.13.0"
+  },
+  "violations": [],
+  "passed_checks": 41
+}

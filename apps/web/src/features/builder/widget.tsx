@@ -11,7 +11,10 @@ import {
 } from "lucide-react";
 import { MediaImage } from "@/features/cms/media-image";
 import { RichText } from "@/features/cms/rich-text";
-import { RichEditor } from "@/features/cms/rich-editor";
+import { InlineRichEditor } from "./inline-rich-editor";
+import { FeatureCard } from "@/features/marketing/feature-card";
+import { AudienceCard } from "@/features/marketing/audience-card";
+import { Container } from "@/components/layout/container";
 import { SectionContent } from "@/features/cms/section-content";
 import { SourceLink as Link } from "@/features/leads/source-link";
 import { RequestForm } from "@/features/leads/request-form";
@@ -81,7 +84,7 @@ export function Widget({
       break;
     case "RichText":
       output = context.editing ? (
-        <RichEditor
+        <InlineRichEditor
           label="ویرایش متن در صفحه"
           value={p.body_html || ""}
           onChange={(html) => onInlineEdit?.(html)}
@@ -119,7 +122,7 @@ export function Widget({
       output = (
         <Link
           href={safeHref(p.href)}
-          className="premium-button premium-button-blue"
+          className="builder-widget-control premium-button premium-button-blue"
         >
           {p.label || p.title || "درخواست دمو"}
           <ArrowLeft size={18} aria-hidden="true" />
@@ -128,12 +131,15 @@ export function Widget({
       break;
     case "Icon": {
       const Icon = icons[p.icon || "school"];
+      const label = p.title?.trim();
       output = (
         <span
-          className="inline-flex size-14 items-center justify-center rounded-xl bg-secondary text-primary-hover"
-          aria-label={p.title || undefined}
+            className="builder-widget-control inline-flex size-14 items-center justify-center rounded-xl bg-secondary text-2xl text-primary-hover"
+            role={label ? "img" : undefined}
+            aria-label={label || undefined}
+            aria-hidden={label ? undefined : true}
         >
-          <Icon aria-hidden="true" />
+            <Icon aria-hidden="true" className="size-[1em]" />
         </span>
       );
       break;
@@ -362,7 +368,7 @@ export function Widget({
         <SectionContent
           {...context}
           section={p.legacy_section}
-          index={node.id}
+          index={`${scope}_${node.id}`}
         />
       ) : null;
       break;
@@ -410,13 +416,41 @@ export function Widget({
           />
         );
       break;
+    case "FeatureIndex":
+    case "AudienceIndex":
+      output = (
+        <section className="section-space">
+          <Container>
+            {p.title && (
+              <h2 className="builder-widget-title mb-6 text-2xl font-semibold">
+                {p.title}
+              </h2>
+            )}
+            {!p.title && (
+              <h2 className="sr-only">
+                {node.type === "FeatureIndex" ? "فهرست امکانات ماکان" : "ماکان برای مخاطبان"}
+              </h2>
+            )}
+            <div className="grid gap-6 tablet:grid-cols-2">
+              {node.type === "FeatureIndex"
+                ? context.features.map((feature) => (
+                    <FeatureCard key={feature.slug} feature={feature} />
+                  ))
+                : context.audiences.map((audience) => (
+                    <AudienceCard key={audience.slug} audience={audience} />
+                  ))}
+            </div>
+          </Container>
+        </section>
+      );
+      break;
     case "FeatureStory": {
       const feature = context.features.find(
         (item) => item.slug === p.feature_slug,
       );
       output = feature ? (
         <PremiumFeatureStory
-          storyId={`story-${node.id}`}
+          storyId={`story-${scope}-${node.id}`}
           feature={feature}
           privatePreview={context.privatePreview}
         />

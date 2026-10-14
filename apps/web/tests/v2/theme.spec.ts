@@ -17,6 +17,7 @@ test("global colors and fonts participate in undo redo and durable document revi
   const id = page.url().split("/").at(-2)!;
   const canvas = page.frameLocator("iframe").first();
   const root = canvas.locator("[data-builder-scope]");
+  await expect(root).toHaveCSS("font-family", /vazirmatn/i);
   await page
     .getByRole("button", { name: "رنگ و فونت برگه", exact: true })
     .click();

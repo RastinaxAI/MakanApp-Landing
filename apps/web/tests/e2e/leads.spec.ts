@@ -53,6 +53,22 @@ async function saved(page: Page) {
   expect(reference).toMatch(/^MK-[A-Za-z0-9_-]{32}$/);
   return reference;
 }
+
+test("validation loads on submit and failed script delivery cannot send a lead", async ({ page }) => {
+  await demo(page, "آزمون قطع بارگیری اعتبارسنجی");
+  await page.getByLabel("شماره تماس", { exact: true }).fill("09120000061");
+  let posts = 0;
+  page.on("request", (request) => {
+    if (request.method() === "POST" && new URL(request.url()).pathname === "/api/v1/leads/demo") posts++;
+  });
+  await page.route("**/_next/static/chunks/**", (route) => route.abort());
+  await page.getByRole("button", { name: "ثبت درخواست دمو", exact: true }).click();
+  await expect(page.getByText("اعتبارسنجی فرم آماده نشد؛ اتصال را بررسی و دوباره تلاش کنید.", { exact: true })).toBeVisible();
+  expect(posts).toBe(0);
+  await page.unroute("**/_next/static/chunks/**");
+  await saved(page);
+  expect(posts).toBe(1);
+});
 test("real demo saves consent source, sales manages assignment notes outcome and owner sees actual contract", async ({
   page,
 }) => {
@@ -241,7 +257,10 @@ test("lost response after real commit retries safely and 422 429 failures preser
 test("forms and CRM are responsive accessible and keyboard consent is independent of submission", async ({
   page,
 }, info) => {
-  const directory = path.resolve("../../docs/qa/step10", info.project.name);
+  const directory = path.resolve(
+    `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
+    info.project.name,
+  );
   await mkdir(directory, { recursive: true });
   for (const width of [360, 768, 1440])
     for (const kind of ["demo", "contact"]) {

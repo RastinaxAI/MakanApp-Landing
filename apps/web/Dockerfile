@@ -3,11 +3,12 @@ WORKDIR /srv/makan
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
 COPY apps/web/package.json ./apps/web/package.json
-RUN npm ci --no-audit --no-fund
+RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 
 FROM dependencies AS builder
 COPY apps/web ./apps/web
 ENV API_INTERNAL_URL=http://127.0.0.1:9
+ENV NODE_OPTIONS=--max-old-space-size=1536 RAYON_NUM_THREADS=2
 RUN npm run build --workspace @makan/web
 
 FROM node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 AS runtime

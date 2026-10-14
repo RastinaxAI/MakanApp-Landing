@@ -2,7 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { z } from "@/lib/validation";
+import * as z from "@/lib/validation";
 import { Button } from "@/components/ui/button";
 import { CmsReady } from "@/features/cms/ready";
 import { TextField, MediaPicker } from "@/features/cms/fields";

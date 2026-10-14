@@ -60,6 +60,15 @@ def test_fresh_upgrade_is_idempotent_and_matches_models(database_factory):
             "lead_notes",
             "lead_status_history",
             "analytics_events",
+            "crm_schools",
+            "crm_contacts",
+            "crm_lead_profiles",
+            "crm_opportunities",
+            "crm_stage_history",
+            "crm_activities",
+            "crm_demos",
+            "crm_notifications",
+            "crm_saved_views",
         } == set(inspect(engine).get_table_names())
         migrate(engine)
         with engine.connect() as connection:

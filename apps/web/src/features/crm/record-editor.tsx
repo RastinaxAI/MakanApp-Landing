@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useId } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { z } from "zod";
+import * as z from "@/lib/validation";
 import { Dialog } from "radix-ui";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";

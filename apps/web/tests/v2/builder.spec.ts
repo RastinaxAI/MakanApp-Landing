@@ -55,11 +55,11 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
     .getAttribute("data-node-id");
   const slot = canvas.locator(`[data-puck-dropzone^="${containerId}:"]`);
   await drag(page, "عنوان", slot);
-  await expect(canvas.locator('[data-widget="Heading"]')).toHaveCount(1);
-  await canvas
+  await expect(slot.locator('[data-widget="Heading"]')).toHaveCount(1);
+  await slot
     .getByRole("textbox", { name: "ویرایش عنوان در صفحه" })
     .fill("تیتر زندهٔ مدرسه");
-  await canvas.getByRole("textbox", { name: "ویرایش عنوان در صفحه" }).blur();
+  await slot.getByRole("textbox", { name: "ویرایش عنوان در صفحه" }).blur();
   await drag(page, "تصویر", slot);
   await expect(canvas.locator('[data-widget="Image"]')).toHaveCount(1);
   await page
@@ -71,7 +71,7 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   await page
     .getByLabel("انتخاب عنصر صفحه", { exact: true })
     .selectOption(
-      (await canvas
+      (await slot
         .locator('[data-widget="Heading"]')
         .getAttribute("data-node-id")) || "",
     );
@@ -135,12 +135,12 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
     .filter({ visible: true })
     .fill("20");
   await page.getByLabel("نمای صفحه‌ساز", { exact: true }).selectOption("390");
-  await expect(canvas.locator('[data-widget="Heading"]')).toHaveCSS(
+  await expect(slot.locator('[data-widget="Heading"]')).toHaveCSS(
     "font-size",
     "20px",
   );
   await page.getByLabel("نمای صفحه‌ساز", { exact: true }).selectOption("1440");
-  await expect(canvas.locator('[data-widget="Heading"]')).toHaveCSS(
+  await expect(slot.locator('[data-widget="Heading"]')).toHaveCSS(
     "font-size",
     "40px",
   );
@@ -155,11 +155,14 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   ).json();
   expect(saved.payload.kind).toBe("page");
   if (saved.payload.kind !== "page") throw new Error("Page expected");
-  expect(saved.payload.document?.nodes[0]?.children).toHaveLength(3);
+  expect(
+    saved.payload.document?.nodes.find((node) => node.type === "Container")
+      ?.children,
+  ).toHaveLength(3);
   expect((await page.request.get(`/${slug}`)).status()).toBe(404);
   await page.reload();
   await expect(
-    canvas.getByRole("textbox", { name: "ویرایش عنوان در صفحه" }),
+    slot.getByRole("textbox", { name: "ویرایش عنوان در صفحه" }),
   ).toHaveText("تیتر زندهٔ مدرسه");
   await page.getByRole("button", { name: "انتشار", exact: true }).click();
   await expect(
@@ -203,10 +206,10 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   expect(
     restored.payload.kind === "page" && restored.payload.document == null,
   ).toBe(true);
-  await mkdir(path.resolve("../../docs/qa/v2-step3"), { recursive: true });
+  await mkdir(path.resolve("../../docs/qa/v2-step6"), { recursive: true });
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/v2-step3/revisions-${info.project.name}.png`,
+      `../../docs/qa/v2-step6/revisions-${info.project.name}.png`,
     ),
     fullPage: true,
   });

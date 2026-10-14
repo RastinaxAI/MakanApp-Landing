@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "origin": "http://127.0.0.1:3100",
+  "routes": [
+    {
+      "route": "/",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/features",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/features/messenger",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/features/school",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/features/reports",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/features/ai",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/solutions",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/solutions/schools",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/solutions/teachers",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/solutions/parents",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/solutions/students",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/demo",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/contact",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/about",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/faq",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/privacy",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/terms",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/blog",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/learn",
+      "status": 200,
+      "h1": 1
+    },
+    {
+      "route": "/admin/login",
+      "status": 200,
+      "h1": 1
+    }
+  ],
+  "readiness": 200,
+  "guest_leads": 401,
+  "business_requests_submitted": 0
+}

@@ -23,7 +23,7 @@ import {
   type PageResult,
   type Opportunity,
   type School,
-  type LeadDetail,
+  type LeadList,
   type Activity,
   type Demo,
   type Notification,
@@ -45,9 +45,7 @@ const sections = {
 type Tab = keyof typeof sections;
 type Data =
   | Dashboard
-  | PageResult<
-      LeadDetail | School | Opportunity | Activity | Demo | Notification
-    >
+  | PageResult<LeadList | School | Opportunity | Activity | Demo | Notification>
   | Automations;
 const emptyPage = {
   items: [],
@@ -202,7 +200,7 @@ export function CrmWorkbench({
           <tbody>
             {list.items.map((item) => {
               if (tab === "leads") {
-                const row = item as LeadDetail;
+                const row = item as LeadList;
                 return (
                   <tr key={row.id}>
                     <td>
@@ -214,7 +212,7 @@ export function CrmWorkbench({
                         {row.full_name}
                       </Link>
                       <p className="text-xs text-muted-foreground">
-                        {row.details.school_name}
+                        {row.school_name}
                       </p>
                     </td>
                     <td dir="ltr" className="text-start">

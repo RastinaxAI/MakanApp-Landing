@@ -213,6 +213,7 @@ class Operator:
             )
         self.run("config", "--quiet")
         self.migrate()
+        self.command("app.commands.crm_backfill")
         if import_content:
             for module in (
                 "import_content",
@@ -577,9 +578,15 @@ def main():
             operator = Operator(args.env_file)
             with operator.lock() if args.action != "status" else nullcontext():
                 if args.action == "build":
-                    operator.run(
-                        "--profile", "tools", "build", "db", "web", "api", "migrate", "caddy"
-                    )
+                    for service in (
+                        "db",
+                        "api",
+                        "migrate",
+                        "maintenance",
+                        "web",
+                        "caddy",
+                    ):
+                        operator.run("--profile", "tools", "build", service)
                     result = {"status": "built"}
                 elif args.action == "deploy":
                     operator.deploy(args.import_approved_marketing)

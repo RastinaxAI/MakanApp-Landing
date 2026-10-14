@@ -129,6 +129,43 @@ export function nodeCSS(node: VisualNode, scope = "", privatePreview = false) {
     return "";
   const selector = `${scope ? `[data-builder-scope="${scope}"] ` : ""}[data-node-id="${node.id}"]`;
   const rule = (style: StyleValues, suffix = "") => {
+    const skinKeys = new Set([
+      "color",
+      "background",
+      "background_media_id",
+      "background_size",
+      "gradient_from",
+      "gradient_to",
+      "gradient_angle",
+      "border_color",
+      "border_width",
+      "border_style",
+      "radius",
+      "shadow",
+      "padding",
+      "padding_inline",
+      "padding_block",
+      "font_size",
+      "font_family",
+      "font_weight",
+      "line_height",
+      "letter_spacing",
+      "text_align",
+      "transition_ms",
+      "height",
+      "min_height",
+      "max_height",
+    ]);
+    const buttonSkin = Object.fromEntries(
+      Object.entries(style).filter(([key]) => skinKeys.has(key)),
+    ) as StyleValues;
+    const styledControl = node.type === "Button" || node.type === "Icon";
+    const wrapperStyle =
+      styledControl
+        ? (Object.fromEntries(
+            Object.entries(style).filter(([key]) => !skinKeys.has(key)),
+          ) as StyleValues)
+        : style;
     const typography = Object.fromEntries(
       Object.entries(style).filter(([key]) =>
         [
@@ -142,7 +179,13 @@ export function nodeCSS(node: VisualNode, scope = "", privatePreview = false) {
         ].includes(key),
       ),
     ) as StyleValues;
-    return `${selector}${suffix}{${declarations(style, false, privatePreview)}}${selector}${suffix}>.builder-layout{${declarations(style, true)}}${selector}${suffix} .builder-widget-title{${declarations(typography, false)}}`;
+    const control =
+      styledControl
+        ? `${selector}${suffix}>.builder-widget-control{${declarations(buttonSkin, false, privatePreview)};${declarations(Object.fromEntries(Object.entries(style).filter(([key]) => ["align", "justify"].includes(key))) as StyleValues, true)}${style.width !== undefined ? ";width:100%" : ""}}`
+        : node.type === "Image"
+          ? `${selector}${suffix} img{${declarations(Object.fromEntries(Object.entries(style).filter(([key]) => ["height", "max_height", "min_height"].includes(key))) as StyleValues, false)};object-fit:contain}`
+          : "";
+    return `${selector}${suffix}{${declarations(wrapperStyle, false, privatePreview)}}${selector}${suffix}>.builder-layout{${declarations(style, true)}}${selector}${suffix} .builder-widget-title{${declarations(typography, false)}}${control}`;
   };
   return (
     rule(node.styles.base) +

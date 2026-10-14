@@ -43,7 +43,7 @@ async def test_request_to_customer360_pipeline_demo_reporting_and_existing_notes
         customer = (await client.get(f"/api/v1/admin/leads/{lead['id']}/customer")).json()
         assert customer["school"]["name"] == "مدرسه آزمون"
         assert customer["contacts"]["pagination"]["total"] == 1
-        assert customer["requests"][0]["id"] == lead["id"]
+        assert customer["requests"]["items"][0]["id"] == lead["id"]
         await write(client, f"leads/{lead['id']}/notes", {"body": "یادداشت قبلی"}, lead["version"])
         opportunity_data = {
             "lead_id": lead["id"],
@@ -93,6 +93,8 @@ async def test_request_to_customer360_pipeline_demo_reporting_and_existing_notes
             "PATCH",
         )
         assert won["stage"] == "won"
+        lead_after = (await client.get(f"/api/v1/admin/leads/{lead['id']}")).json()
+        assert lead_after["status"] == "closed" and lead_after["outcome"] == "won"
         stale = await write(
             client,
             "crm/opportunities/" + opportunity["id"],
@@ -146,6 +148,12 @@ async def test_manual_intake_assignment_duplicates_tags_filters_private_views_an
         }
         lead = await created(client, "leads", data)
         assert lead["assigned_to"] == str(ids["sales"])
+        assert (await client.get("/api/v1/admin/leads", params={"q": "۰۹۱۲۳۴۵۶۷۸۹"})).json()[
+            "pagination"
+        ]["total"] == 1
+        assert (
+            await client.get("/api/v1/admin/crm/dashboard", params={"q": "۰۹۱۲۳۴۵۶۷۸۹"})
+        ).json()["total_leads"] == 1
         assert (await write(client, "leads", data)).status_code == 409
         customer = (await client.get(f"/api/v1/admin/leads/{lead['id']}/customer")).json()
         await created(

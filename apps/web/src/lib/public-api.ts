@@ -3,6 +3,7 @@ import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { backendUrl } from "./admin-api";
+import { backendRead } from "./backend-read";
 import type {
   CmsContent,
   CmsPage,
@@ -11,10 +12,9 @@ import type {
 } from "@/features/cms/types";
 
 export const publicGet = cache(async <T>(path: string): Promise<T> => {
-  const result = await fetch(backendUrl(path), {
+  const result = await backendRead(backendUrl(path), {
     cache: "no-store",
     redirect: "manual",
-    signal: AbortSignal.timeout(8000),
   });
   if (result.status === 404) notFound();
   if (!result.ok) throw new Error("Published content service unavailable");

@@ -30,6 +30,8 @@ export const widgetLabels = {
   LegacySection: "بخش موجود",
   Hero: "معرفی اصلی ماکان",
   FeatureStory: "روایت محصول",
+  FeatureIndex: "فهرست امکانات منتشرشده",
+  AudienceIndex: "فهرست مخاطبان",
 } as const;
 export type WidgetType = keyof typeof widgetLabels;
 export type StyleValues = {
@@ -146,6 +148,27 @@ export type BuilderSite = {
 };
 export const walkNodes = (nodes: VisualNode[]): VisualNode[] =>
   nodes.flatMap((node) => [node, ...walkNodes(node.children)]);
+
+export function visibleNodes(nodes: VisualNode[]): VisualNode[] {
+  const visit = (
+    items: VisualNode[],
+    parent: [boolean, boolean, boolean],
+  ): VisualNode[] =>
+    items.flatMap((node) => {
+      const base = node.styles.base.hidden ?? false;
+      const visible: [boolean, boolean, boolean] = [
+        !base && parent[0],
+        !(node.styles.tablet.hidden ?? base) && parent[1],
+        !(node.styles.mobile.hidden ?? node.styles.tablet.hidden ?? base) &&
+          parent[2],
+      ];
+      return [
+        ...(visible.some(Boolean) ? [node] : []),
+        ...visit(node.children, visible),
+      ];
+    });
+  return visit(nodes, [true, true, true]);
+}
 export type BuilderContext = {
   content: CmsContent;
   features: Feature[];
@@ -191,7 +214,20 @@ export function legacyDocument(sections: CmsSection[]): VisualDocument {
 export function documentFromContent(
   payload: CmsPayload,
   features: Feature[] = [],
+  slug = "",
 ): VisualDocument {
+  const finalize = (document: VisualDocument) => {
+    if (["features", "solutions"].includes(slug))
+      document.nodes.push({
+        id: "catalogue",
+        type: slug === "features" ? "FeatureIndex" : "AudienceIndex",
+        version: 1,
+        props: {},
+        styles: emptyStyles(),
+        children: [],
+      });
+    return document;
+  };
   if (payload.kind === "home" || payload.kind === "page") {
     if (payload.document) return payload.document;
     if (payload.kind === "page" && !payload.sections.length) {
@@ -206,7 +242,7 @@ export function documentFromContent(
             "'": "&#x27;",
           })[letter]!,
       );
-      return {
+      return finalize({
         schema_version: 2,
         globals: structuredClone(defaultGlobals),
         nodes: [
@@ -227,9 +263,9 @@ export function documentFromContent(
             children: [],
           },
         ],
-      };
+      });
     }
-    return legacyDocument(payload.sections);
+    return finalize(legacyDocument(payload.sections));
   }
   if (payload.kind === "faq") return legacyDocument([]);
   if (payload.kind !== "feature" && payload.kind !== "audience")

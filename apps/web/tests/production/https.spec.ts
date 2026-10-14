@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 
 for (const path of ["/", "/features", "/solutions/schools", "/demo", "/learn/articles/seo-article", "/learn/videos/seo-video", "/admin/login"]) {
 test(`production TLS ${path} hydrates under nonce CSP and remains responsive`, async ({ page }) => {
@@ -66,4 +67,36 @@ test("production administrator session uses secure cookie and survives navigatio
   await expect(page.locator("h1")).toBeVisible();
   const response = await page.request.get("/api/v1/admin/leads");
   expect(response.status()).toBe(200);
+});
+
+test("HTTPS demo loads validation on intent and persists into the existing CRM", async ({ page, context }) => {
+  const origin = process.env.PRODUCTION_TEST_ORIGIN;
+  const session = process.env.PRODUCTION_TEST_SESSION;
+  if (!origin || !session) throw new Error("Owned HTTPS fixture session required");
+  await context.addCookies([{ name: "__Host-makan_session", value: session, url: origin, secure: true, httpOnly: true, sameSite: "Lax" }]);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() === "error" && /Content Security Policy|violates.*policy/i.test(message.text())) errors.push(message.text());
+  });
+  await page.goto("/demo");
+  const submit = page.getByRole("button", { name: "ثبت درخواست دمو", exact: true });
+  await expect(submit).toBeEnabled();
+  await submit.click();
+  await expect(page.getByText("حداقل 2 نویسه وارد کنید.", { exact: true }).first()).toBeVisible();
+  const name = "درخواست مستقل HTTPS " + randomUUID();
+  await page.getByLabel("نام و نام خانوادگی", { exact: true }).fill(name);
+  await page.getByLabel("شماره تماس", { exact: true }).fill("09120000061");
+  await page.getByLabel("نام مدرسه یا مؤسسه", { exact: true }).fill("مدرسهٔ آزمون مستقل HTTPS");
+  await page.getByRole("checkbox").check();
+  await submit.click();
+  await expect(page.getByText("درخواست شما ثبت شد.", { exact: true })).toBeVisible();
+  const leads = await page.request.get(`/api/v1/admin/leads?q=${encodeURIComponent(name)}`);
+  expect(leads.status()).toBe(200);
+  const lead = (await leads.json()).items.find((item: { full_name: string }) => item.full_name === name);
+  expect(lead).toBeTruthy();
+  const customer = await page.request.get(`/api/v1/admin/leads/${lead.id}/customer`);
+  expect(customer.status()).toBe(200);
+  expect((await customer.json()).school.name).toBe("مدرسهٔ آزمون مستقل HTTPS");
+  expect(errors).toEqual([]);
 });

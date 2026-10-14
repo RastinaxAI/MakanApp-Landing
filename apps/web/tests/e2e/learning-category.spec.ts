@@ -10,7 +10,7 @@ async function write(
   ).csrf_token;
   const response = await page.request.post(`/api/v1/admin/${path}`, {
     headers: {
-      Origin: "http://127.0.0.1:3100",
+      Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100",
       "X-CSRF-Token": token,
       ...(version ? { "If-Match": String(version) } : {}),
     },

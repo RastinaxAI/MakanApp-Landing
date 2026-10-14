@@ -16,6 +16,7 @@ from app.schemas.common import PaginatedResponse, PaginationMeta
 from app.schemas.leads import (
     CONSENT_TEXT,
     CONSENT_VERSION,
+    DIGITS,
     Assignee,
     ContactSubmission,
     DemoSubmission,
@@ -232,7 +233,12 @@ def authorize(request: Request, session: Session, mutation=False):
 
 def projection(row, detail=False):
     fields = LeadDetail.model_fields if detail else LeadSummary.model_fields
-    return (LeadDetail if detail else LeadSummary)(**{key: getattr(row, key) for key in fields})
+    return (LeadDetail if detail else LeadSummary)(
+        **{
+            key: row.details.get("school_name") if key == "school_name" else getattr(row, key)
+            for key in fields
+        }
+    )
 
 
 def conditions(query: LeadQuery):
@@ -266,6 +272,7 @@ def conditions(query: LeadQuery):
         )
         result.append(
             or_(
+                Lead.contact_value.ilike("%" + phone_search(query.q) + "%", escape="\\"),
                 *(
                     column.ilike(term, escape="\\")
                     for column in (
@@ -275,10 +282,26 @@ def conditions(query: LeadQuery):
                         Lead.details["school_name"].astext,
                         Lead.details["subject"].astext,
                     )
-                )
+                ),
             )
         )
     return result
+
+
+def phone_search(value):
+    import re
+
+    value = value.translate(DIGITS).strip()
+    if re.fullmatch(r"[0-9+ ()-]{3,40}", value):
+        value = re.sub(r"[ ()-]", "", value)
+        return (
+            "+98" + value[4:]
+            if value.startswith("0098")
+            else "+98" + value[1:]
+            if value.startswith("0")
+            else value
+        )
+    return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
 def listing(request, session, query):

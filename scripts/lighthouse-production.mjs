@@ -5,7 +5,9 @@ import { launch } from "chrome-launcher";
 
 const origin = process.env.PRODUCTION_TEST_ORIGIN;
 if (!origin || !/^https:\/\/localhost:\d+$/.test(origin)) throw new Error("Isolated HTTPS origin required");
-const output = path.resolve("docs/qa/step10/lighthouse");
+const phase = process.env.MAKAN_QA_PHASE || "step10";
+if (!/^[a-z0-9-]+$/.test(phase)) throw new Error("Invalid QA phase");
+const output = path.resolve(`docs/qa/${phase}/lighthouse`);
 await mkdir(output, { recursive: true });
 const routes = ["/", "/features", "/solutions/schools", "/demo", "/learn/articles/seo-article", "/learn/videos/seo-video"];
 const rows = [];

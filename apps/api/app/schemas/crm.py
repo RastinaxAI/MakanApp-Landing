@@ -281,7 +281,7 @@ class CustomerRecord(StrictSchema):
     lead: LeadDetail | None
     profile: ProfileRecord
     school: SchoolRecord | None
-    requests: list[LeadDetail]
+    requests: PaginatedResponse[LeadDetail]
     contacts: PaginatedResponse[ContactRecord]
     opportunities: PaginatedResponse[OpportunityRecord]
     activities: PaginatedResponse[ActivityRecord]

@@ -6,7 +6,7 @@ export function Brand({ name = "ماکان", logo }: { name?: string; logo?: Cms
   return (
     <Link
       href="/"
-      aria-label={`${name}، صفحه اصلی`}
+      aria-label={logo ? `${name}، ${logo.alt_text}، صفحه اصلی` : `${name} MakanApp، صفحه اصلی`}
       className="inline-flex shrink-0 items-center gap-3 rounded-xl leading-tight"
     >
       {logo ? (

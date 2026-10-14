@@ -262,7 +262,7 @@ export function PageBuilder({
   const [current, setCurrent] = useState(initial);
   const [initialDocument] = useState(() =>
     initial.payload.kind !== "faq"
-      ? documentFromContent(initial.payload, dataContext.features)
+      ? documentFromContent(initial.payload, dataContext.features, initial.slug)
       : { schema_version: 2 as const, globals: defaultGlobals, nodes: [] },
   );
   const [data, setData] = useState<EditorData>(() =>

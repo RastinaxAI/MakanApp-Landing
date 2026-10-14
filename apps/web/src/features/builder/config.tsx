@@ -429,6 +429,8 @@ export function editorConfig(
         components: [
           "Hero",
           "FeatureStory",
+          "FeatureIndex",
+          "AudienceIndex",
           "FAQ",
           "Features",
           "Statistics",

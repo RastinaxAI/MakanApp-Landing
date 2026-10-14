@@ -15,5 +15,5 @@ export function SourceLink(props: ComponentProps<typeof NextLink>) {
     source && (props.href === "/demo" || props.href === "/contact")
       ? `${props.href}?source=${source}`
       : props.href;
-  return <NextLink {...props} href={href} />;
+  return <NextLink prefetch={false} {...props} href={href} />;
 }

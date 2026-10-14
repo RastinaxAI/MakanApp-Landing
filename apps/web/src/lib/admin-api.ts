@@ -1,6 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { backendRead } from "./backend-read";
 
 export type AdminProfile = {
   id: string;
@@ -39,11 +40,10 @@ export function permittedCookies(value: string) {
 }
 export async function adminGet<T>(path: string): Promise<T | null> {
   const jar = await cookies();
-  const response = await fetch(backendUrl(`admin/${path}`), {
+  const response = await backendRead(backendUrl(`admin/${path}`), {
     headers: { Cookie: permittedCookies(jar.toString()) },
     cache: "no-store",
     redirect: "manual",
-    signal: AbortSignal.timeout(8000),
   });
   if (response.status === 401) return null;
   if (!response.ok) throw new Error("Admin service unavailable");

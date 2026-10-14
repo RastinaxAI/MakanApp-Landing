@@ -85,7 +85,7 @@ export default async function LeadsPage({
           ["دمو", metrics.demo],
           ["پیام تماس", metrics.contact],
           ["واجد شرایط فعلی", metrics.qualified],
-          ["قرارداد ثبت‌شده", metrics.contracts],
+          ["نتیجهٔ موفق ثبت‌شده", metrics.contracts],
         ].map(([label, value]) => (
           <section
             key={label}

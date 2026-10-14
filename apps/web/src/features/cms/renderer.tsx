@@ -7,7 +7,7 @@ import { FaqList, type FaqItem } from "@/features/marketing/faq-list";
 import type { Audience, Feature } from "@/features/marketing/content";
 import { ContentSeo } from "@/features/seo/structured-data";
 import type { CmsContent, LandingPayload } from "./types";
-import { walkNodes, documentFromContent } from "@/features/builder/types";
+import { visibleNodes, documentFromContent } from "@/features/builder/types";
 
 export function asFeatures(contents: CmsContent[]): Feature[] {
   return contents.flatMap((c) =>
@@ -75,7 +75,7 @@ export function CmsRenderer(props: LegacyRendererProps) {
     : [];
   const selected =
     p.kind !== "faq" && p.document
-      ? walkNodes(p.document.nodes).flatMap((node) => {
+      ? visibleNodes(p.document.nodes).flatMap((node) => {
           if (
             node.styles.base.hidden === true &&
             node.styles.tablet.hidden !== false &&
@@ -176,7 +176,7 @@ function CmsBody(props: LegacyRendererProps) {
         )}
         {payload.kind === "home" &&
           ((payload.document &&
-            !walkNodes(payload.document.nodes).some(
+            !visibleNodes(payload.document.nodes).some(
               (node) => node.type === "ArticleList",
             )) ||
             (!payload.document && learningIndex === sections.length)) &&

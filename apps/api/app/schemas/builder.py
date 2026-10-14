@@ -36,6 +36,8 @@ WidgetType = Literal[
     "LegacySection",
     "Hero",
     "FeatureStory",
+    "FeatureIndex",
+    "AudienceIndex",
 ]
 
 

@@ -1,4 +1,5 @@
-import type { LeadDetail, Assignee } from "@/features/leads/types";
+import type { Lead, LeadDetail, Assignee } from "@/features/leads/types";
+export type LeadList = Lead & { school_name: string | null };
 export type { LeadDetail, Assignee };
 export type PageResult<T> = {
   items: T[];
@@ -166,7 +167,7 @@ export type Customer = {
     converted_at: string | null;
   };
   school: School | null;
-  requests: LeadDetail[];
+  requests: PageResult<LeadDetail>;
   contacts: PageResult<Contact>;
   opportunities: PageResult<Opportunity>;
   activities: PageResult<Activity>;

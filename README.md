@@ -1,6 +1,6 @@
 # ماکان — راهنمای اجرای سایت و پنل مدیریت
 
-سایت معرفی ماکان و پنل مدیریت مستقل آن؛ شامل مدیریت محتوا، مقاله، ویدیوهای آپارات و درخواست‌های دمو و مشاوره.
+سایت معرفی ماکان و پنل مدیریت مستقل آن؛ شامل صفحه‌ساز تصویری، مرکز آموزش، رسانه‌ها و CRM مدارس و درخواست‌های دمو.
 
 **مسیر کار:** اجرای برنامه‌ها ← بازکردن سایت ← ورود مدیر با شماره همراه ← مدیریت محتوا و درخواست‌ها.
 
@@ -14,7 +14,7 @@
 
 ```powershell
 cd C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite
-docker compose --profile website up -d --wait db api web
+docker compose --profile website up -d --wait db api web maintenance
 ```
 
 ۳. این آدرس‌ها را باز کنید:
@@ -28,6 +28,23 @@ docker compose --profile website up -d --wait db api web
 ۴. در صفحهٔ ورود، شمارهٔ مدیر ثبت‌شده را وارد کنید، **«دریافت کد ورود»** را بزنید و در حالت توسعه، کد **111111** را وارد کنید.
 
 ورود با ایمیل و رمز جایگزین شده است. در حالت توسعه پیامکی ارسال نمی‌شود؛ شماره‌ای که به حساب مدیر فعال متصل نیست، اجازهٔ ورود ندارد. اگر MFA را فعال کرده‌اید، کد برنامهٔ تأییدکننده یا کد بازیابی هم لازم است.
+
+## بعد از ورود چه کار کنیم؟
+
+| کار | مسیر در پنل |
+| --- | --- |
+| تغییر ظاهر یا متن یک صفحه | محتوای سایت ← انتخاب برگه ← صفحه‌ساز |
+| ساخت صفحهٔ جدید | محتوای سایت ← افزودن؛ سپس عنوان، Container و عناصر موردنیاز را اضافه کنید |
+| تغییر نمایش موبایل | داخل صفحه‌ساز حالت موبایل را انتخاب کنید و تنظیمات همان اندازه را تغییر دهید |
+| ذخیره و انتشار | ابتدا «ذخیره»، سپس «پیش‌نمایش» و «انتشار»؛ ذخیرهٔ پیش‌نویس به‌تنهایی سایت عمومی را عوض نمی‌کند |
+| بازیابی نسخهٔ قبلی | تاریخچهٔ نسخه‌ها ← بازیابی به پیش‌نویس؛ پس از بررسی، منتشر کنید |
+| مدیریت درخواست دمو | فروش و پروندهٔ مدارس ← سرنخ‌ها؛ درخواست‌های فرم سایت خودکار در این بخش ثبت می‌شوند |
+| پیگیری یک مدرسه | بازکردن سرنخ ← نمای مشتری؛ اطلاعات مدرسه، افراد، یادداشت، فعالیت و دمو را تکمیل کنید |
+| پیگیری فروش | فروش و پروندهٔ مدارس ← فرصت‌ها؛ کارت را به مرحلهٔ بعد بکشید یا مرحله را از فرم تغییر دهید |
+| برنامه‌ریزی دمو | نمای مشتری ← دمو؛ کارشناس، زمان، نتیجه و اقدام بعدی را ثبت کنید |
+| یادآوری‌ها | فروش و پروندهٔ مدارس ← اعلان‌ها؛ سرویس `maintenance` یادآوری‌های داخلی را پردازش می‌کند |
+
+اعلان‌های CRM داخل پنل هستند. پیامک ورود فقط با اتصال ملی‌پیامک ارسال می‌شود؛ ارسال پیامک فروش و دمو فعلاً فعال نشده است. تصاویر شماتیک سایت اسکرین‌شات محصول نیستند؛ تصویر واقعی تأییدشده را از کتابخانهٔ رسانه انتخاب کنید. امکانات AI با وضعیت «در نقشهٔ راه» معرفی می‌شوند.
 
 ## نصب اولیه روی سیستم جدید
 
@@ -48,10 +65,11 @@ pwsh -NoProfile -File .\scripts\setup-development.ps1
 ### ۲. ساخت برنامه‌ها
 
 ```powershell
-docker compose --parallel 1 --profile tools --profile website build api migrate web
+docker compose --profile tools --profile website build api migrate maintenance
+docker compose --profile website build web
 ```
 
-ساخت‌ها پشت سر هم انجام می‌شوند تا مصرف حافظه کمتر باشد.
+ابتدا Backend و سرویس‌های هم‌تصویر آن ساخته می‌شوند، سپس وب؛ مصرف حافظه کمتر می‌شود.
 
 ### ۳. آماده‌کردن دیتابیس و اجرای Backend
 
@@ -69,6 +87,7 @@ docker compose up -d --wait api
 docker compose exec -T api python -m app.commands.import_content
 docker compose exec -T api python -m app.commands.refresh_learning_intro
 docker compose exec -T api python -m app.commands.refresh_form_copy
+docker compose exec -T api python -m app.commands.crm_backfill
 docker compose exec -T db psql -U postgres -d makan_landing -c ANALYZE
 ```
 
@@ -77,7 +96,7 @@ docker compose exec -T db psql -U postgres -d makan_landing -c ANALYZE
 ### ۵. اجرای سایت و ساخت اولین مالک
 
 ```powershell
-docker compose --profile website up -d --wait web
+docker compose --profile website up -d --wait web maintenance
 docker compose exec -it api python -m app.commands.admin bootstrap
 ```
 
@@ -96,7 +115,7 @@ docker compose exec -it api python -m app.commands.admin bind-phone --email $man
 
 ## اتصال ملی‌پیامک و فعال‌کردن ارسال واقعی
 
-در پنل وارد **تنظیمات ← پنل پیامکی** شوید:
+در منوی پنل، **مدیریت ← پنل پیامکی** را باز کنید:
 
 1. نام کاربری ملی‌پیامک، **رمز وب‌سرویس** و **شناسهٔ الگوی خدماتی تأییدشده (Body ID)** را وارد کنید. الگو باید یک پارامتر برای کد ورود شش‌رقمی داشته باشد.
 2. «اتصال پنل پیامکی فعال باشد» را انتخاب کنید. فعلاً حالت توسعه را روشن نگه دارید.
@@ -120,28 +139,25 @@ docker compose exec -it api python -m app.commands.sms reset-debug
 **روشن‌کردن سایت پس از خاموش‌شدن کامپیوتر:**
 
 ```powershell
-docker compose --profile website up -d --wait db api web
+docker compose --profile website up -d --wait db api web maintenance
 ```
 
 **توقف برنامه‌ها:**
 
 ```powershell
-docker compose --profile website stop web api db
+docker compose --profile website stop web api maintenance db
 ```
 
 داده‌ها و تصاویر پس از توقف باقی می‌مانند. از `down --volumes` برای این محیط استفاده نکنید؛ داده‌های ذخیره‌شده را حذف می‌کند.
 
-**پس از دریافت نسخهٔ جدید کد:** ابتدا از داده‌های مهم پشتیبان بگیرید، سپس:
+**به‌روزرسانی همین کامپیوتر به V2:** ابزار زیر ابتدا برنامه‌ها را می‌سازد، از دیتابیس و رسانه‌ها پشتیبان رمزگذاری‌شده می‌گیرد، آن را روی دیتابیس جداگانه بازیابی و مقایسه می‌کند، سپس Migration و انتقال محتوا را اجرا می‌کند. اطلاعات قبلی و نسخه‌های قدیمی حفظ می‌شوند. برای این ابزار، محیط Python پروژه و دیتابیس تست باید آماده باشند:
 
 ```powershell
-docker compose --profile website stop web api
-docker compose --parallel 1 --profile tools --profile website build api migrate web
-docker compose up -d --wait db
-docker compose --profile tools run --rm migrate
-docker compose --profile website up -d --wait api web
+docker compose --env-file .env.test -f compose.test.yaml up -d --wait
+.\apps\api\.venv\Scripts\python.exe -X utf8 .\scripts\upgrade-development.py
 ```
 
-برای به‌روزرسانی معمول، ساخت مالک و ورود دوبارهٔ محتوای اولیه لازم نیست. دستورهای نصب تازه را برای حذف یا بازسازی دیتابیس موجود استفاده نکنید.
+ساخت مالک و ورود دوبارهٔ محتوای اولیه لازم نیست. پشتیبان و کلید خصوصی آن در `.backups` قرار می‌گیرند؛ هر دو را در محل امن نگه دارید. این ابزار برای محیط محلی همین پروژه است؛ راهنمای سرور در بخش انتشار قرار دارد. توقف برنامه، داده‌ها را حذف نمی‌کند.
 
 ## اگر سایت باز نشد
 
@@ -170,6 +186,8 @@ docker compose --profile website logs --tail 60 web api
 
 دستورهای بالا برای اجرای محلی هستند. برای سرور و HTTPS از [راهنمای استقرار](docs/production-runbook.md) و [راهنمای پشتیبان‌گیری و بازیابی](docs/backup-restore-runbook.md) استفاده کنید. دامنه و سرور عمومی هنوز مشخص نشده‌اند.
 
+پیش از انتشار عمومی، [یافته‌های امنیتی و موارد باقی‌مانده](docs/v2-security-findings.md) را بررسی کنید؛ اسکن imageها چند هشدار High بسته‌های پایه ثبت کرده است.
+
 در محیط انتشار، کد ثابت **111111** غیرفعال است. قبل از اولین ورود مدیر، اپراتور با فایل تنظیمات همان محیط، اتصال پیامکی را آماده می‌کند؛ نمونهٔ مسیر مطابق راهنمای استقرار:
 
 ```bash
@@ -183,6 +201,10 @@ docker compose -f compose.production.yaml --env-file /etc/makan-landing/producti
 لوگوی اصلی در `apps/web/public/brand/makan-logo.png` حفظ شده است. لوگو و فاوآیکون مربع با گوشه‌های گرد هستند. رنگ برند **#156FEE** است و رنگ‌های رابط در `apps/web/src/styles/tokens.css` قرار دارند. لوگوی محتوای سایت از تنظیمات پنل نیز قابل تغییر است.
 
 - [گزارش آخرین تغییرات پنل و تست‌ها](docs/admin-refresh-report.md)
+- [راهنمای صفحه‌ساز و ابزارهای آن](docs/v2-advanced-editor.md)
+- [راهنمای CRM و محدودیت Integrationها](docs/v2-demo-crm.md)
+- [گزارش نهایی V2 و تست‌ها](docs/v2-integration-quality.md)
+- [وضعیت قابلیت‌های حفظ‌شده و ارتقایافته](docs/v2-delivery-matrix.md)
 - [معماری](docs/architecture.md)
 - [قرارداد API](docs/api-contract.md)
 - [طراحی دیتابیس](docs/database-design.md)

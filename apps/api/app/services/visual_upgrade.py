@@ -13,7 +13,18 @@ from app.services import cms
 from app.services.auth import audit, now_utc
 
 
-def document_from_payload(payload: dict, features: list[dict] | None = None):
+def document_from_payload(payload: dict, features: list[dict] | None = None, slug=""):
+    def finalize(value):
+        if slug in ("features", "solutions"):
+            value["nodes"].append(
+                {
+                    "id": "catalogue",
+                    "type": "FeatureIndex" if slug == "features" else "AudienceIndex",
+                    "props": {},
+                }
+            )
+        return VisualDocument.model_validate(value).model_dump(mode="json", exclude_none=True)
+
     if payload.get("document"):
         return deepcopy(payload["document"])
     kind = payload["kind"]
@@ -107,7 +118,7 @@ def document_from_payload(payload: dict, features: list[dict] | None = None):
                 }
             )
     if kind == "page" and not sections:
-        return VisualDocument.model_validate(
+        return finalize(
             {
                 "nodes": [
                     {
@@ -122,7 +133,7 @@ def document_from_payload(payload: dict, features: list[dict] | None = None):
                     },
                 ]
             }
-        ).model_dump(mode="json", exclude_none=True)
+        )
     value = {
         "schema_version": 2,
         "nodes": [
@@ -130,7 +141,7 @@ def document_from_payload(payload: dict, features: list[dict] | None = None):
             for index, section in enumerate(sections)
         ],
     }
-    return VisualDocument.model_validate(value).model_dump(mode="json", exclude_none=True)
+    return finalize(value)
 
 
 def upgrade(session: Session, actor=None):
@@ -158,7 +169,7 @@ def upgrade(session: Session, actor=None):
         ):
             result["skipped"].append(str(page.id))
             continue
-        payload["document"] = document_from_payload(payload, features)
+        payload["document"] = document_from_payload(payload, features, page.slug.split(":", 1)[1])
         data = ContentInput(
             slug=page.slug.split(":", 1)[1],
             title=current.title,

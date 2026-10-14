@@ -10,7 +10,9 @@ test("Persian document, local font, preview metadata and no third-party requests
   const errors: string[] = [];
   page.on("request", (request) => {
     if (
-      !request.url().startsWith("http://127.0.0.1:3100") &&
+      !request
+        .url()
+        .startsWith(process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100") &&
       !request.url().startsWith("data:")
     )
       external.push(request.url());
@@ -39,7 +41,7 @@ test("Persian document, local font, preview metadata and no third-party requests
 });
 
 for (const width of [320, 360, 390, 479, 480, 768, 1024, 1440]) {
-  test(`responsive layout at ${width}px with correct card columns`, async ({
+  test(`responsive layout at ${width}px with readable role panels`, async ({
     page,
   }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
@@ -50,20 +52,24 @@ for (const width of [320, 360, 390, 479, 480, 768, 1024, 1440]) {
         () => document.documentElement.scrollWidth <= innerWidth,
       ),
     ).toBe(true);
-    const columns = await page
-      .getByTestId("role-grid")
+    const roles = page.getByRole("tablist", { name: "ماکان برای نقش شما" });
+    await expect(roles.getByRole("tab")).toHaveCount(4);
+    const panel = page.locator(".premium-role-panel").filter({ visible: true });
+    const columns = await panel
       .evaluate(
         (element) =>
           getComputedStyle(element).gridTemplateColumns.split(" ").length,
       );
-    expect(columns).toBe(width < 480 ? 1 : width < 1024 ? 2 : 4);
+    expect(columns).toBe(width < 1024 ? 1 : 2);
+    await roles.getByRole("tab", { name: "والدین", exact: true }).click();
+    await expect(panel.getByRole("link")).toHaveAttribute("href", /\/solutions\/parents$/);
     const headerMenu = page.getByRole("button", { name: "باز کردن منو" });
     if (width < 1024) await expect(headerMenu).toBeVisible();
     else await expect(headerMenu).toBeHidden();
-    await expect(page.getByTestId("product-placeholder").first()).toBeVisible();
+    await expect(page.locator("[data-feature-preview]").first()).toBeVisible();
     if ([390, 768, 1440].includes(width)) {
       const directory = path.resolve(
-        "../../docs/qa/step10",
+        `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
         testInfo.project.name,
       );
       await mkdir(directory, { recursive: true });
@@ -243,7 +249,7 @@ for (const width of [390, 1440]) {
       window.scrollTo({ top: 0, behavior: "instant" });
     });
     const directory = path.resolve(
-      "../../docs/qa/step10",
+      `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
       testInfo.project.name,
     );
     await mkdir(directory, { recursive: true });

@@ -61,22 +61,25 @@ export function Customer360({
     initial?: Record<string, unknown>;
   } | null>(null);
   const [leadId, setLeadId] = useState(
-    data.lead?.id || data.requests[0]?.id || "",
+    data.lead?.id || data.requests.items[0]?.id || "",
   );
   const lead =
-    data.lead || data.requests.find((row) => row.id === leadId) || null;
+    data.lead ||
+    data.requests.items.find((row) => row.id === leadId) ||
+    data.requests.items[0] ||
+    null;
   const editable = !!lead && !lead.purged_at;
   const add = (resource: Resource) => setEditor({ resource });
   const edit = (resource: Resource, record: AnyRecord) =>
     setEditor({ resource, initial: { ...record } });
   const context =
     editor?.resource === "contacts"
-      ? { school_id: data.school?.id, lead_id: leadId }
+      ? { school_id: data.school?.id, lead_id: lead?.id || "" }
       : editor?.resource === "schools"
         ? {}
         : editor?.resource === "opportunities"
-          ? { lead_id: leadId, school_id: data.school?.id }
-          : { lead_id: leadId };
+          ? { lead_id: lead?.id || "", school_id: data.school?.id }
+          : { lead_id: lead?.id || "" };
   const pager = (totalPages: number) => {
     const root = data.lead
       ? `/admin/crm/leads/${data.lead.id}`
@@ -239,7 +242,7 @@ export function Customer360({
           </section>
           <section className="crm-surface">
             <h2 className="mb-4 font-semibold">درخواست‌های مرتبط</h2>
-            {!data.lead && data.requests.length > 0 && (
+            {!data.lead && data.requests.items.length > 0 && (
               <>
                 <label
                   htmlFor="customer-current-request"
@@ -250,10 +253,10 @@ export function Customer360({
                 <select
                   id="customer-current-request"
                   className="crm-control mb-4"
-                  value={leadId}
+                  value={lead?.id || ""}
                   onChange={(e) => setLeadId(e.target.value)}
                 >
-                  {data.requests.map((r) => (
+                  {data.requests.items.map((r) => (
                     <option key={r.id} value={r.id}>
                       {r.full_name} — {date(r.created_at)}
                     </option>
@@ -261,7 +264,7 @@ export function Customer360({
                 </select>
               </>
             )}
-            {data.requests.map((row) => (
+            {data.requests.items.map((row) => (
               <Link
                 prefetch={false}
                 key={row.id}
@@ -275,6 +278,7 @@ export function Customer360({
                 </span>
               </Link>
             ))}
+            {pager(data.requests.pagination.pages)}
           </section>
         </aside>
         <div className="min-w-0">

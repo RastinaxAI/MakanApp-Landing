@@ -24,6 +24,23 @@ NODE_PATH = None
 def node_command(*args):
     global NODE_PATH
     if NODE_PATH is None:
+        cache = ROOT / ".preview/node24-path.txt"
+        if cache.is_file():
+            candidate = cache.read_text(encoding="utf-8").strip()
+            if Path(candidate).is_file() and Path(candidate).name.lower() in (
+                "node",
+                "node.exe",
+            ):
+                try:
+                    if (
+                        subprocess.check_output([candidate, "--version"], text=True)
+                        .strip()
+                        .startswith("v24.")
+                    ):
+                        NODE_PATH = candidate
+                        return [NODE_PATH, *args]
+                except (OSError, subprocess.CalledProcessError):
+                    pass
         version = subprocess.check_output(["node", "--version"], text=True).strip()
         NODE_PATH = (
             shutil.which("node")
@@ -44,6 +61,8 @@ def node_command(*args):
         )
         if not NODE_PATH or not Path(NODE_PATH).is_file():
             raise RuntimeError("Node.js 24 runtime is unavailable")
+        cache.parent.mkdir(exist_ok=True)
+        cache.write_text(NODE_PATH, encoding="utf-8")
     return [NODE_PATH, *args]
 
 
@@ -115,13 +134,47 @@ def main():
         "--project", choices=["all", "chromium", "firefox", "webkit"], default="all"
     )
     parser.add_argument(
-        "--spec", choices=["all", "crm", "builder", "public-upgrade"], default="all"
+        "--spec",
+        choices=[
+            "all",
+            "crm",
+            "builder",
+            "advanced",
+            "theme",
+            "widgets",
+            "public-upgrade",
+            "visual-regression",
+            "admin",
+            "cms",
+            "learning",
+            "learning-category",
+            "leads",
+            "leads-layout",
+            "public-pages",
+            "layout",
+            "seo",
+            "otp-admin",
+        ],
+        default="all",
     )
     parser.add_argument("--dev", action="store_true")
+    parser.add_argument("--update-snapshots", action="store_true")
+    parser.add_argument(
+        "--suite", choices=["v2", "legacy", "legacy-seo", "legacy-otp"], default="v2"
+    )
     parser.add_argument("--api-scope", choices=["all", "crm"], default="all")
     args = parser.parse_args()
     qa = ROOT / "docs/qa" / args.phase
     qa.mkdir(parents=True, exist_ok=True)
+    report_name = (
+        (
+            "browser.json"
+            if args.spec == "all"
+            else f"browser-v2-{args.spec}-{args.project}.json"
+        )
+        if args.suite == "v2"
+        else f"browser-{args.suite}-{args.spec}-{args.project}.json"
+    )
     if args.gate == "build":
         build()
         return
@@ -149,7 +202,9 @@ def main():
     if (ROOT / ".preview/e2e-db-name.txt").exists():
         raise RuntimeError("An earlier owned fixture must be cleaned before this run")
     env.update(
-        E2E_OTP_ONLY="1",
+        E2E_OTP_ONLY="1" if args.suite in ("v2", "legacy-otp") else "0",
+        E2E_SEO_FIXTURES="1" if args.suite == "legacy-seo" else "0",
+        MAKAN_QA_PHASE=args.phase,
         E2E_BASE_URL="http://127.0.0.1:3200",
         API_INTERNAL_URL="http://127.0.0.1:8100",
     )
@@ -158,6 +213,12 @@ def main():
     logs = ROOT / ".preview"
     logs.mkdir(exist_ok=True)
     api = web = None
+    result = ROOT / (
+        "apps/web/test-results/v2-results.json"
+        if args.suite == "v2"
+        else "apps/web/test-results/v2-legacy-results.json"
+    )
+    result.unlink(missing_ok=True)
     original = (ROOT / "apps/web/next-env.d.ts").read_bytes()
     try:
         flags = (
@@ -195,11 +256,15 @@ def main():
             argv = node_command(
                 str(ROOT / "node_modules/@playwright/test/cli.js"),
                 "test",
-                "--config=playwright.v2.config.ts",
+                "--config=playwright.v2.config.ts"
+                if args.suite == "v2"
+                else "--config=playwright.v2-legacy.config.ts",
                 "--max-failures=1",
             )
             if args.project != "all":
                 argv.append(f"--project={args.project}")
+            if args.update_snapshots:
+                argv.append("--update-snapshots=all")
             if args.spec != "all":
                 argv.append(args.spec + ".spec.ts")
             run(argv, env, ROOT / "apps/web")
@@ -207,11 +272,18 @@ def main():
         stop(web)
         stop(api)
         (ROOT / "apps/web/next-env.d.ts").write_bytes(original)
-        result = ROOT / "apps/web/test-results/v2-results.json"
+        result = ROOT / (
+            "apps/web/test-results/v2-results.json"
+            if args.suite == "v2"
+            else "apps/web/test-results/v2-legacy-results.json"
+        )
         if result.exists():
-            shutil.copyfile(result, qa / "browser.json")
+            shutil.copyfile(
+                result,
+                qa / report_name,
+            )
         run([str(quality.PYTHON), "tests/e2e_cleanup.py"], env, ROOT / "apps/api")
-    report = json.loads((qa / "browser.json").read_text(encoding="utf-8"))
+    report = json.loads((qa / report_name).read_text(encoding="utf-8"))
     print("V2 browser gate passed; tests:", report.get("stats", {}).get("expected"))
 
 

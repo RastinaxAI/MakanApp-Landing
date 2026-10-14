@@ -50,7 +50,7 @@ async function mutate(
   return page.request.fetch(`/api/v1/admin/${endpoint}`, {
     method,
     headers: {
-      Origin: "http://127.0.0.1:3100",
+      Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100",
       "X-CSRF-Token": (await csrf.json()).csrf_token,
       ...(version ? { "If-Match": String(version) } : {}),
     },
@@ -62,7 +62,10 @@ async function image(page: Page) {
     await (await page.request.get("/api/v1/admin/auth/csrf")).json()
   ).csrf_token;
   const response = await page.request.post("/api/v1/admin/media", {
-    headers: { Origin: "http://127.0.0.1:3100", "X-CSRF-Token": token },
+    headers: {
+      Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100",
+      "X-CSRF-Token": token,
+    },
     multipart: {
       alt_text: "تصویر واقعی آزمون آموزش",
       file: {
@@ -478,7 +481,10 @@ for (const width of [360, 768, 1440])
     });
     expect(category.status()).toBe(201);
     await page.setViewportSize({ width, height: 900 });
-    const directory = path.resolve("../../docs/qa/step10", info.project.name);
+    const directory = path.resolve(
+      `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
+      info.project.name,
+    );
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["library", "/learn"],
@@ -495,7 +501,10 @@ for (const width of [360, 768, 1440])
       await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
       if (url === "/admin/learn/taxonomy")
         await expect(
-          page.getByRole("button", { name: `حذف ${categoryTitle}`, exact: true }),
+          page.getByRole("button", {
+            name: `حذف ${categoryTitle}`,
+            exact: true,
+          }),
         ).toBeEnabled();
       expect(
         await page.evaluate(
@@ -543,7 +552,10 @@ for (const width of [360, 768, 1440])
     const blog = await fixture(page, `detail-blog-${suffix}`, "blog", {
       cover_media_id: media,
     });
-    const directory = path.resolve("../../docs/qa/step10", info.project.name);
+    const directory = path.resolve(
+      `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
+      info.project.name,
+    );
     await mkdir(directory, { recursive: true });
     for (const [name, url] of [
       ["article-detail", `/learn/articles/${a.slug}?series=${series.slug}`],

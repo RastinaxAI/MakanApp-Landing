@@ -34,7 +34,7 @@ services:
     restart: 'no'
   api:
     build: {context: ./apps/api}
-    environment:
+    environment: &api_environment
       APP_ENV: development
       AUTH_OTP_DEBUG: ${AUTH_OTP_DEBUG:-true}
       AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
@@ -81,10 +81,30 @@ services:
     cap_drop: [ALL]
     security_opt: [no-new-privileges:true]
     restart: unless-stopped
+  maintenance:
+    profiles: [website]
+    build: {context: ./apps/api}
+    environment: *api_environment
+    command: [python, -m, app.commands.maintenance, --state-file, /srv/operations/maintenance.json]
+    networks: [database]
+    depends_on: {db: {condition: service_healthy}}
+    volumes: [operations_data:/srv/operations]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
+    healthcheck:
+      test: [CMD, python, -m, app.commands.maintenance, --check, --state-file, /srv/operations/maintenance.json]
+      interval: 30s
+      timeout: 8s
+      retries: 4
+      start_period: 30s
 volumes:
   postgres_data:
   media_data:
   web_cache:
+  operations_data:
 networks:
   application:
   database:

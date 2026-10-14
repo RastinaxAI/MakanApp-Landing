@@ -1,4 +1,4 @@
-import { z } from "@/lib/validation";
+import * as z from "@/lib/validation";
 
 export function normalizePhone(value: string) {
   const digits = value.replace(/[۰-۹٠-٩]/g, (char) =>

@@ -385,6 +385,42 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
             for node in nodes
         )
         expected_h1 = 1 if payload.kind in ("home", "feature", "audience") else 0
+
+        def visible_headings(items, parent=(True, True, True)):
+            for node in items:
+                base = bool(node.styles.base.hidden)
+                visible = tuple(
+                    parent[index] and not hidden
+                    for index, hidden in enumerate(
+                        (
+                            base,
+                            node.styles.tablet.hidden
+                            if node.styles.tablet.hidden is not None
+                            else base,
+                            node.styles.mobile.hidden
+                            if node.styles.mobile.hidden is not None
+                            else node.styles.tablet.hidden
+                            if node.styles.tablet.hidden is not None
+                            else base,
+                        )
+                    )
+                )
+                primary = (
+                    node.type == "Hero"
+                    or (node.type == "Heading" and node.props.level == 1)
+                    or (
+                        node.type == "LegacySection" and node.props.legacy_section["type"] == "hero"
+                    )
+                )
+                if primary and not all(visible) and payload.document.purpose == "page":
+                    raise ApiProblem(
+                        422,
+                        "HEADING_VISIBILITY",
+                        "تیتر اصلی باید در موبایل، تبلت و دسکتاپ قابل مشاهده باشد.",
+                    )
+                visible_headings(node.children, visible)
+
+        visible_headings(payload.document.nodes)
         if h1_count != expected_h1 and not (
             payload.kind == "page"
             and payload.document.purpose in ("page", "template")

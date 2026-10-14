@@ -14,7 +14,7 @@ test("CRM list handles long names native filters and reflows at mobile tablet de
   ).json();
   await new Promise((resolve) => setTimeout(resolve, 1100));
   const response = await page.request.post("/api/v1/leads/demo", {
-    headers: { Origin: "http://127.0.0.1:3100" },
+    headers: { Origin: process.env.E2E_BASE_URL ?? "http://127.0.0.1:3100" },
     data: {
       full_name: name,
       phone: "09123456789",
@@ -36,7 +36,10 @@ test("CRM list handles long names native filters and reflows at mobile tablet de
     .fill(process.env.E2E_ADMIN_PASSWORD!);
   await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
   await expect(page).toHaveURL(/\/admin$/, { timeout: 15000 });
-  const directory = path.resolve("../../docs/qa/step10", info.project.name);
+  const directory = path.resolve(
+    `../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "step10"}`,
+    info.project.name,
+  );
   await mkdir(directory, { recursive: true });
   for (const width of [360, 768, 1440]) {
     await page.setViewportSize({ width, height: 1000 });

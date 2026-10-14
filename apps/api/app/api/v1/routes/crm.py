@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query, Request, Response
 from sqlalchemy.orm import Session
 
 from app.db.session import get_session
-from app.schemas.common import PaginatedResponse
+from app.schemas.common import ErrorResponse, PaginatedResponse
 from app.schemas.crm import (
     ActivityInput,
     ActivityRecord,
@@ -28,7 +28,13 @@ from app.schemas.crm import (
 )
 from app.services import crm
 
-router = APIRouter(prefix="/admin/crm", tags=["crm"])
+router = APIRouter(
+    prefix="/admin/crm",
+    tags=["crm"],
+    responses={
+        code: {"model": ErrorResponse} for code in (401, 403, 404, 409, 413, 422, 428, 429, 503)
+    },
+)
 SessionDep = Annotated[Session, Depends(get_session)]
 QueryDep = Annotated[CrmQuery, Query()]
 

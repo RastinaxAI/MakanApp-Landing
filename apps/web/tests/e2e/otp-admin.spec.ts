@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
-const output = path.resolve("../../docs/qa/admin-refresh");
+const output = path.resolve(`../../docs/qa/${process.env.MAKAN_QA_PHASE ?? "admin-refresh"}`);
 const phone = "09120000001";
 
 async function login(page: import("@playwright/test").Page, number = phone) {

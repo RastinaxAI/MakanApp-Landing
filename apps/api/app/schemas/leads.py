@@ -153,7 +153,7 @@ class LeadSummary(StrictSchema):
     last_activity_at: datetime
     purged_at: datetime | None
     version: int
-    details: dict = Field(default_factory=dict)
+    school_name: str | None = None
 
 
 class LeadDetail(LeadSummary):

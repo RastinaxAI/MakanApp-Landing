@@ -1,4 +1,4 @@
-import { z } from "@/lib/validation";
+import * as z from "@/lib/validation";
 import { widgetLabels, walkNodes, type VisualDocument } from "./types";
 const hex = z.string().regex(/^#[0-9a-f]{6}$/i);
 const globals = z

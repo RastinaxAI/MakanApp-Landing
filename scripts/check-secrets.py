@@ -12,8 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     keys = set()
     environments = [ROOT / ".env", ROOT / ".env.test"]
-    environments.extend((ROOT / ".preview/step10").glob("*.env"))
-    environments.extend((ROOT / ".preview/admin-refresh").glob("*.env"))
+    environments.extend((ROOT / ".preview").rglob("*.env"))
     for path in environments:
         if not path.exists():
             continue
@@ -23,9 +22,9 @@ def main():
                 word in match[1] for word in ("PASSWORD", "SECRET", "KEY")
             ):
                 keys.add(match[2].encode())
-    password = ROOT / ".preview/step10/admin-password.txt"
-    if password.exists():
-        keys.add(password.read_bytes().strip())
+    for password in (ROOT / ".preview").rglob("admin-password.txt"):
+        if password.is_file() and password.read_bytes().strip():
+            keys.add(password.read_bytes().strip())
     owner_phone = ROOT / ".preview/admin-refresh/owner-phone.txt"
     if owner_phone.exists():
         keys.add(owner_phone.read_bytes().strip())

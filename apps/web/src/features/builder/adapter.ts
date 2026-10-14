@@ -43,7 +43,7 @@ export function toEditorData(document: VisualDocument): EditorData {
         node_styles: node.styles,
         children: convert(node.children),
       },
-    }));
+    })) as EditorData["content"];
   return {
     root: { props: { document_globals: document.globals } },
     content: convert(document.nodes),
