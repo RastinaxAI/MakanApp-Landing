@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./tokens.css";
+@import "./premium.css";
 
 @layer base {
   * { @apply border-border; }
