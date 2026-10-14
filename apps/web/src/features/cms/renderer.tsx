@@ -68,7 +68,7 @@ function CmsBody(props: LegacyRendererProps) {
   if (payload.kind === "home" || payload.kind === "page")
     return (
       <>
-        {payload.kind !== "home" && (
+        {payload.kind !== "home" && (!payload.document?.purpose || payload.document.purpose === "page") && (
           <PageHero
             eyebrow={payload.eyebrow}
             title={payload.headline}

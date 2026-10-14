@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import EmailStr, Field, TypeAdapter, field_validator, model_validator
 
-from app.schemas.builder import VisualDocument
+from app.schemas.builder import DocumentGlobals, VisualDocument
 from app.schemas.common import PaginationQuery, StrictSchema
 from app.schemas.learning import LearningPayload
 from app.services.html_safety import clean_html, safe_link
@@ -225,6 +225,12 @@ class AdminContent(PublicContent):
     scheduled_revision_id: UUID | None
     scheduled_at: datetime | None
     is_archived: bool
+
+
+class BuilderPublicSite(StrictSchema):
+    globals: DocumentGlobals
+    header: PublicContent | None
+    footer: PublicContent | None
 
 
 class RevisionInfo(StrictSchema):

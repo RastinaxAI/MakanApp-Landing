@@ -11,8 +11,15 @@ from sqlalchemy.orm import Session
 from app.core.problems import ApiProblem
 from app.db.session import get_session
 from app.models import FaqCategory, MediaAsset, PageRevision
+from app.schemas.builder import (
+    BuilderLibraryQuery,
+    BuilderSettings,
+    BuilderSettingsOutput,
+    VisualDocument,
+)
 from app.schemas.cms import (
     AdminContent,
+    BuilderPublicSite,
     Category,
     CategoryInput,
     ContentInput,
@@ -28,7 +35,7 @@ from app.schemas.cms import (
     SettingsOutput,
 )
 from app.schemas.common import ErrorResponse, PaginatedResponse, PaginationQuery
-from app.services import cms, media, site_settings
+from app.services import builder, cms, media, site_settings
 from app.services.auth import audit, principal, require_capability
 
 router = APIRouter(
@@ -39,6 +46,42 @@ router = APIRouter(
 )
 SessionDep = Annotated[Session, Depends(get_session)]
 Resource = Literal["pages", "features", "audiences", "faqs", "content"]
+
+
+@router.get("/site/builder", response_model=BuilderPublicSite)
+def public_builder(session: SessionDep):
+    with session.begin():
+        return builder.public_site(session)
+
+
+@router.get("/admin/builder/settings", response_model=BuilderSettingsOutput)
+def builder_settings(request: Request, session: SessionDep):
+    with session.begin():
+        cms.authorize(request, session)
+        return builder.settings(session)
+
+
+@router.patch("/admin/builder/settings", response_model=BuilderSettingsOutput)
+def builder_settings_update(data: BuilderSettings, request: Request, session: SessionDep):
+    return builder.update(request, session, data)
+
+
+@router.post("/admin/builder/validate", response_model=VisualDocument)
+def builder_validate(data: VisualDocument, request: Request, session: SessionDep):
+    with session.begin():
+        cms.authorize(request, session, True)
+        return data
+
+
+@router.get("/admin/builder/library", response_model=PaginatedResponse[AdminContent])
+def builder_library(
+    request: Request,
+    session: SessionDep,
+    query: Annotated[BuilderLibraryQuery, Query()],
+):
+    with session.begin():
+        cms.authorize(request, session)
+        return builder.library(session, query.purpose, query.page, query.page_size)
 
 
 @router.get("/site/settings", response_model=SettingsOutput)

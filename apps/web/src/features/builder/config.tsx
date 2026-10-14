@@ -20,7 +20,8 @@ import {
   type WidgetProps,
   type WidgetType,
 } from "./types";
-import type { EditorMap, EditorProps } from "./adapter";
+import type { EditorMap, EditorProps, EditorRootProps } from "./adapter";
+import { useRef } from "react";
 
 function LegacyFields({
   value,
@@ -88,6 +89,10 @@ function EditableWidget({
   slot?: SlotComponent;
 }) {
   const puck = usePuck();
+  const wrapper = useRef<HTMLDivElement>(null);
+  const viewport = Number(puck.appState.ui.viewports.current.width);
+  const styleMode =
+    viewport <= 479 ? "mobile" : viewport <= 1023 ? "tablet" : "base";
   const replaceProps = (partial: Partial<EditorProps>) => {
     const selector = puck.getSelectorForId(fields.id);
     const item = puck.getItemById(fields.id);
@@ -110,6 +115,7 @@ function EditableWidget({
   };
   return (
     <div
+      ref={wrapper}
       className="relative"
       onClickCapture={(event) => {
         const target = (event.target as HTMLElement).closest("[data-node-id]");
@@ -141,12 +147,14 @@ function EditableWidget({
           onKeyDown={(event) => {
             if (!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
             event.preventDefault();
-            const old = parseFloat(fields.node_styles?.base.width || "320");
+            const old =
+              wrapper.current?.querySelector<HTMLElement>("[data-node-id]")
+                ?.offsetWidth || 320;
             replaceProps({
               node_styles: {
                 ...(fields.node_styles || emptyStyles()),
-                base: {
-                  ...fields.node_styles?.base,
+                [styleMode]: {
+                  ...fields.node_styles?.[styleMode],
                   width: `${Math.max(80, Math.min(1600, old + (event.key === "ArrowLeft" ? 10 : -10)))}px`,
                 },
               },
@@ -169,8 +177,8 @@ function EditableWidget({
               replaceProps({
                 node_styles: {
                   ...(fields.node_styles || emptyStyles()),
-                  base: {
-                    ...fields.node_styles?.base,
+                  [styleMode]: {
+                    ...fields.node_styles?.[styleMode],
                     width: `${Math.round(Math.max(80, Math.min(1600, width + (start - pointer.clientX) * scale)))}px`,
                   },
                 },
@@ -195,7 +203,7 @@ function EditableWidget({
 export function editorConfig(
   context: BuilderContext,
   assets: MediaAsset[],
-): Config<EditorMap> {
+): Config<EditorMap, EditorRootProps> {
   const text = (label: string) => ({ type: "text" as const, label });
   const components = Object.fromEntries(
     (Object.keys(widgetLabels) as WidgetType[]).map((type) => {
@@ -205,7 +213,7 @@ export function editorConfig(
           type: "custom",
           label: "چیدمان و Style",
           render: ({ value, onChange }) => (
-            <StylePanel value={value} onChange={onChange} />
+            <StylePanel value={value} onChange={onChange} assets={assets} />
           ),
         },
       };

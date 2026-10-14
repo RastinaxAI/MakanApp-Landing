@@ -60,7 +60,11 @@ function color(value: string) {
     ? `var(--builder-${value.slice(7)})`
     : "inherit";
 }
-function declarations(style: StyleValues, layout: boolean) {
+function declarations(
+  style: StyleValues,
+  layout: boolean,
+  privatePreview = false,
+) {
   const output: string[] = [];
   for (const [rawKey, value] of Object.entries(style)) {
     if (
@@ -106,9 +110,18 @@ function declarations(style: StyleValues, layout: boolean) {
     output.push(
       `background-image:linear-gradient(${Number(style.gradient_angle ?? 135)}deg,${color(style.gradient_from)},${color(style.gradient_to)})`,
     );
+  else if (
+    !layout &&
+    style.background_media_id &&
+    /^[0-9a-f-]{36}$/i.test(style.background_media_id)
+  ) {
+    output.push(
+      `background-image:url("/api/v1/${privatePreview ? "admin/" : ""}media/${style.background_media_id}/file");background-size:${style.background_size === "contain" ? "contain" : style.background_size === "auto" ? "auto" : "cover"};background-position:center;background-repeat:no-repeat`,
+    );
+  }
   return output.join(";");
 }
-export function nodeCSS(node: VisualNode, scope = "") {
+export function nodeCSS(node: VisualNode, scope = "", privatePreview = false) {
   if (
     !/^[a-zA-Z0-9_-]+$/.test(node.id) ||
     (scope && !/^[a-zA-Z0-9_-]+$/.test(scope))
@@ -116,7 +129,7 @@ export function nodeCSS(node: VisualNode, scope = "") {
     return "";
   const selector = `${scope ? `[data-builder-scope="${scope}"] ` : ""}[data-node-id="${node.id}"]`;
   const rule = (style: StyleValues, suffix = "") =>
-    `${selector}${suffix}{${declarations(style, false)}}${selector}${suffix}>.builder-layout{${declarations(style, true)}}`;
+    `${selector}${suffix}{${declarations(style, false, privatePreview)}}${selector}${suffix}>.builder-layout{${declarations(style, true)}}`;
   return (
     rule(node.styles.base) +
     `@media(max-width:1023px){${rule(node.styles.tablet)}}` +
@@ -134,5 +147,5 @@ export function globalCSS(globals: DocumentGlobals, scope: string) {
         /^[a-z][a-z0-9_-]{0,31}$/.test(key) && /^#[0-9a-f]{6}$/i.test(value),
     )
     .map(([key, value]) => `--builder-${key}:${value}`);
-  return `[data-builder-scope="${scope}"]{${tokens.join(";")};font-family:${fontFamilies[globals.font]}}`;
+  return `[data-builder-scope="${scope}"]{${tokens.join(";")};--primary:var(--builder-primary);--brand:var(--builder-brand);--foreground:var(--builder-text);--card:var(--builder-surface);font-family:${fontFamilies[globals.font] || fontFamilies.sans}}`;
 }

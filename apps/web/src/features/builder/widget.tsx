@@ -84,6 +84,7 @@ export function Widget({
           label="ویرایش متن در صفحه"
           value={p.body_html || ""}
           onChange={(html) => onInlineEdit?.(html)}
+          assets={context.assets}
         />
       ) : (
         <RichText
@@ -406,7 +407,7 @@ export function Widget({
       data-widget={node.type}
       className={`builder-node ${node.type === "Heading" ? "text-3xl font-bold" : ""}`}
     >
-      <style>{nodeCSS(node, scope)}</style>
+      <style>{nodeCSS(node, scope, context.privatePreview)}</style>
       {output}
     </div>
   );

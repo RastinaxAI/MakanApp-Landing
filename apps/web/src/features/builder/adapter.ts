@@ -1,4 +1,4 @@
-import type { Data, Slot } from "@puckeditor/core";
+import type { Config, Data, Slot } from "@puckeditor/core";
 import type {
   VisualDocument,
   VisualNode,
@@ -13,7 +13,12 @@ export type EditorProps = WidgetProps & {
   node_styles?: NodeStyles;
 };
 export type EditorMap = Record<WidgetType, EditorProps>;
-export type EditorData = Data<EditorMap>;
+export type EditorRootProps = {
+  title?: string;
+  document_globals?: VisualDocument["globals"];
+};
+export type EditorData = Data<EditorMap, EditorRootProps>;
+export type EditorConfig = Config<EditorMap, EditorRootProps>;
 export function canonicalJSON(value: unknown): string {
   const normalize = (item: unknown): unknown =>
     Array.isArray(item)
@@ -39,7 +44,10 @@ export function toEditorData(document: VisualDocument): EditorData {
         children: convert(node.children),
       },
     }));
-  return { root: { props: {} }, content: convert(document.nodes) };
+  return {
+    root: { props: { document_globals: document.globals } },
+    content: convert(document.nodes),
+  };
 }
 export function fromEditorData(
   data: EditorData,
@@ -68,5 +76,9 @@ export function fromEditorData(
         children: convert((children || []) as EditorData["content"]),
       };
     });
-  return { schema_version: 2, globals, nodes: convert(data.content) };
+  return {
+    schema_version: 2,
+    globals: data.root.props?.document_globals || globals,
+    nodes: convert(data.content),
+  };
 }

@@ -1,56 +1,10 @@
-import { test, expect, type Page, type Locator } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
 import type { AdminContent } from "../../src/features/cms/types";
 
-async function login(page: Page, phone = "09120000001") {
-  await page.goto("/admin/login");
-  await page.getByLabel("شماره همراه", { exact: true }).fill(phone);
-  await page
-    .getByRole("button", { name: "دریافت کد ورود", exact: true })
-    .click();
-  await page.getByLabel("کد ورود", { exact: true }).fill("111111");
-  await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
-  await expect(page).toHaveURL(/\/admin$/);
-}
-async function drag(page: Page, name: string, target: Locator) {
-  const source = page.getByText(name, { exact: true }).first().locator("..");
-  await source.scrollIntoViewIfNeeded();
-  const sourceBox = await source.boundingBox();
-  const targetBox = await target.boundingBox();
-  expect(sourceBox).not.toBeNull();
-  expect(targetBox).not.toBeNull();
-  if (!sourceBox || !targetBox)
-    throw new Error("Drag controls must be visible");
-  await page.mouse.move(
-    sourceBox.x + sourceBox.width / 2,
-    sourceBox.y + sourceBox.height / 2,
-  );
-  await page.mouse.down();
-  await page.mouse.move(
-    sourceBox.x + sourceBox.width / 2 + 10,
-    sourceBox.y + sourceBox.height / 2 + 10,
-    { steps: 5 },
-  );
-  await page.mouse.move(
-    targetBox.x + targetBox.width / 2,
-    targetBox.y + Math.max(12, targetBox.height - 12),
-    { steps: 25 },
-  );
-  await page.waitForTimeout(150);
-  for (let pass = 0; pass < 2; pass++) {
-    const adjusted = await target.boundingBox();
-    if (!adjusted) throw new Error("Dropzone disappeared during drag");
-    await page.mouse.move(
-      adjusted.x + adjusted.width / 2,
-      adjusted.y + adjusted.height / 2,
-      { steps: 8 },
-    );
-    await page.waitForTimeout(150);
-  }
-  await page.mouse.up();
-}
+import { login, drag } from "./helpers";
 
 test("visual canvas creates nested content, changes mobile style, saves refreshes publishes real demo and restores", async ({
   page,
@@ -249,10 +203,10 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   expect(
     restored.payload.kind === "page" && restored.payload.document == null,
   ).toBe(true);
-  await mkdir(path.resolve("../../docs/qa/v2-step2"), { recursive: true });
+  await mkdir(path.resolve("../../docs/qa/v2-step3"), { recursive: true });
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/v2-step2/revisions-${info.project.name}.png`,
+      `../../docs/qa/v2-step3/revisions-${info.project.name}.png`,
     ),
     fullPage: true,
   });

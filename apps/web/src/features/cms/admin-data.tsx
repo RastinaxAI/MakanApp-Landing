@@ -31,7 +31,7 @@ export async function cmsAll<T>(resource: string) {
   const result: T[] = [];
   for (let page = 1; ; page++) {
     const data = await cmsGet<CmsPage<T>>(
-      `${resource}?page=${page}&page_size=100`,
+      `${resource}${resource.includes("?") ? "&" : "?"}page=${page}&page_size=100`,
     );
     result.push(...data.items);
     if (page >= data.pagination.pages) return result;

@@ -92,6 +92,10 @@ def eligible(group: str | None = None):
         )
     )
     statement = published().where(
+        func.coalesce(
+            PageRevision.content_json["payload"]["document"]["purpose"].as_string(), "page"
+        )
+        == "page",
         PageRevision.indexable.is_(True),
         func.coalesce(PageRevision.content_json["payload"]["legal_draft"].as_boolean(), False).is_(
             False

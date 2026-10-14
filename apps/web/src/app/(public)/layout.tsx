@@ -2,6 +2,8 @@ import type { ReactNode } from "react";
 import { PublicShell } from "@/components/layout/public-shell";
 import { getSettings, publicGet } from "@/lib/public-api";
 import type { CmsImageRef } from "@/features/cms/types";
+import type { BuilderSite } from "@/features/builder/types";
+import { BuilderRenderer } from "@/features/builder/renderer";
 import { AnalyticsConsent } from "@/features/analytics/consent";
 import { cookies, headers } from "next/headers";
 import {
@@ -15,6 +17,20 @@ export default async function PublicLayout({
   children: ReactNode;
 }) {
   const settings = await getSettings();
+  const builder = await publicGet<BuilderSite>("site/builder");
+  const sitePart = (part: BuilderSite["header"]) =>
+    part?.payload.kind === "page" && part.payload.document ? (
+      <BuilderRenderer
+        document={part.payload.document}
+        context={{
+          content: part,
+          features: [],
+          audiences: [],
+          faqs: [],
+          articles: [],
+        }}
+      />
+    ) : null;
   const logo = settings.general.logo_media_id
     ? await publicGet<CmsImageRef>(`media/${settings.general.logo_media_id}`)
     : undefined;
@@ -34,7 +50,21 @@ export default async function PublicLayout({
         analytics.policy_version,
       );
   return (
-    <PublicShell settings={settings} logo={logo}>
+    <PublicShell
+      globals={builder.globals}
+      settings={settings}
+      logo={logo}
+      header={
+        builder.header ? (
+          <header aria-label="سربرگ سایت">{sitePart(builder.header)}</header>
+        ) : undefined
+      }
+      footer={
+        builder.footer ? (
+          <footer aria-label="پابرگ سایت">{sitePart(builder.footer)}</footer>
+        ) : undefined
+      }
+    >
       {children}
       <AnalyticsConsent
         config={analytics}

@@ -1,5 +1,13 @@
 "use client";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import {
   Puck,
   blocksPlugin,
@@ -7,6 +15,7 @@ import {
   outlinePlugin,
   usePuck,
   type Dictionary,
+  type Viewports,
 } from "@puckeditor/core";
 import "@puckeditor/core/no-external.css";
 import Link from "next/link";
@@ -14,6 +23,7 @@ import { adminRequest } from "@/features/admin/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/features/cms/fields";
+import { MediaPicker } from "@/features/cms/fields";
 import type { AdminContent, MediaAsset } from "@/features/cms/types";
 import { editorConfig } from "./config";
 import {
@@ -29,7 +39,23 @@ import {
   type BuilderContext,
   type VisualDocument,
 } from "./types";
-import { globalCSS } from "./styles";
+import { AdvancedTools } from "./advanced-tools";
+import { BuilderTheme, DocumentRoot, GlobalFields } from "./theme";
+import type { DocumentGlobals } from "./types";
+import { validateDocument } from "./validation";
+
+// Stable identities prevent the editor from reinitializing viewport/history on each change.
+const editorViewports: Viewports = [
+  { width: 1440, height: "auto", label: "دسکتاپ" },
+  { width: 768, height: "auto", label: "تبلت" },
+  { width: 390, height: "auto", label: "موبایل" },
+];
+const editorIframe = { enabled: true, syncHostStyles: true };
+const editorPlugins = [
+  blocksPlugin({ label: "عناصر" }),
+  outlinePlugin({ label: "لایه‌ها" }),
+  fieldsPlugin({ desktopSideBar: "right" }),
+];
 
 const dictionary: Dictionary = {
   "header-publish": "انتشار",
@@ -61,6 +87,20 @@ const dictionary: Dictionary = {
   "viewport-zoom-out": "کوچک‌نمایی",
   "viewport-zoom-auto": "بزرگ‌نمایی خودکار {zoom}%",
 };
+const ToolsContext = createContext<{
+  globals: DocumentGlobals;
+  busy: boolean;
+  publish: (data: EditorData) => void;
+}>({ globals: defaultGlobals, busy: false, publish: () => undefined });
+function HeaderTools() {
+  const { globals, busy, publish } = useContext(ToolsContext);
+  return (
+    <div className="flex flex-wrap items-center gap-3">
+      <EditorQuickTools publish={publish} busy={busy} />
+      <AdvancedTools globals={globals} busy={busy} />
+    </div>
+  );
+}
 function RtlFrame({
   document,
   children,
@@ -118,6 +158,16 @@ function EditorQuickTools({
   };
   return (
     <div className="flex flex-wrap items-center gap-2" dir="rtl">
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() =>
+          puck.dispatch({ type: "setUi", ui: { itemSelector: null } })
+        }
+      >
+        رنگ و فونت برگه
+      </Button>
       <select
         aria-label="انتخاب عنصر صفحه"
         className="min-h-10 max-w-40 rounded-lg border border-input bg-white px-2 text-xs"
@@ -213,6 +263,10 @@ export function PageBuilder({
   const [data, setData] = useState<EditorData>(() =>
     toEditorData(initialDocument),
   );
+  const globals = data.root.props?.document_globals || initialDocument.globals;
+  const [autosave, setAutosave] = useState(true);
+  const autosaveRef = useRef<() => void>(() => undefined);
+  const checkpoint = useRef(0);
   const latest = useRef(data);
   const [dirty, setDirty] = useState(
     !(
@@ -224,6 +278,7 @@ export function PageBuilder({
   const lock = useRef(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [publishAt, setPublishAt] = useState("");
   const [metadata, setMetadata] = useState({
     title: initial.title,
     headline:
@@ -232,11 +287,13 @@ export function PageBuilder({
     seo_title: initial.seo.title,
     seo_description: initial.seo.description,
     indexable: initial.seo.indexable,
+    og_media_id: initial.seo.og_media_id,
   });
   const context = useMemo<BuilderContext>(
     () => ({
       ...dataContext,
       content: { ...initial, media: assets },
+      assets,
       privatePreview: true,
     }),
     [dataContext, initial, assets],
@@ -245,16 +302,25 @@ export function PageBuilder({
     const value = editorConfig(context, assets);
     const scope = `editor_${initial.id}`;
     value.root = {
-      fields: {},
+      fields: {
+        document_globals: {
+          type: "custom",
+          label: "رنگ و فونت برگه",
+          render: ({ value, onChange }) => (
+            <GlobalFields
+              value={value || defaultGlobals}
+              onChange={onChange}
+              compact
+            />
+          ),
+        },
+      },
       render: ({ children }) => (
-        <div className="builder-document" data-builder-scope={scope}>
-          <style>{globalCSS(initialDocument.globals, scope)}</style>
-          {children}
-        </div>
+        <DocumentRoot scope={scope}>{children}</DocumentRoot>
       ),
     };
     return value;
-  }, [context, assets, initial.id, initialDocument.globals]);
+  }, [context, assets, initial.id]);
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => {
       if (dirty) event.preventDefault();
@@ -273,34 +339,37 @@ export function PageBuilder({
         throw new Error("عنوان برگه و تیتر اصلی را کامل کنید.");
       if (current.payload.kind !== "home" && current.payload.kind !== "page")
         throw new Error("این نوع محتوا با صفحه‌ساز سازگار نیست.");
-      const document: VisualDocument = fromEditorData(
-        snapshot,
-        initialDocument.globals,
-      );
-      let saved = await adminRequest<AdminContent>(
-        `content/${current.id}`,
-        "PATCH",
-        {
-          title: metadata.title,
-          slug: current.slug,
-          payload: {
-            ...current.payload,
-            headline: metadata.headline,
-            summary: metadata.summary,
-            document,
-          },
-          seo: {
-            ...current.seo,
-            title: metadata.seo_title,
-            description: metadata.seo_description,
-            indexable: metadata.indexable,
-          },
-          visibility: current.visibility,
-          sort_order: current.sort_order,
-          category_id: current.category_id,
-        },
-        current.row_version,
-      );
+      const document: VisualDocument = fromEditorData(snapshot, globals);
+      document.purpose = initialDocument.purpose || "page";
+      validateDocument(document);
+      let saved =
+        publish && !dirty
+          ? current
+          : await adminRequest<AdminContent>(
+              `content/${current.id}`,
+              "PATCH",
+              {
+                title: metadata.title,
+                slug: current.slug,
+                payload: {
+                  ...current.payload,
+                  headline: metadata.headline,
+                  summary: metadata.summary,
+                  document,
+                },
+                seo: {
+                  ...current.seo,
+                  title: metadata.seo_title,
+                  description: metadata.seo_description,
+                  indexable: metadata.indexable,
+                  og_media_id: metadata.og_media_id,
+                },
+                visibility: current.visibility,
+                sort_order: current.sort_order,
+                category_id: current.category_id,
+              },
+              current.row_version,
+            );
       setCurrent(saved);
       if (publish)
         saved = await adminRequest<AdminContent>(
@@ -311,13 +380,79 @@ export function PageBuilder({
         );
       setCurrent(saved);
       setDirty(false);
+      checkpoint.current = Date.now();
       setMessage(
         publish
           ? "نسخهٔ صفحه‌ساز ذخیره و منتشر شد."
           : "پیش‌نویس صفحه‌ساز در دیتابیس ذخیره شد.",
       );
+      return saved;
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : "ذخیره انجام نشد.");
+    } finally {
+      lock.current = false;
+      setBusy(false);
+    }
+  }
+  useEffect(() => {
+    autosaveRef.current = () => {
+      if (
+        autosave &&
+        dirty &&
+        !busy &&
+        Date.now() - checkpoint.current >= 90000
+      ) {
+        checkpoint.current = Date.now();
+        void save();
+      }
+    };
+  });
+  useEffect(() => {
+    checkpoint.current = Date.now();
+    const timer = window.setInterval(() => autosaveRef.current(), 5000);
+    return () => window.clearInterval(timer);
+  }, []);
+  async function lifecycle(
+    action: "schedule" | "cancel-schedule" | "unpublish",
+  ) {
+    if (lock.current || current.is_archived) return;
+    let row = current;
+    if (dirty) {
+      const saved = await save();
+      if (!saved) return;
+      row = saved;
+    }
+    lock.current = true;
+    setBusy(true);
+    setError("");
+    setMessage("");
+    try {
+      const body =
+        action === "schedule"
+          ? {
+              revision_id: row.revision_id,
+              publish_at: new Date(publishAt).toISOString(),
+            }
+          : undefined;
+      setCurrent(
+        await adminRequest<AdminContent>(
+          `content/${row.id}/${action}`,
+          "POST",
+          body,
+          row.row_version,
+        ),
+      );
+      setMessage(
+        action === "schedule"
+          ? "انتشار نسخهٔ ذخیره‌شده زمان‌بندی شد."
+          : action === "unpublish"
+            ? "انتشار لغو شد؛ پیش‌نویس و نسخه‌ها باقی ماندند."
+            : "زمان‌بندی انتشار لغو شد.",
+      );
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "تغییر انتشار انجام نشد.",
+      );
     } finally {
       lock.current = false;
       setBusy(false);
@@ -433,6 +568,15 @@ export function PageBuilder({
               setDirty(true);
             }}
           />
+          <MediaPicker
+            label="تصویر اشتراک‌گذاری SEO"
+            assets={assets}
+            value={metadata.og_media_id}
+            onChange={(og_media_id) => {
+              setMetadata({ ...metadata, og_media_id });
+              setDirty(true);
+            }}
+          />
           <label className="flex items-center gap-3 text-sm">
             <Input
               type="checkbox"
@@ -447,57 +591,128 @@ export function PageBuilder({
           </label>
         </div>
       </details>
+      <details className="mb-4 rounded-xl border border-border bg-white p-4">
+        <summary className="cursor-pointer text-sm font-semibold">
+          زمان‌بندی و وضعیت انتشار
+        </summary>
+        <div className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="grid gap-2 text-sm">
+            زمان انتشار · ساعت مرورگر
+            <input
+              aria-label="زمان انتشار برگه"
+              type="datetime-local"
+              className="min-h-11 rounded-lg border border-input bg-white px-3"
+              value={publishAt}
+              onChange={(event) => setPublishAt(event.target.value)}
+            />
+          </label>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy || !publishAt || current.is_archived}
+            onClick={() => void lifecycle("schedule")}
+          >
+            ذخیره و زمان‌بندی انتشار
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy || !current.scheduled_revision_id}
+            onClick={() => void lifecycle("cancel-schedule")}
+          >
+            لغو زمان‌بندی
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={busy || !current.published_revision_id}
+            onClick={() => void lifecycle("unpublish")}
+          >
+            لغو انتشار عمومی
+          </Button>
+        </div>
+        {current.scheduled_at && (
+          <p className="mt-3 text-sm">
+            زمان تنظیم‌شده:{" "}
+            {new Date(current.scheduled_at).toLocaleString("fa-IR")}
+          </p>
+        )}
+      </details>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <label className="flex min-h-11 items-center gap-2 text-xs">
+          <input
+            type="checkbox"
+            checked={autosave}
+            onChange={(event) => setAutosave(event.target.checked)}
+          />
+          ذخیرهٔ خودکار پیش‌نویس · حداکثر یک نسخه در ۹۰ ثانیه
+        </label>
+      </div>
       <p className="mb-3 text-xs text-muted-foreground">
         عنصر را از کتابخانه به صفحه یا کانتینر بکشید. عنوان و متن را روی صفحه و
         Styleها را در پنل تنظیمات ویرایش کنید. پیش‌نمایش، آخرین نسخهٔ ذخیره‌شده
         را نشان می‌دهد.
       </p>
-      <Puck
-        config={config}
-        data={data}
-        onChange={(value) => {
-          if (
-            canonicalJSON(fromEditorData(value, initialDocument.globals)) ===
-            canonicalJSON(
-              fromEditorData(latest.current, initialDocument.globals),
-            )
-          )
-            return;
-          latest.current = value;
-          setData(value);
-          setDirty(true);
-        }}
-        onPublish={(value) => void save(true, value)}
-        renderHeaderActions={() => (
-          <EditorQuickTools
-            publish={(value) => void save(true, value)}
-            busy={busy}
+      <BuilderTheme.Provider
+        value={
+          globals.inherit_site !== false && dataContext.siteGlobals
+            ? {
+                ...globals,
+                colors: {
+                  ...globals.colors,
+                  ...dataContext.siteGlobals.colors,
+                },
+                font: dataContext.siteGlobals.font,
+              }
+            : globals
+        }
+      >
+        <ToolsContext.Provider
+          value={{
+            globals,
+            busy: busy || current.is_archived,
+            publish: (value) => void save(true, value),
+          }}
+        >
+          <Puck
+            config={config}
+            data={data}
+            onChange={(value) => {
+              if (
+                canonicalJSON(
+                  fromEditorData(value, initialDocument.globals),
+                ) ===
+                canonicalJSON(
+                  fromEditorData(latest.current, initialDocument.globals),
+                )
+              )
+                return;
+              latest.current = value;
+              setData(value);
+              setDirty(true);
+            }}
+            onPublish={(value) => void save(true, value)}
+            dictionary={dictionary}
+            plugins={editorPlugins}
+            headerTitle="ویرایش بصری"
+            headerPath={`/${current.slug === "home" ? "" : current.slug}`}
+            height="min(1100px,84vh)"
+            viewports={editorViewports}
+            iframe={editorIframe}
+            overrides={{
+              iframe: RtlFrame,
+              headerActions: HeaderTools,
+            }}
+            permissions={{
+              edit: !busy && !current.is_archived,
+              drag: !busy && !current.is_archived,
+              delete: !busy && !current.is_archived,
+              duplicate: !busy && !current.is_archived,
+              insert: !busy && !current.is_archived,
+            }}
           />
-        )}
-        dictionary={dictionary}
-        plugins={[
-          blocksPlugin({ label: "عناصر" }),
-          outlinePlugin({ label: "لایه‌ها" }),
-          fieldsPlugin({ desktopSideBar: "right" }),
-        ]}
-        headerTitle="ویرایش بصری"
-        headerPath={`/${current.slug === "home" ? "" : current.slug}`}
-        height="min(900px,80vh)"
-        viewports={[
-          { width: 1440, height: "auto", label: "دسکتاپ" },
-          { width: 768, height: "auto", label: "تبلت" },
-          { width: 390, height: "auto", label: "موبایل" },
-        ]}
-        iframe={{ enabled: true, syncHostStyles: true }}
-        overrides={{ iframe: RtlFrame }}
-        permissions={{
-          edit: !busy,
-          drag: !busy,
-          delete: !busy,
-          duplicate: !busy,
-          insert: !busy,
-        }}
-      />
+        </ToolsContext.Provider>
+      </BuilderTheme.Provider>
     </div>
   );
 }

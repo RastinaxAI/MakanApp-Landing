@@ -6,7 +6,7 @@ from uuid import UUID
 
 from pydantic import Field, field_validator, model_validator
 
-from app.schemas.common import StrictSchema
+from app.schemas.common import PaginationQuery, StrictSchema
 from app.services.aparat import video_id
 from app.services.html_safety import clean_html, safe_link
 
@@ -83,6 +83,8 @@ class StyleValues(StrictSchema):
     text_align: Literal["start", "center", "end", "justify"] | None = None
     color: str | None = None
     background: str | None = None
+    background_media_id: UUID | None = None
+    background_size: Literal["cover", "contain", "auto"] | None = None
     gradient_from: str | None = None
     gradient_to: str | None = None
     gradient_angle: int | None = Field(default=None, ge=0, le=360)
@@ -190,12 +192,11 @@ class VisualNode(StrictSchema):
             raise ValueError("Only layout widgets can contain child nodes")
         if self.type == "LegacySection" and self.props.legacy_section is None:
             raise ValueError("Legacy section data is required")
-        if self.type == "Video" and not self.props.aparat_id:
-            raise ValueError("A validated Aparat identifier is required")
         return self
 
 
 class DocumentGlobals(StrictSchema):
+    inherit_site: bool = True
     colors: dict[str, str] = Field(
         default_factory=lambda: {
             "brand": "#156fee",
@@ -220,6 +221,7 @@ class DocumentGlobals(StrictSchema):
 
 class VisualDocument(StrictSchema):
     schema_version: Literal[2] = 2
+    purpose: Literal["page", "template", "section", "header", "footer"] = "page"
     globals: DocumentGlobals = Field(default_factory=DocumentGlobals)
     nodes: list[VisualNode] = Field(default_factory=list, max_length=100)
 
@@ -269,3 +271,17 @@ class VisualDocument(StrictSchema):
                 yield from visit(node.children)
 
         return list(visit(self.nodes))
+
+
+class BuilderSettings(StrictSchema):
+    globals: DocumentGlobals = Field(default_factory=DocumentGlobals)
+    header_page_id: UUID | None = None
+    footer_page_id: UUID | None = None
+
+
+class BuilderSettingsOutput(BuilderSettings):
+    row_version: int
+
+
+class BuilderLibraryQuery(PaginationQuery):
+    purpose: Literal["template", "section", "header", "footer"] | None = None

@@ -2,6 +2,7 @@
 import { useState, createElement, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { RichText } from "@/features/cms/rich-text";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import type { WidgetItem } from "./types";
 
 export function EditableHeading({
@@ -33,37 +34,25 @@ export function EditableHeading({
   );
 }
 export function WidgetTabs({ items }: { items: WidgetItem[] }) {
-  const [selected, setSelected] = useState(0);
   return (
-    <div>
-      <div
-        className="flex flex-wrap gap-2 border-b border-border pb-3"
-        role="tablist"
-        aria-label="بخش‌های محتوا"
-      >
+    <Tabs defaultValue="0" dir="rtl">
+      <TabsList className="h-auto flex-wrap" aria-label="بخش‌های محتوا">
         {items.map((item, index) => (
-          <button
-            type="button"
-            key={index}
-            role="tab"
-            aria-selected={selected === index}
-            className={`min-h-11 rounded-lg px-4 ${selected === index ? "bg-primary text-white" : "bg-secondary text-foreground"}`}
-            onClick={() => setSelected(index)}
-          >
+          <TabsTrigger key={index} value={String(index)} className="min-h-11">
             {item.title}
-          </button>
+          </TabsTrigger>
         ))}
-      </div>
-      {items[selected] && (
-        <div role="tabpanel" className="py-5">
-          {items[selected]?.body_html ? (
-            <RichText html={items[selected]!.body_html!} />
+      </TabsList>
+      {items.map((item, index) => (
+        <TabsContent key={index} value={String(index)} className="py-5">
+          {item.body_html ? (
+            <RichText html={item.body_html} />
           ) : (
-            <p>{items[selected]?.text}</p>
+            <p>{item.text}</p>
           )}
-        </div>
-      )}
-    </div>
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 }
 export function WidgetCarousel({ slides }: { slides: ReactNode[] }) {

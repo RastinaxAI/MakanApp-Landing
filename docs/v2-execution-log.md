@@ -9,8 +9,8 @@
 | STEP 0 | پایان‌یافته؛ گزارش و ۲۰۹ تست موفق |
 | STEP 1 | پایان‌یافته؛ Build/lint/typecheck و سه نمای مرورگر/axe موفق؛ جزئیات در v2-art-direction.md |
 | STEP 2 | پایان‌یافته؛ ۲۲۴ تست API، ۳ سناریوی مرورگر، Build/lint/typecheck؛ v2-core-editor.md |
-| STEP 3 | در حال اجرا؛ ابزارهای پیشرفته روی همان CMS |
-| STEP 4 | آغاز نشده |
+| STEP 3 | پایان‌یافته؛ ۴۳ تست API، سناریوهای ۳ مرورگر، Build/lint/typecheck؛ v2-advanced-editor.md |
+| STEP 4 | در حال آماده‌سازی؛ Backup معتبر پیش از انتقال محتوا |
 | STEP 5 | آغاز نشده |
 | STEP 6 | آغاز نشده |
 

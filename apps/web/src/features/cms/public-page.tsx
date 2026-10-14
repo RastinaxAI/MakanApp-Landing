@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { walkNodes } from "@/features/builder/types";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
@@ -48,8 +49,21 @@ export async function PublicPage({
     );
   }
   if (content.kind !== "page") notFound();
-  const dynamicSections = content.payload.kind === "page" && (content.payload.document || content.payload.sections.some((section) => ["faq", "trust", "audiences", "experience", "product-experience"].includes(section.type)));
-  const dynamicData = dynamicSections ? await Promise.all([getFeatures(), getAudiences(), getFaqs()]) : null;
+  const dynamicSections =
+    content.payload.kind === "page" &&
+    (content.payload.document ||
+      content.payload.sections.some((section) =>
+        [
+          "faq",
+          "trust",
+          "audiences",
+          "experience",
+          "product-experience",
+        ].includes(section.type),
+      ));
+  const dynamicData = dynamicSections
+    ? await Promise.all([getFeatures(), getAudiences(), getFaqs()])
+    : null;
   const extra =
     slug === "features"
       ? await getFeatures()
@@ -59,7 +73,12 @@ export async function PublicPage({
   return (
     <>
       <div id={slug === "privacy" ? "requests-policy" : undefined}>
-        <CmsRenderer content={content} features={dynamicData ? asFeatures(dynamicData[0].items) : []} audiences={dynamicData ? asAudiences(dynamicData[1].items) : []} faqs={dynamicData ? asFaqs(dynamicData[2].items) : []} />
+        <CmsRenderer
+          content={content}
+          features={dynamicData ? asFeatures(dynamicData[0].items) : []}
+          audiences={dynamicData ? asAudiences(dynamicData[1].items) : []}
+          faqs={dynamicData ? asFaqs(dynamicData[2].items) : []}
+        />
       </div>
       {extra && (
         <section className="section-space">
@@ -103,7 +122,16 @@ export async function PublicPage({
           </section>
         </Container>
       )}
-      {request}
+      {request &&
+        !(
+          content.payload.kind === "page" &&
+          content.payload.document &&
+          walkNodes(content.payload.document.nodes).some(
+            (node) =>
+              node.type === (slug === "demo" ? "DemoForm" : "ContactForm"),
+          )
+        ) &&
+        request}
       {["blog", "learn"].includes(slug) && (
         <Container>
           <section className="my-8 rounded-2xl border border-dashed border-input bg-card p-8">

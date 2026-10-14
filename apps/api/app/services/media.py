@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 
 from fastapi import Request, UploadFile
 from PIL import Image, UnidentifiedImageError
-from sqlalchemy import exists, select
+from sqlalchemy import exists, func, select
 from sqlalchemy.orm import Session
 
 from app.core.problems import ApiProblem
@@ -109,6 +109,9 @@ def public_reference(session: Session, media_id: UUID):
                 Page.is_archived.is_(False),
                 PageRevision.id == effective_id(now_utc()),
                 PageRevision.content_json["visibility"].as_boolean().is_(True),
+                func.coalesce(
+                    PageRevision.content_json["payload"]["document"]["purpose"].as_string(), "page"
+                ).not_in(("template", "section")),
             )
         )
     )

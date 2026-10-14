@@ -7,6 +7,7 @@ import {
 } from "@/features/cms/admin-data";
 import { ContentEditor } from "@/features/cms/editor";
 import type { AdminContent, FaqCategory } from "@/features/cms/types";
+import { redirect } from "next/navigation";
 export default async function EditorPage({
   params,
 }: {
@@ -19,6 +20,7 @@ export default async function EditorPage({
     cmsAssets(),
     cmsAll<FaqCategory>("faq-categories"),
   ]);
+  if ((initial.payload.kind === "home" || initial.payload.kind === "page") && initial.payload.document) redirect(`/admin/content/${initial.id}/builder`);
   return (
     <ContentEditor initial={initial} assets={assets} categories={categories} />
   );

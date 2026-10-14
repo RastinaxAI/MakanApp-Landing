@@ -1,0 +1,22 @@
+{
+  "api_tests": 43,
+  "production_build": "passed",
+  "lint": "passed",
+  "typecheck": "passed",
+  "ruff": "passed",
+  "browser": {
+    "chromium": {
+      "passed": 5,
+      "source": "preceding full suite"
+    },
+    "firefox": {
+      "passed": 5,
+      "source": "preceding full suite"
+    },
+    "webkit": {
+      "passed": 5,
+      "source": "final targeted rerun after admin header prefetch fix"
+    }
+  },
+  "database_migration": "none"
+}

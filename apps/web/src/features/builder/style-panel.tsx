@@ -2,6 +2,8 @@
 import { useState } from "react";
 import type { NodeStyles, StyleValues } from "./types";
 import { emptyStyles } from "./types";
+import { MediaPicker } from "@/features/cms/fields";
+import type { MediaAsset } from "@/features/cms/types";
 
 const numerical: [keyof StyleValues, string, number, number][] = [
   ["padding", "فاصله داخلی", 0, 160],
@@ -46,6 +48,7 @@ const choices: [keyof StyleValues, string, string[]][] = [
   ],
   ["shadow", "سایه", ["none", "soft", "raised"]],
   ["border_style", "نوع حاشیه", ["solid", "dashed", "dotted", "none"]],
+  ["background_size", "اندازه تصویر زمینه", ["cover", "contain", "auto"]],
 ];
 const colors: [keyof StyleValues, string][] = [
   ["color", "رنگ متن"],
@@ -57,9 +60,11 @@ const colors: [keyof StyleValues, string][] = [
 export function StylePanel({
   value,
   onChange,
+  assets = [],
 }: {
   value?: NodeStyles;
   onChange: (styles: NodeStyles) => void;
+  assets?: MediaAsset[];
 }) {
   const [mode, setMode] = useState<keyof NodeStyles>("base");
   const styles = value || emptyStyles();
@@ -197,6 +202,12 @@ export function StylePanel({
           رنگ و نمایش
         </summary>
         <div className="mt-3 grid gap-3">
+          <MediaPicker
+            label={`تصویر زمینه ${mode}`}
+            assets={assets}
+            value={selected.background_media_id}
+            onChange={(value) => set("background_media_id", value || undefined)}
+          />
           {colors.map(([key, label]) => (
             <label key={key} className="grid gap-1 text-xs">
               {label}

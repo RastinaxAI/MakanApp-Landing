@@ -1,4 +1,4 @@
-import type { CmsContent, CmsSection } from "@/features/cms/types";
+import type { CmsContent, CmsSection, MediaAsset } from "@/features/cms/types";
 import type { Audience, Feature } from "@/features/marketing/content";
 import type { FaqItem } from "@/features/marketing/faq-list";
 import type { LearningContent } from "@/features/learning/types";
@@ -55,6 +55,8 @@ export type StyleValues = {
   text_align?: "start" | "center" | "end" | "justify";
   color?: string;
   background?: string;
+  background_media_id?: string | null;
+  background_size?: "cover" | "contain" | "auto";
   gradient_from?: string;
   gradient_to?: string;
   gradient_angle?: number;
@@ -120,14 +122,29 @@ export type VisualNode = {
   children: VisualNode[];
 };
 export type DocumentGlobals = {
+  inherit_site?: boolean;
   colors: Record<string, string>;
   font: "sans" | "serif" | "mono";
 };
 export type VisualDocument = {
   schema_version: 2;
+  purpose?: "page" | "template" | "section" | "header" | "footer";
   globals: DocumentGlobals;
   nodes: VisualNode[];
 };
+export type BuilderSettings = {
+  globals: DocumentGlobals;
+  header_page_id: string | null;
+  footer_page_id: string | null;
+  row_version: number;
+};
+export type BuilderSite = {
+  globals: DocumentGlobals;
+  header: CmsContent | null;
+  footer: CmsContent | null;
+};
+export const walkNodes = (nodes: VisualNode[]): VisualNode[] =>
+  nodes.flatMap((node) => [node, ...walkNodes(node.children)]);
 export type BuilderContext = {
   content: CmsContent;
   features: Feature[];
@@ -136,6 +153,8 @@ export type BuilderContext = {
   articles: LearningContent[];
   privatePreview?: boolean;
   editing?: boolean;
+  siteGlobals?: DocumentGlobals;
+  assets?: MediaAsset[];
 };
 export const emptyStyles = (): NodeStyles => ({
   base: {},

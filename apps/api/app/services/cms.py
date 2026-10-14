@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import UTC, datetime
 from uuid import UUID
@@ -95,6 +96,10 @@ def create_revision(session: Session, item: Page, data: ContentInput, actor: UUI
     payload = data.payload.model_dump(mode="json")
     if payload.get("document") is not None:
         payload["document"] = data.payload.document.model_dump(mode="json", exclude_none=True)
+        if len(json.dumps(payload, ensure_ascii=False).encode("utf-8")) > 250000:
+            raise ApiProblem(
+                413, "DOCUMENT_TOO_LARGE", "حجم برگه زیاد است؛ محتوای آن را به چند برگه تقسیم کنید."
+            )
     if data.category_id:
         if data.payload.kind != "faq" or not session.get(FaqCategory, data.category_id):
             raise ApiProblem(422, "INVALID_CATEGORY", "دسته پرسش معتبر نیست.")
@@ -229,6 +234,7 @@ def page_list(session: Session, query: ContentQuery, resource="content", public=
         statement = statement.where(
             Page.is_archived.is_(False),
             PageRevision.content_json["visibility"].as_boolean().is_(True),
+            public_document(),
         )
     elif query.status == "archived":
         statement = statement.where(Page.is_archived.is_(True))
@@ -281,11 +287,21 @@ def get_public(session: Session, kinds: tuple[str, ...], slug: str):
             Page.slug.in_([key(kind, slug) for kind in kinds]),
             Page.is_archived.is_(False),
             PageRevision.content_json["visibility"].as_boolean().is_(True),
+            public_document(),
         )
     ).first()
     if not row:
         raise ApiProblem(404, "NOT_FOUND", "صفحه منتشرشده یافت نشد.")
     return projection(*row, session=session)
+
+
+def public_document():
+    return (
+        func.coalesce(
+            PageRevision.content_json["payload"]["document"]["purpose"].as_string(), "page"
+        )
+        == "page"
+    )
 
 
 def save(
@@ -359,6 +375,8 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
 
         learning_checks(payload)
     if payload.kind in ("home", "page") and payload.document is not None:
+        if payload.document.purpose in ("template", "section"):
+            expose = False
         nodes = payload.document.all_nodes()
         h1_count = sum(
             node.type == "Hero"
@@ -366,7 +384,9 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
             or (node.type == "LegacySection" and node.props.legacy_section["type"] == "hero")
             for node in nodes
         )
-        if h1_count != (1 if payload.kind == "home" else 0):
+        if h1_count != (1 if payload.kind == "home" else 0) and not (
+            payload.document.purpose == "template" and h1_count <= 1
+        ):
             raise ApiProblem(
                 422,
                 "HEADING_STRUCTURE",
@@ -374,6 +394,44 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
             )
         if not nodes:
             raise ApiProblem(422, "INCOMPLETE_CONTENT", "سند صفحه خالی است.")
+        if payload.kind == "home" and payload.document.purpose != "page":
+            raise ApiProblem(422, "INVALID_PURPOSE", "صفحهٔ خانه باید برگهٔ عمومی بماند.")
+        for node in nodes:
+            references = (
+                [("feature", node.props.feature_slug)]
+                if node.type in ("FeatureStory", "ProductShowcase")
+                else [("faq", slug) for slug in node.props.faq_slugs]
+                if node.type == "FAQ"
+                else []
+            )
+            for kind, slug in references:
+                try:
+                    get_public(session, (kind,), slug)
+                except ApiProblem as error:
+                    if error.status == 404:
+                        raise ApiProblem(
+                            422, "UNRESOLVED_WIDGET", "مرجع ویجت باید محتوای منتشرشده و موجود باشد."
+                        ) from None
+                    raise
+            if node.type == "Video" and not node.props.aparat_id:
+                raise ApiProblem(422, "INCOMPLETE_WIDGET", "شناسهٔ ویدیوی آپارات را کامل کنید.")
+            if node.type == "Image" and not node.props.media_id:
+                raise ApiProblem(422, "INCOMPLETE_WIDGET", "تصویر را از رسانه‌ها انتخاب کنید.")
+            if payload.document.purpose in ("header", "footer") and node.type in (
+                "Hero",
+                "DemoForm",
+                "ContactForm",
+            ):
+                raise ApiProblem(
+                    422, "INVALID_SITE_PART", "تیتر اصلی و فرم درخواست باید داخل برگه باشند."
+                )
+        if item.published_revision_id:
+            old = session.get(PageRevision, item.published_revision_id)
+            old_doc = old.content_json.get("payload", {}).get("document") or {}
+            if old_doc.get("purpose", "page") != payload.document.purpose:
+                raise ApiProblem(
+                    409, "PURPOSE_IMMUTABLE", "کاربرد برگهٔ منتشرشده تغییر نمی‌کند؛ برگهٔ تازه بسازید."
+                )
     if not headline.strip() or (
         payload.kind == "home"
         and payload.document is None

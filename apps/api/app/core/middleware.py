@@ -65,6 +65,7 @@ class RequestContextMiddleware:
                             "faqs",
                             "content",
                             "settings",
+                            "builder",
                             "learn/",
                             "blog/",
                         )
