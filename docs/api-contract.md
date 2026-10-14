@@ -272,3 +272,10 @@ API0.9.0 شش endpoint SEO و analytics می‌افزاید؛ مسیرهای ق�
 GET /api/v1/admin/auth/config وضعیت دیباگ غیرحساس را می‌دهد. POST auth/otp/request با phone نرمال‌شده و Origin/CSRF؛ POST auth/otp/verify با phone/code و mfa_code اختیاری نشست امن می‌سازد. POST auth/otp/reauth با نشست/CSRF کد حساس همان نشست را می‌فرستد. خطاهای401 OTP_INVALID/MFA_REQUIRED،403 CSRF،429 quota و503 SMS_* استانداردند. POST auth/login قدیمی در محیط واقعی410 است؛ fixture تست مستقل است.
 
 GET/PATCH /api/v1/admin/settings/sms مخصوص مالک؛ PATCH با If-Match، confirmation_code و MFA در صورت فعال، enabled/debug_mode، username/password اختیاری برای حفظ مقدار ذخیره‌شده، body_id. پاسخ فقط flag تنظیم‌شدن credential دارد و مقدارش را نمایش نمی‌دهد. POST settings/sms/check فقط GetCredit و بدون ارسال پیامک؛ موفقیت connected=true. accountCreate در محیط واقعی phone/role/confirmation_code دارد؛ افزودن مدیر ثبت واقعی است و ورود شماره دلخواه مالکیت نمی‌دهد.
+
+
+## کنترل محتوای تب در صفحه‌ساز
+
+مسیرهای ذخیره، پیش‌نمایش، انتشار و نسخه‌ها تغییر نکرده‌اند. در سند بصری نسخهٔ ۲، هر عضو `props.items` می‌تواند `heading` و `eyebrow` اختیاری، هرکدام تا ۱۸۰ نویسه، داشته باشد. این دو فیلد متن ساده هستند و در رندر به‌صورت متن نمایش داده می‌شوند. `body_html` همان پاک‌سازی امن موجود را دارد؛ `href` همان اعتبارسنجی پیوند و `media_id` همان اعتبارسنجی UUID و کنترل رسانهٔ خصوصی/عمومی را حفظ می‌کنند.
+
+تنظیمات تب‌های مخاطبان صفحهٔ اصلی در `props.items` عنصر `LegacySection` از نوع `audiences` ذخیره می‌شوند. بدون تنظیم محلی، محتوای مرجع قبلی نمایش داده می‌شود. برگه‌های مخاطبان، مدل دیتابیس و API ورود تغییری ندارند. بارگذاری از داخل صفحه‌ساز با همان `POST /api/v1/admin/media` و CSRF انجام می‌شود. فهرست رسانه از همان مسیر صفحه‌بندی‌شدهٔ موجود استفاده می‌کند.

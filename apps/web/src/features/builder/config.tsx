@@ -1,6 +1,7 @@
 "use client";
 import {
   usePuck,
+  registerOverlayPortal,
   type ComponentConfig,
   type Config,
   type Fields,
@@ -21,59 +22,123 @@ import {
   type WidgetType,
 } from "./types";
 import type { EditorMap, EditorProps, EditorRootProps } from "./adapter";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import { ItemsEditor } from "./items-editor";
+import { useElementFocus } from "./element-focus";
 
 function LegacyFields({
   value,
   onChange,
   assets,
+  context,
 }: {
   value?: CmsSection | null;
   onChange: (value: CmsSection) => void;
   assets: MediaAsset[];
+  context: BuilderContext;
 }) {
+  const puck = usePuck();
+  const item = puck.selectedItem;
   if (!value) return null;
   return (
     <div className="space-y-3">
-      <TextField
-        label="عنوان بخش موجود"
-        value={value.title}
-        onChange={(title) => onChange({ ...value, title })}
-      />
-      <TextField
-        label="توضیح بخش موجود"
-        value={value.description}
-        multiline
-        onChange={(description) => onChange({ ...value, description })}
-      />
-      <RichEditor
-        label="متن بخش موجود"
-        value={value.body_html || ""}
-        onChange={(body_html) => onChange({ ...value, body_html })}
-        assets={assets}
-      />
-      <BlocksEditor
-        label="موارد بخش موجود"
-        items={value.items}
-        onChange={(items) => onChange({ ...value, items })}
-        assets={assets}
-      />
-      <MediaPicker
-        label="تصویر بخش موجود"
-        value={value.media_id}
-        onChange={(media_id) => onChange({ ...value, media_id })}
-        assets={assets}
-      />
-      <TextField
-        label="متن دعوت"
-        value={value.cta_label || ""}
-        onChange={(cta_label) => onChange({ ...value, cta_label })}
-      />
-      <TextField
-        label="پیوند دعوت"
-        value={value.cta_href || "/demo"}
-        onChange={(cta_href) => onChange({ ...value, cta_href })}
-      />
+      {value.type === "audiences" && (
+        <>
+          <p className="rounded-lg bg-primary-soft p-3 text-xs leading-6">
+            تب‌های مخاطبان همین بخش را اینجا ویرایش کنید. تغییرات این بخش مستقل
+            از برگه‌های معرفی مخاطبان ذخیره می‌شوند.
+          </p>
+          <ItemsEditor
+            type="Tabs"
+            assets={assets}
+            value={
+              item?.props.items?.length
+                ? item.props.items
+                : context.audiences.map((audience) => ({
+                    title: audience.title,
+                    heading: audience.headline,
+                    eyebrow: audience.eyebrow,
+                    text: audience.summary,
+                    href: `/solutions/${audience.slug}`,
+                    media_id: null,
+                  }))
+            }
+            onChange={(items) => {
+              if (!item) return;
+              const selector = puck.getSelectorForId(item.props.id);
+              if (selector)
+                puck.dispatch({
+                  type: "replace",
+                  destinationIndex: selector.index,
+                  destinationZone: selector.zone,
+                  data: { ...item, props: { ...item.props, items } },
+                });
+            }}
+          />
+        </>
+      )}
+      <details open={value.type !== "audiences"}>
+        <summary className="cursor-pointer text-sm font-semibold">
+          عنوان و محتوای کلی بخش
+        </summary>
+        <div className="mt-4 space-y-3">
+          <TextField
+            label="عنوان بخش موجود"
+            value={value.title}
+            onChange={(title) => onChange({ ...value, title })}
+          />
+          <TextField
+            label="عنوان کوتاه بخش"
+            value={value.kicker || ""}
+            maxLength={180}
+            onChange={(kicker) => onChange({ ...value, kicker })}
+          />
+          {value.type === "hero" && (
+            <TextField
+              label="ادامه عنوان اصلی"
+              value={value.accent || ""}
+              maxLength={180}
+              onChange={(accent) => onChange({ ...value, accent })}
+            />
+          )}
+          <TextField
+            label="توضیح بخش موجود"
+            value={value.description}
+            multiline
+            onChange={(description) => onChange({ ...value, description })}
+          />
+          <RichEditor
+            label="متن بخش موجود"
+            value={value.body_html || ""}
+            onChange={(body_html) => onChange({ ...value, body_html })}
+            assets={assets}
+          />
+          {value.type !== "audiences" && (
+            <BlocksEditor
+              label="موارد بخش موجود"
+              items={value.items}
+              onChange={(items) => onChange({ ...value, items })}
+              assets={assets}
+            />
+          )}
+          <MediaPicker
+            label="تصویر بخش موجود"
+            value={value.media_id}
+            onChange={(media_id) => onChange({ ...value, media_id })}
+            assets={assets}
+          />
+          <TextField
+            label="متن دعوت"
+            value={value.cta_label || ""}
+            onChange={(cta_label) => onChange({ ...value, cta_label })}
+          />
+          <TextField
+            label="پیوند دعوت"
+            value={value.cta_href || "/demo"}
+            onChange={(cta_href) => onChange({ ...value, cta_href })}
+          />
+        </div>
+      </details>
     </div>
   );
 }
@@ -89,7 +154,14 @@ function EditableWidget({
   slot?: SlotComponent;
 }) {
   const puck = usePuck();
+  const { focus, reveal } = useElementFocus();
   const wrapper = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const cleanup = Array.from(
+      wrapper.current?.querySelectorAll<HTMLElement>('[role="tablist"]') || [],
+    ).map((list) => registerOverlayPortal(list, { disableDrag: true }));
+    return () => cleanup.forEach((remove) => remove?.());
+  }, [type, fields.id, fields.items?.length, fields.legacy_section?.type]);
   const viewport = Number(puck.appState.ui.viewports.current.width);
   const styleMode =
     viewport <= 479 ? "mobile" : viewport <= 1023 ? "tablet" : "base";
@@ -116,13 +188,25 @@ function EditableWidget({
   return (
     <div
       ref={wrapper}
-      className="relative"
+      className={`relative ${type === "Tabs" ? "pt-12" : ""}`}
+      onClick={(event) => {
+        if ((event.target as HTMLElement).closest("[data-puck-overlay-portal]"))
+          event.stopPropagation();
+      }}
       onClickCapture={(event) => {
         const target = (event.target as HTMLElement).closest("[data-node-id]");
         if (target?.getAttribute("data-node-id") === fields.id) {
           const selector = puck.getSelectorForId(fields.id);
           if (selector)
-            puck.dispatch({ type: "setUi", ui: { itemSelector: selector } });
+            puck.dispatch({
+              type: "setUi",
+              ui: {
+                itemSelector: selector,
+                plugin: { current: "fields" },
+                leftSideBarVisible: true,
+                mobilePanelExpanded: true,
+              },
+            });
         }
         if ((event.target as HTMLElement).closest("a")) event.preventDefault();
       }}
@@ -135,6 +219,8 @@ function EditableWidget({
             type === "Heading" ? { title: value } : { body_html: value },
           )
         }
+        onItemSelect={(index) => reveal(fields.id, index)}
+        activeItemIndex={focus.node === fields.id ? focus.index : undefined}
       >
         {slot && slot({ className: "builder-layout", minEmptyHeight: 100 })}
       </Widget>
@@ -208,7 +294,13 @@ export function editorConfig(
   const components = Object.fromEntries(
     (Object.keys(widgetLabels) as WidgetType[]).map((type) => {
       const fields: Fields<EditorProps> = {
-        title: text("عنوان"),
+        title: text(
+          ["Heading", "Hero", "CTA", "FeatureIndex", "AudienceIndex"].includes(
+            type,
+          )
+            ? "عنوان"
+            : "نام در لایه‌ها",
+        ),
         node_styles: {
           type: "custom",
           label: "چیدمان و Style",
@@ -219,7 +311,7 @@ export function editorConfig(
       };
       if (["Container", "Grid"].includes(type))
         fields.children = { type: "slot", label: "فرزندان" };
-      if (["RichText", "CTA", "Hero"].includes(type))
+      if (["CTA", "Hero"].includes(type))
         fields.text = { type: "textarea", label: "توضیح" };
       if (type === "RichText")
         fields.body_html = {
@@ -294,36 +386,16 @@ export function editorConfig(
         ].includes(type)
       )
         fields.items = {
-          type: "array",
-          label: "موارد",
-          getItemSummary: (item) => item.title || "مورد",
-          arrayFields: {
-            title: text("عنوان مورد"),
-            text: { type: "textarea", label: "توضیح مورد" },
-            value: text("مقدار یا قیمت"),
-            attribution: text("نام و سمت تأییدشده"),
-            href: text("پیوند مورد"),
-            media_id: {
-              type: "custom",
-              label: "تصویر مورد",
-              render: ({ value, onChange }) => (
-                <MediaPicker
-                  label="تصویر مورد"
-                  value={value}
-                  onChange={onChange}
-                  assets={assets}
-                />
-              ),
-            },
-          },
-          defaultItemProps: {
-            title: "مورد تازه",
-            text: "",
-            value: "",
-            attribution: "",
-            href: null,
-            media_id: null,
-          },
+          type: "custom",
+          label: type === "Tabs" ? "تب‌ها و محتوای هر تب" : "محتوای موارد",
+          render: ({ value, onChange }) => (
+            <ItemsEditor
+              type={type}
+              value={value}
+              onChange={onChange}
+              assets={assets}
+            />
+          ),
         };
       if (type === "FAQ")
         fields.faq_slugs = {
@@ -367,7 +439,12 @@ export function editorConfig(
           type: "custom",
           label: "محتوای موجود",
           render: ({ value, onChange }) => (
-            <LegacyFields value={value} onChange={onChange} assets={assets} />
+            <LegacyFields
+              value={value}
+              onChange={onChange}
+              assets={assets}
+              context={context}
+            />
           ),
         };
       const config: ComponentConfig<EditorProps> = {
@@ -376,6 +453,22 @@ export function editorConfig(
         defaultProps: {
           title: ["Container", "Grid"].includes(type) ? "" : widgetLabels[type],
           ...(type === "Heading" ? { level: 2 } : {}),
+          ...(["Tabs", "Accordion", "Carousel"].includes(type)
+            ? {
+                items: [
+                  {
+                    title: type === "Tabs" ? "تب اول" : "مورد اول",
+                    text: "محتوای این مورد را از تنظیمات ویرایش کنید.",
+                    media_id: null,
+                  },
+                  {
+                    title: type === "Tabs" ? "تب دوم" : "مورد دوم",
+                    text: "",
+                    media_id: null,
+                  },
+                ],
+              }
+            : {}),
           ...(["Container", "Grid"].includes(type)
             ? {
                 children: [],

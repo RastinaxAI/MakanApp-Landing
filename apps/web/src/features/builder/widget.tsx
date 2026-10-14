@@ -54,12 +54,16 @@ export function Widget({
   children,
   scope = "",
   onInlineEdit,
+  onItemSelect,
+  activeItemIndex,
 }: {
   node: VisualNode;
   context: BuilderContext;
   children?: ReactNode;
   scope?: string;
   onInlineEdit?: (text: string) => void;
+  onItemSelect?: (index: number) => void;
+  activeItemIndex?: number;
 }) {
   const p = node.props;
   const image = context.content.media.find((asset) => asset.id === p.media_id);
@@ -134,12 +138,12 @@ export function Widget({
       const label = p.title?.trim();
       output = (
         <span
-            className="builder-widget-control inline-flex size-14 items-center justify-center rounded-xl bg-secondary text-2xl text-primary-hover"
-            role={label ? "img" : undefined}
-            aria-label={label || undefined}
-            aria-hidden={label ? undefined : true}
+          className="builder-widget-control inline-flex size-14 items-center justify-center rounded-xl bg-secondary text-2xl text-primary-hover"
+          role={label ? "img" : undefined}
+          aria-label={label || undefined}
+          aria-hidden={label ? undefined : true}
         >
-            <Icon aria-hidden="true" className="size-[1em]" />
+          <Icon aria-hidden="true" className="size-[1em]" />
         </span>
       );
       break;
@@ -189,11 +193,11 @@ export function Widget({
     case "Tabs":
       output = (
         <WidgetTabs
-          items={
-            context.editing
-              ? items.map((item) => ({ ...item, body_html: undefined }))
-              : items
-          }
+          items={items}
+          media={context.content.media}
+          privatePreview={context.privatePreview}
+          onItemSelect={onItemSelect}
+          activeIndex={activeItemIndex}
         />
       );
       break;
@@ -231,9 +235,16 @@ export function Widget({
                 title: feature.title,
                 text: feature.summary,
                 href: `/features/${feature.slug}`,
+                media_id: null,
               }))
           ).map((item, index) => (
             <article key={index} className="border-s-2 border-primary ps-5">
+              {imageOf(item.media_id) && (
+                <MediaImage
+                  image={imageOf(item.media_id)!}
+                  privatePreview={context.privatePreview}
+                />
+              )}
               <h3 className="text-xl font-semibold">{item.title}</h3>
               <p className="my-3 text-muted-foreground">{item.text}</p>
               {item.href && (
@@ -268,6 +279,14 @@ export function Widget({
         <div className="grid gap-6 tablet:grid-cols-2">
           {items.map((item, index) => (
             <figure key={index} className="border-s-2 border-primary ps-5">
+              {imageOf(item.media_id) && (
+                <div className="mb-4 max-w-24">
+                  <MediaImage
+                    image={imageOf(item.media_id)!}
+                    privatePreview={context.privatePreview}
+                  />
+                </div>
+              )}
               <blockquote className="text-lg leading-9">{item.text}</blockquote>
               <figcaption className="mt-4 text-sm text-muted-foreground">
                 {item.attribution || item.title}
@@ -313,6 +332,12 @@ export function Widget({
               key={index}
               className="rounded-2xl border border-border p-6"
             >
+              {imageOf(item.media_id) && (
+                <MediaImage
+                  image={imageOf(item.media_id)!}
+                  privatePreview={context.privatePreview}
+                />
+              )}
               <h3 className="text-xl font-semibold">{item.title}</h3>
               <p className="my-5 text-3xl font-semibold">{item.value}</p>
               <p>{item.text}</p>
@@ -368,6 +393,9 @@ export function Widget({
         <SectionContent
           {...context}
           section={p.legacy_section}
+          audienceItems={items}
+          onAudienceSelect={onItemSelect}
+          activeAudienceIndex={activeItemIndex}
           index={`${scope}_${node.id}`}
         />
       ) : null;
@@ -428,7 +456,9 @@ export function Widget({
             )}
             {!p.title && (
               <h2 className="sr-only">
-                {node.type === "FeatureIndex" ? "فهرست امکانات ماکان" : "ماکان برای مخاطبان"}
+                {node.type === "FeatureIndex"
+                  ? "فهرست امکانات ماکان"
+                  : "ماکان برای مخاطبان"}
               </h2>
             )}
             <div className="grid gap-6 tablet:grid-cols-2">

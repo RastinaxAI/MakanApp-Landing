@@ -60,6 +60,8 @@ export function fromEditorData(
       if (clean.items)
         clean.items = clean.items.map((item) => ({
           title: item.title,
+          heading: item.heading,
+          eyebrow: item.eyebrow,
           text: item.text,
           body_html: item.body_html,
           href: item.href,

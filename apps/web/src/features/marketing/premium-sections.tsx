@@ -14,6 +14,7 @@ import type { CmsSection, CmsImageRef } from "@/features/cms/types";
 import type { Audience, Feature } from "./content";
 import { PremiumFeatureStory } from "./premium";
 import { RoleStory } from "./role-story";
+import type { WidgetItem } from "@/features/builder/types";
 
 export function DetailIntroduction({
   section,
@@ -232,11 +233,21 @@ export function PremiumAudiences({
   audiences,
   suffix,
   children,
+  items,
+  media,
+  privatePreview,
+  onItemSelect,
+  activeIndex,
 }: {
   section: CmsSection;
   audiences: Audience[];
   suffix: string;
   children?: ReactNode;
+  items?: WidgetItem[];
+  media?: CmsImageRef[];
+  privatePreview?: boolean;
+  onItemSelect?: (index: number) => void;
+  activeIndex?: number;
 }) {
   return (
     <section className="premium-audience-section" data-section="audiences">
@@ -246,7 +257,14 @@ export function PremiumAudiences({
           {section.title}
         </h2>
         <p className="premium-section-summary">{section.description}</p>
-        <RoleStory audiences={audiences} />
+        <RoleStory
+          audiences={audiences}
+          items={items}
+          media={media}
+          privatePreview={privatePreview}
+          onItemSelect={onItemSelect}
+          activeIndex={activeIndex}
+        />
         {children}
       </Container>
     </section>

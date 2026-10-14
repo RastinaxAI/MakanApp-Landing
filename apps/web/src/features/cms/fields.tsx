@@ -1,5 +1,7 @@
 "use client";
-import { useId } from "react";
+import { useId, useState } from "react";
+import Image from "next/image";
+import { MediaChooser } from "./media-chooser";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -64,9 +66,38 @@ export function MediaPicker({
   disabled?: boolean;
 }) {
   const id = useId();
+  const [acquired, setAcquired] = useState<MediaAsset[]>([]);
+  const choices = [
+    ...assets,
+    ...acquired.filter((asset) => !assets.some((item) => item.id === asset.id)),
+  ];
+  const selected = choices.find((asset) => asset.id === value);
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
+      {selected && (
+        <Image
+          src={`/api/v1/admin/media/${selected.id}/file`}
+          alt={selected.alt_text}
+          width={240}
+          height={140}
+          unoptimized
+          className="max-h-40 w-full rounded-lg border border-border bg-white object-contain"
+        />
+      )}
+      <MediaChooser
+        label={label}
+        assets={choices}
+        selected={value}
+        disabled={disabled}
+        onChoose={(asset) => {
+          setAcquired((items) => [
+            ...items.filter((item) => item.id !== asset.id),
+            asset,
+          ]);
+          onChange(asset.id);
+        }}
+      />
       <select
         id={id}
         value={value || ""}
@@ -75,7 +106,7 @@ export function MediaPicker({
         className="min-h-11 w-full rounded-lg border border-input bg-card px-3"
       >
         <option value="">بدون تصویر</option>
-        {assets.map((a) => (
+        {choices.map((a) => (
           <option key={a.id} value={a.id}>
             {a.alt_text} · {a.original_filename}
           </option>

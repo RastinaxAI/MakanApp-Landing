@@ -82,6 +82,8 @@ export type NodeStyles = Record<
 >;
 export type WidgetItem = {
   title?: string;
+  heading?: string;
+  eyebrow?: string;
   text?: string;
   body_html?: string;
   href?: string | null;

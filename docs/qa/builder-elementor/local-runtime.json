@@ -1,0 +1,47 @@
+{
+  "database_unchanged": true,
+  "tables_verified": 23,
+  "pages": 26,
+  "revisions": 50,
+  "migration": "0009_demo_crm",
+  "table_count": 40,
+  "media_files_unchanged": true,
+  "routes": [
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/demo",
+      "status": 200
+    },
+    {
+      "path": "/features/messenger",
+      "status": 200
+    },
+    {
+      "path": "/solutions/schools",
+      "status": 200
+    },
+    {
+      "path": "/learn",
+      "status": 200
+    },
+    {
+      "path": "/admin/login",
+      "status": 200
+    },
+    {
+      "path": "/health/ready",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/admin/content",
+      "status": 401
+    },
+    {
+      "path": "/no-such-editor-upgrade-page",
+      "status": 404
+    }
+  ]
+}

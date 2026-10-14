@@ -10,6 +10,7 @@ export default defineConfig({
     ["json", { outputFile: "test-results/v2-results.json" }],
   ],
   use: {
+    actionTimeout: 30000,
     baseURL: "http://127.0.0.1:3200",
     screenshot: "only-on-failure",
     trace: "retain-on-failure",

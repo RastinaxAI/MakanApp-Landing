@@ -34,6 +34,24 @@ def visual_document(media_id=None):
                     },
                     {"id": "image_1", "type": "Image", "props": {"media_id": media_id}},
                     {"id": "form_1", "type": "DemoForm"},
+                    {
+                        "id": "tabs_1",
+                        "type": "Tabs",
+                        "props": {
+                            "items": [
+                                {
+                                    "title": "تب اول",
+                                    "heading": "تیتر تب",
+                                    "eyebrow": "عنوان کوتاه",
+                                    "text": "متن مستقل",
+                                    "media_id": media_id,
+                                    "body_html": (
+                                        '<p onclick="bad()">محتوا</p><script>bad()</script>'
+                                    ),
+                                }
+                            ]
+                        },
+                    },
                 ],
             }
         ],
@@ -80,6 +98,11 @@ async def test_visual_save_reload_publish_restore_preserves_legacy_and_media(
             == "عنوان بصری"
         )
         assert reloaded["payload"]["document"]["nodes"][0]["styles"]["mobile"] == {"columns": 1}
+        tab = reloaded["payload"]["document"]["nodes"][0]["children"][3]["props"]["items"][0]
+        assert tab["heading"] == "تیتر تب"
+        assert tab["eyebrow"] == "عنوان کوتاه"
+        assert tab["media_id"] == media_id
+        assert tab["body_html"] == "<p>محتوا</p>"
         assert (await client.get("/api/v1/pages/visual-flow")).json()["payload"].get(
             "document"
         ) is None

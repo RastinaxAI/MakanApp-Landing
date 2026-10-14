@@ -61,12 +61,16 @@ export function StylePanel({
   value,
   onChange,
   assets = [],
+  section,
+  initialMode = "base",
 }: {
   value?: NodeStyles;
   onChange: (styles: NodeStyles) => void;
   assets?: MediaAsset[];
+  section?: "style" | "advanced";
+  initialMode?: keyof NodeStyles;
 }) {
-  const [mode, setMode] = useState<keyof NodeStyles>("base");
+  const [mode, setMode] = useState<keyof NodeStyles>(initialMode);
   const styles = value || emptyStyles();
   const selected = styles[mode] || {};
   const set = (
@@ -78,6 +82,21 @@ export function StylePanel({
     else Object.assign(updated, { [key]: next });
     onChange({ ...styles, [mode]: updated });
   };
+  const isStyle = (key: string) =>
+    [
+      "font_family",
+      "font_weight",
+      "text_align",
+      "background_size",
+      "shadow",
+      "border_style",
+      "radius",
+      "border_width",
+      "font_size",
+      "line_height",
+      "letter_spacing",
+      "gradient_angle",
+    ].includes(key);
   const inputClass =
     "min-h-10 min-w-0 w-full rounded-md border border-input bg-white px-2 text-xs";
   return (
@@ -111,93 +130,103 @@ export function StylePanel({
           چیدمان و اندازه
         </summary>
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {choices.map(([key, label, values]) => (
-            <label key={key} className="grid gap-1 text-xs">
-              {label}
-              <select
-                aria-label={`${label} ${mode}`}
-                className={inputClass}
-                value={String(selected[key] ?? "")}
-                onChange={(event) =>
-                  set(
-                    key,
-                    event.target.value
-                      ? key === "font_weight"
-                        ? Number(event.target.value)
-                        : event.target.value
-                      : undefined,
-                  )
+          {choices
+            .filter(
+              ([key]) => !section || (section === "style") === isStyle(key),
+            )
+            .map(([key, label, values]) => (
+              <label key={key} className="grid gap-1 text-xs">
+                {label}
+                <select
+                  aria-label={`${label} ${mode}`}
+                  className={inputClass}
+                  value={String(selected[key] ?? "")}
+                  onChange={(event) =>
+                    set(
+                      key,
+                      event.target.value
+                        ? key === "font_weight"
+                          ? Number(event.target.value)
+                          : event.target.value
+                        : undefined,
+                    )
+                  }
+                >
+                  <option value="">ارث‌بری</option>
+                  {values.map((item) => (
+                    <option key={item} value={item}>
+                      {item}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+          {(section === "style" ? [] : ["width", "max_width", "height"]).map(
+            (name) => (
+              <label className="grid gap-1 text-xs" key={name}>
+                {
+                  { width: "عرض", max_width: "حداکثر عرض", height: "ارتفاع" }[
+                    name
+                  ]
                 }
-              >
-                <option value="">ارث‌بری</option>
-                {values.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ))}
-          {["width", "max_width", "height"].map((name) => (
-            <label className="grid gap-1 text-xs" key={name}>
-              {
-                { width: "عرض", max_width: "حداکثر عرض", height: "ارتفاع" }[
-                  name
-                ]
-              }
-              <input
-                aria-label={`${name} ${mode}`}
-                className={inputClass}
-                dir="ltr"
-                placeholder="100% / 640px"
-                value={String(selected[name as keyof StyleValues] ?? "")}
-                onChange={(event) =>
-                  set(
-                    name as keyof StyleValues,
-                    event.target.value || undefined,
-                  )
-                }
-              />
-            </label>
-          ))}
+                <input
+                  aria-label={`${name} ${mode}`}
+                  className={inputClass}
+                  dir="ltr"
+                  placeholder="100% / 640px"
+                  value={String(selected[name as keyof StyleValues] ?? "")}
+                  onChange={(event) =>
+                    set(
+                      name as keyof StyleValues,
+                      event.target.value || undefined,
+                    )
+                  }
+                />
+              </label>
+            ),
+          )}
         </div>
       </details>
-      <details>
+      <details open={!!section}>
         <summary className="cursor-pointer text-sm font-semibold">
           فاصله، تایپوگرافی و سطح
         </summary>
         <div className="mt-3 grid grid-cols-2 gap-3">
-          {numerical.map(([key, label, min, max]) => (
-            <label key={key} className="grid gap-1 text-xs">
-              {label}
-              <input
-                aria-label={`${label} ${mode}`}
-                className={inputClass}
-                type="number"
-                min={min}
-                max={max}
-                step={
-                  key === "line_height" || key === "letter_spacing" ? 0.1 : 1
-                }
-                value={
-                  selected[key] === undefined || selected[key] === null
-                    ? ""
-                    : Number(selected[key])
-                }
-                onChange={(event) =>
-                  set(
-                    key,
-                    event.target.value === ""
-                      ? undefined
-                      : Number(event.target.value),
-                  )
-                }
-              />
-            </label>
-          ))}
+          {numerical
+            .filter(
+              ([key]) => !section || (section === "style") === isStyle(key),
+            )
+            .map(([key, label, min, max]) => (
+              <label key={key} className="grid gap-1 text-xs">
+                {label}
+                <input
+                  aria-label={`${label} ${mode}`}
+                  className={inputClass}
+                  type="number"
+                  min={min}
+                  max={max}
+                  step={
+                    key === "line_height" || key === "letter_spacing" ? 0.1 : 1
+                  }
+                  value={
+                    selected[key] === undefined || selected[key] === null
+                      ? ""
+                      : Number(selected[key])
+                  }
+                  onChange={(event) =>
+                    set(
+                      key,
+                      event.target.value === ""
+                        ? undefined
+                        : Number(event.target.value),
+                    )
+                  }
+                />
+              </label>
+            ))}
         </div>
       </details>
-      <details>
+      <details open={!!section}>
         <summary className="cursor-pointer text-sm font-semibold">
           رنگ و نمایش
         </summary>
@@ -208,7 +237,7 @@ export function StylePanel({
             value={selected.background_media_id}
             onChange={(value) => set("background_media_id", value || undefined)}
           />
-          {colors.map(([key, label]) => (
+          {(section === "advanced" ? [] : colors).map(([key, label]) => (
             <label key={key} className="grid gap-1 text-xs">
               {label}
               <input

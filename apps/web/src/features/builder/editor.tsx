@@ -47,6 +47,11 @@ import {
   GlobalFields,
 } from "./theme";
 import type { DocumentGlobals } from "./types";
+import { InspectorFields, InspectorSettings } from "./inspector";
+import { LibraryItem } from "./library-item";
+import { ElementFocusProvider } from "./element-focus";
+import { MediaUpdates } from "@/features/cms/media-context";
+import { Undo2, Redo2 } from "lucide-react";
 import { validateDocument } from "./validation";
 
 // Stable identities prevent the editor from reinitializing viewport/history on each change.
@@ -59,7 +64,7 @@ const editorIframe = { enabled: true, syncHostStyles: true };
 const editorPlugins = [
   blocksPlugin({ label: "عناصر" }),
   outlinePlugin({ label: "لایه‌ها" }),
-  fieldsPlugin({ desktopSideBar: "right" }),
+  fieldsPlugin({ desktopSideBar: "left", label: "ویرایش عنصر" }),
 ];
 
 const dictionary: Dictionary = {
@@ -97,12 +102,110 @@ const ToolsContext = createContext<{
   busy: boolean;
   publish: (data: EditorData) => void;
 }>({ globals: defaultGlobals, busy: false, publish: () => undefined });
+function SelectionSync() {
+  const puck = usePuck();
+  const id = puck.selectedItem?.props.id;
+  const dispatch = puck.dispatch;
+  useEffect(() => {
+    if (id)
+      dispatch({
+        type: "setUi",
+        ui: {
+          plugin: { current: "fields" },
+          leftSideBarVisible: true,
+          mobilePanelExpanded: true,
+        },
+      });
+  }, [id, dispatch]);
+  return null;
+}
 function HeaderTools() {
   const { globals, busy, publish } = useContext(ToolsContext);
   return (
     <div className="flex flex-wrap items-center gap-3">
+      <SelectionSync />
+      <SidebarTools />
       <EditorQuickTools publish={publish} busy={busy} />
       <AdvancedTools globals={globals} busy={busy} />
+    </div>
+  );
+}
+function EditorHeader({
+  actions,
+}: {
+  actions: ReactNode;
+  children: ReactNode;
+}) {
+  const puck = usePuck();
+  const preview = useContext(BuilderPreview);
+  return (
+    <header
+      className="builder-toolbar border-b border-border bg-white px-4 py-3"
+      dir="rtl"
+    >
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="truncate text-sm font-semibold">
+          ویرایش بصری · {preview.content?.title}
+        </p>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            aria-label="واگرد"
+            disabled={!puck.history.hasPast}
+            onClick={() => puck.history.back()}
+          >
+            <Undo2 size={17} />
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            aria-label="انجام دوباره"
+            disabled={!puck.history.hasFuture}
+            onClick={() => puck.history.forward()}
+          >
+            <Redo2 size={17} />
+          </Button>
+        </div>
+      </div>
+      {actions}
+    </header>
+  );
+}
+function SidebarTools() {
+  const puck = usePuck();
+  return (
+    <div className="flex gap-2">
+      {[
+        ["blocks", "عناصر"],
+        ["outline", "لایه‌ها"],
+        ["fields", "ویرایش عنصر"],
+      ].map(([name, label]) => (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          key={name}
+          aria-pressed={
+            puck.appState.ui.plugin.current === name &&
+            puck.appState.ui.leftSideBarVisible
+          }
+          onClick={() =>
+            puck.dispatch({
+              type: "setUi",
+              ui: {
+                plugin: { current: name! },
+                leftSideBarVisible: true,
+                mobilePanelExpanded: true,
+              },
+            })
+          }
+        >
+          {label}
+        </Button>
+      ))}
     </div>
   );
 }
@@ -168,7 +271,15 @@ function EditorQuickTools({
         variant="outline"
         size="sm"
         onClick={() =>
-          puck.dispatch({ type: "setUi", ui: { itemSelector: null } })
+          puck.dispatch({
+            type: "setUi",
+            ui: {
+              itemSelector: null,
+              plugin: { current: "fields" },
+              leftSideBarVisible: true,
+              mobilePanelExpanded: true,
+            },
+          })
         }
       >
         رنگ و فونت برگه
@@ -252,13 +363,15 @@ function EditorQuickTools({
 }
 export function PageBuilder({
   initial,
-  assets,
+  assets: initialAssets,
   dataContext,
 }: {
   initial: AdminContent;
   assets: MediaAsset[];
   dataContext: Omit<BuilderContext, "content">;
 }) {
+  const [assets, setAssets] = useState(initialAssets);
+  const [fullscreen, setFullscreen] = useState(false);
   const [current, setCurrent] = useState(initial);
   const [initialDocument] = useState(() =>
     initial.payload.kind !== "faq"
@@ -461,7 +574,10 @@ export function PageBuilder({
     }
   }
   return (
-    <div className="builder-workspace" dir="rtl">
+    <div
+      className={`builder-workspace ${fullscreen ? "builder-workspace-fullscreen" : ""}`}
+      dir="rtl"
+    >
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">صفحه‌ساز ماکان</h1>
@@ -471,6 +587,14 @@ export function PageBuilder({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            aria-pressed={fullscreen}
+            onClick={() => setFullscreen(!fullscreen)}
+          >
+            {fullscreen ? "خروج از تمام‌صفحه" : "ویرایش تمام‌صفحه"}
+          </Button>
           <Link
             href="/admin/content"
             className="inline-flex min-h-11 items-center px-3 text-primary-hover"
@@ -661,84 +785,107 @@ export function PageBuilder({
         Styleها را در پنل تنظیمات ویرایش کنید. پیش‌نمایش، آخرین نسخهٔ ذخیره‌شده
         را نشان می‌دهد.
       </p>
-      <BuilderTheme.Provider
-        value={
-          globals.inherit_site !== false && dataContext.siteGlobals
-            ? {
-                ...globals,
-                colors: {
-                  ...globals.colors,
-                  ...dataContext.siteGlobals.colors,
-                },
-                font: dataContext.siteGlobals.font,
-              }
-            : globals
+      <MediaUpdates.Provider
+        value={(asset) =>
+          setAssets((items) => [
+            ...items.filter((item) => item.id !== asset.id),
+            asset,
+          ])
         }
       >
-        <BuilderPreview.Provider
-          value={{
-            content: {
-              ...initial,
-              title: metadata.title,
-              payload:
-                current.payload.kind === "faq"
-                  ? current.payload
-                  : {
-                      ...current.payload,
-                      headline: metadata.headline,
-                      summary: metadata.summary,
+        <ElementFocusProvider>
+          <BuilderTheme.Provider
+            value={
+              globals.inherit_site !== false && dataContext.siteGlobals
+                ? {
+                    ...globals,
+                    colors: {
+                      ...globals.colors,
+                      ...dataContext.siteGlobals.colors,
                     },
-            },
-            purpose: initialDocument.purpose || "page",
-          }}
-        >
-          <ToolsContext.Provider
-            value={{
-              globals,
-              busy: busy || current.is_archived,
-              publish: (value) => void save(true, value),
-            }}
+                    font: dataContext.siteGlobals.font,
+                  }
+                : globals
+            }
           >
-            <Puck
-              config={config}
-              data={data}
-              onChange={(value) => {
-                if (
-                  canonicalJSON(
-                    fromEditorData(value, initialDocument.globals),
-                  ) ===
-                  canonicalJSON(
-                    fromEditorData(latest.current, initialDocument.globals),
-                  )
-                )
-                  return;
-                latest.current = value;
-                setData(value);
-                setDirty(true);
+            <BuilderPreview.Provider
+              value={{
+                content: {
+                  ...initial,
+                  title: metadata.title,
+                  payload:
+                    current.payload.kind === "faq"
+                      ? current.payload
+                      : {
+                          ...current.payload,
+                          headline: metadata.headline,
+                          summary: metadata.summary,
+                        },
+                },
+                purpose: initialDocument.purpose || "page",
               }}
-              onPublish={(value) => void save(true, value)}
-              dictionary={dictionary}
-              plugins={editorPlugins}
-              headerTitle="ویرایش بصری"
-              headerPath={`/${current.slug === "home" ? "" : current.slug}`}
-              height="min(1100px,84vh)"
-              viewports={editorViewports}
-              iframe={editorIframe}
-              overrides={{
-                iframe: RtlFrame,
-                headerActions: HeaderTools,
-              }}
-              permissions={{
-                edit: !busy && !current.is_archived,
-                drag: !busy && !current.is_archived,
-                delete: !busy && !current.is_archived,
-                duplicate: !busy && !current.is_archived,
-                insert: !busy && !current.is_archived,
-              }}
-            />
-          </ToolsContext.Provider>
-        </BuilderPreview.Provider>
-      </BuilderTheme.Provider>
+            >
+              <ToolsContext.Provider
+                value={{
+                  globals,
+                  busy: busy || current.is_archived,
+                  publish: (value) => void save(true, value),
+                }}
+              >
+                <InspectorSettings.Provider
+                  value={{ assets, disabled: busy || current.is_archived }}
+                >
+                  <Puck
+                    config={config}
+                    data={data}
+                    onChange={(value) => {
+                      if (
+                        canonicalJSON(
+                          fromEditorData(value, initialDocument.globals),
+                        ) ===
+                        canonicalJSON(
+                          fromEditorData(
+                            latest.current,
+                            initialDocument.globals,
+                          ),
+                        )
+                      )
+                        return;
+                      latest.current = value;
+                      setData(value);
+                      setDirty(true);
+                    }}
+                    onPublish={(value) => void save(true, value)}
+                    dictionary={dictionary}
+                    plugins={editorPlugins}
+                    headerTitle="ویرایش بصری"
+                    headerPath={`/${current.slug === "home" ? "" : current.slug}`}
+                    height={
+                      fullscreen ? "calc(100dvh - 230px)" : "min(1100px,84vh)"
+                    }
+                    viewports={editorViewports}
+                    iframe={editorIframe}
+                    overrides={{
+                      header: EditorHeader,
+                      fields: InspectorFields,
+                      drawerItem: LibraryItem,
+                      iframe: RtlFrame,
+                      headerActions: HeaderTools,
+                    }}
+                    permissions={{
+                      edit: !busy && !current.is_archived,
+                      drag: !busy && !current.is_archived,
+                      delete: !busy && !current.is_archived,
+                      duplicate: !busy && !current.is_archived,
+                      insert: !busy && !current.is_archived,
+                    }}
+                  />
+                </InspectorSettings.Provider>
+              </ToolsContext.Provider>
+            </BuilderPreview.Provider>
+          </BuilderTheme.Provider>
+        </ElementFocusProvider>
+      </MediaUpdates.Provider>
     </div>
   );
 }

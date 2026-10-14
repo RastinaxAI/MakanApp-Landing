@@ -129,7 +129,11 @@ def build():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("gate", choices=["build", "backend", "browser"])
-    parser.add_argument("--phase", choices=["v2-step5", "v2-step6"], default="v2-step6")
+    parser.add_argument(
+        "--phase",
+        choices=["v2-step5", "v2-step6", "builder-elementor"],
+        default="v2-step6",
+    )
     parser.add_argument(
         "--project", choices=["all", "chromium", "firefox", "webkit"], default="all"
     )
@@ -139,6 +143,7 @@ def main():
             "all",
             "crm",
             "builder",
+            "elementor",
             "advanced",
             "theme",
             "widgets",

@@ -23,6 +23,7 @@ import { MediaImage } from "./media-image";
 import { RichText } from "./rich-text";
 import type { Audience, Feature } from "@/features/marketing/content";
 import type { CmsContent, CmsSection } from "./types";
+import type { WidgetItem } from "@/features/builder/types";
 
 export type LegacyRendererProps = {
   content: CmsContent;
@@ -31,6 +32,9 @@ export type LegacyRendererProps = {
   faqs?: FaqItem[];
   privatePreview?: boolean;
   learning?: ReactNode;
+  audienceItems?: WidgetItem[];
+  onAudienceSelect?: (index: number) => void;
+  activeAudienceIndex?: number;
 };
 
 export function SectionContent({
@@ -109,6 +113,11 @@ export function SectionContent({
         section={section}
         audiences={audiences}
         suffix={String(index)}
+        items={props.audienceItems}
+        media={content.media}
+        privatePreview={privatePreview}
+        onItemSelect={props.onAudienceSelect}
+        activeIndex={props.activeAudienceIndex}
       >
         {extras}
       </PremiumAudiences>

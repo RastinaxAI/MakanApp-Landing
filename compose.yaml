@@ -57,7 +57,7 @@ services:
       interval: 10s
       timeout: 6s
       retries: 6
-      start_period: 10s
+      start_period: 180s
     restart: unless-stopped
     read_only: true
     tmpfs: [/tmp]
@@ -99,7 +99,7 @@ services:
       interval: 30s
       timeout: 8s
       retries: 4
-      start_period: 30s
+      start_period: 180s
 volumes:
   postgres_data:
   media_data:

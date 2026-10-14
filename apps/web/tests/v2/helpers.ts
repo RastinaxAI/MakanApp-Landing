@@ -19,17 +19,30 @@ export async function drag(page: Page, name: string, target: Locator) {
     const frame = await page.locator("iframe").first().boundingBox();
     const viewport = page.viewportSize();
     if (!frame || !viewport) throw new Error("Canvas viewport is unavailable");
-    const top = Math.max(box.y + 8, frame.y + 8, 64);
+    const top = Math.max(box.y + 8, frame.y + 32, 64);
     const bottom = Math.min(
       box.y + box.height - 8,
-      frame.y + frame.height - 8,
-      viewport.height - 45,
+      frame.y + frame.height - 32,
+      viewport.height - 64,
     );
     if (bottom < top)
       throw new Error("Drop target is outside the visible canvas");
-    return { x: box.x + box.width / 2, y: (top + bottom) / 2 };
+    // Aim at the insertion boundary, not the centre of a tall image inside it.
+    return { x: box.x + box.width / 2, y: Math.min(top + 16, bottom) };
   };
-  const source = page.getByText(name, { exact: true }).first().locator("..");
+  const candidate = page
+    .getByText(name, { exact: true })
+    .filter({ visible: true })
+    .first();
+  if (!(await candidate.isVisible())) {
+    await page.getByRole("button", { name: "عناصر", exact: true }).click();
+  }
+  const source = page
+    .getByText(name, { exact: true })
+    .filter({ visible: true })
+    .first()
+    .locator("..");
+  await target.scrollIntoViewIfNeeded();
   await source.scrollIntoViewIfNeeded();
   const sourceBox = await source.boundingBox();
   const targetBox = await target.boundingBox();

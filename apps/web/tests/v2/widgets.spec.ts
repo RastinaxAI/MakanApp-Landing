@@ -60,7 +60,8 @@ test("all registered widgets share public SSR rendering and interactive controls
       await page.request.get("/api/v1/admin/content?kind=home&page_size=100")
     ).json()
   ).items[0] as AdminContent;
-  if (!original.published_revision_id) throw new Error("Published homepage fixture required");
+  if (!original.published_revision_id)
+    throw new Error("Published homepage fixture required");
   const publishedBefore = original.published_revision_id;
   const item = {
     title: "محتوای آزمون",
@@ -124,8 +125,12 @@ test("all registered widgets share public SSR rendering and interactive controls
   button.styles.focus = { border_color: "#1266df", border_width: 3 };
   const icon = nodes.find((node) => node.type === "Icon")!;
   icon.styles.base = {
-    width: "72px", height: "72px", color: "#176b45",
-    background: "#edf7f0", radius: 18, font_size: 36,
+    width: "72px",
+    height: "72px",
+    color: "#176b45",
+    background: "#edf7f0",
+    radius: 18,
+    font_size: 36,
   };
   nodes.push(
     { ...build("DemoForm"), id: "second_demo" },
@@ -173,7 +178,9 @@ test("all registered widgets share public SSR rendering and interactive controls
   await expect(control).toHaveCSS("background-color", "rgb(16, 91, 198)");
   await control.focus();
   await expect(control).toHaveCSS("border-top-width", "3px");
-  const iconControl = page.locator('[data-node-id="test_Icon"] .builder-widget-control');
+  const iconControl = page.locator(
+    '[data-node-id="test_Icon"] .builder-widget-control',
+  );
   await expect(iconControl).toHaveCSS("color", "rgb(23, 107, 69)");
   await expect(iconControl).toHaveCSS("border-radius", "18px");
   await expect(iconControl).toHaveCSS("width", "72px");
@@ -189,8 +196,16 @@ test("all registered widgets share public SSR rendering and interactive controls
     .getByRole("tab", { name: "محتوای دوم", exact: true })
     .click();
   await expect(
-    page.locator('[data-widget="Tabs"]').getByRole("tabpanel"),
+    page.locator('[data-widget="Tabs"]').getByRole("tabpanel").locator("p"),
   ).toHaveText("توضیح دوم");
+  await expect(
+    page
+      .locator('[data-widget="Tabs"]')
+      .getByRole("link", { name: "بیشتر بدانید", exact: true }),
+  ).toHaveAttribute("href", "/demo?source=home");
+  await expect(
+    page.locator('[data-widget="Tabs"]').getByRole("img"),
+  ).toHaveCount(1);
   await page
     .locator('[data-widget="Carousel"]')
     .getByRole("button", { name: "اسلاید بعدی", exact: true })
@@ -224,10 +239,19 @@ test("all registered widgets share public SSR rendering and interactive controls
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
   expect(accessibility.violations).toEqual([]);
+  const restoredPublication = (await (
+    await write(
+      page,
+      `content/${original.id}/publish`,
+      { revision_id: publishedBefore },
+      saved.row_version + 1,
+    )
+  ).json()) as AdminContent;
+  // Restore the working draft too, so the next browser edits the original page.
   await write(
     page,
-    `content/${original.id}/publish`,
-    { revision_id: publishedBefore },
-    saved.row_version + 1,
+    `content/${original.id}/revisions/${original.revision_id}/restore`,
+    undefined,
+    restoredPublication.row_version,
   );
 });

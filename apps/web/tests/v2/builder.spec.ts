@@ -102,26 +102,22 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
         ),
     )
     .not.toEqual(orderBefore);
-  await page
-    .getByText("فاصله، تایپوگرافی و سطح", { exact: true })
-    .filter({ visible: true })
-    .click();
+  await page.getByRole("tab", { name: "استایل", exact: true }).click();
   await page
     .getByLabel("اندازه متن base", { exact: true })
     .filter({ visible: true })
     .fill("40");
+  await page.getByRole("tab", { name: "پیشرفته", exact: true }).click();
   await page
     .getByLabel("فاصله داخلی base", { exact: true })
     .filter({ visible: true })
     .fill("16");
+  await page.getByRole("tab", { name: "استایل", exact: true }).click();
   await page
     .getByLabel("خانواده فونت base", { exact: true })
     .filter({ visible: true })
     .selectOption("sans");
-  await page
-    .getByText("رنگ و نمایش", { exact: true })
-    .filter({ visible: true })
-    .click();
+
   await page
     .getByLabel("رنگ متن base", { exact: true })
     .filter({ visible: true })
@@ -206,10 +202,13 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   expect(
     restored.payload.kind === "page" && restored.payload.document == null,
   ).toBe(true);
-  await mkdir(path.resolve("../../docs/qa/v2-step6"), { recursive: true });
+  await mkdir(
+    path.resolve(`../../docs/qa/${process.env.MAKAN_QA_PHASE || "v2-step6"}`),
+    { recursive: true },
+  );
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/v2-step6/revisions-${info.project.name}.png`,
+      `../../docs/qa/${process.env.MAKAN_QA_PHASE || "v2-step6"}/revisions-${info.project.name}.png`,
     ),
     fullPage: true,
   });

@@ -119,6 +119,8 @@ class NodeStyles(StrictSchema):
 
 class WidgetItem(StrictSchema):
     title: str = Field(default="", max_length=180)
+    heading: str = Field(default="", max_length=180)
+    eyebrow: str = Field(default="", max_length=180)
     text: str = Field(default="", max_length=4000)
     body_html: str = Field(default="", max_length=16000)
     href: str | None = Field(default=None, max_length=500)

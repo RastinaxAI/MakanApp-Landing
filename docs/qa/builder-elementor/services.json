@@ -1,0 +1,22 @@
+[
+  {
+    "Service": "api",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "db",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "maintenance",
+    "State": "running",
+    "Health": "healthy"
+  },
+  {
+    "Service": "web",
+    "State": "running",
+    "Health": "healthy"
+  }
+]

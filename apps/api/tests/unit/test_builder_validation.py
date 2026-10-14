@@ -1,8 +1,23 @@
 import pytest
 from pydantic import ValidationError
 
-from app.schemas.builder import VisualDocument
+from app.schemas.builder import VisualDocument, WidgetItem
 from app.schemas.cms import ContentInput
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        {"heading": "x" * 181},
+        {"eyebrow": "x" * 181},
+        {"href": "javascript:alert(1)"},
+        {"media_id": "arbitrary-html"},
+        {"script": "alert(1)"},
+    ],
+)
+def test_tab_item_rejects_invalid_content(data):
+    with pytest.raises(ValidationError):
+        WidgetItem.model_validate(data)
 
 
 def node(kind="Heading", identifier="heading_1", **props):
