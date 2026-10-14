@@ -1,0 +1,294 @@
+@layer components {
+  .premium-detail-intro {
+    padding-block: 2rem 5rem;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .premium-detail-layout {
+    display: grid;
+    gap: 3rem;
+    align-items: center;
+  }
+  .premium-detail-layout h1 {
+    max-width: 48rem;
+    font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+    line-height: 1.5;
+    letter-spacing: -0.035em;
+    font-weight: 750;
+  }
+  .premium-detail-layout h1 > span {
+    display: block;
+    color: var(--primary);
+  }
+  .premium-detail-summary {
+    margin-top: 1.5rem;
+    max-width: 42rem;
+    color: var(--muted-foreground);
+    line-height: 2.1;
+    font-size: 1.1rem;
+  }
+  .premium-detail-emblem {
+    border-radius: 2rem;
+    padding: 2rem;
+    min-height: 24rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--secondary);
+  }
+  .premium-detail-emblem small {
+    margin-top: 1rem;
+    max-width: 20rem;
+    color: var(--muted-foreground);
+    line-height: 1.9;
+  }
+  .detail-emblem-symbol {
+    align-self: center;
+    width: 11rem;
+    height: 11rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 2.5rem;
+    display: grid;
+    place-items: center;
+    transform: rotate(-8deg);
+    margin-block: 1rem 3rem;
+  }
+  .detail-emblem-symbol svg {
+    width: 5rem;
+    height: 5rem;
+    transform: rotate(8deg);
+  }
+  .premium-detail-audience .premium-detail-emblem {
+    border-inline-start: 4px solid var(--primary);
+    border-radius: 0.25rem 2rem 2rem 0.25rem;
+  }
+  .premium-problem {
+    padding-block: 5rem;
+  }
+  .premium-problem-heading {
+    max-width: 50rem;
+  }
+  .premium-problem h2,
+  .premium-feature-index > h2,
+  .premium-audience-section h2,
+  .premium-journey h2 {
+    font-size: clamp(1.8rem, 3.3vw, 3rem);
+    font-weight: 750;
+    line-height: 1.65;
+    letter-spacing: -0.025em;
+  }
+  .premium-problem-heading > p:last-child,
+  .premium-section-summary,
+  .premium-journey-heading > p:last-child {
+    margin-block: 1.2rem 2.5rem;
+    color: var(--muted-foreground);
+    line-height: 2;
+    max-width: 48rem;
+  }
+  .premium-problem-rows {
+    display: grid;
+    margin-top: 3rem;
+  }
+  .premium-problem-rows li {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 1.5rem;
+    padding-block: 1.8rem;
+    border-top: 1px solid var(--border);
+  }
+  .premium-problem-rows li > span {
+    color: var(--primary-hover);
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+  .premium-problem-rows h3 {
+    font-size: 1.25rem;
+    font-weight: 650;
+  }
+  .premium-problem-rows li p {
+    color: var(--muted-foreground);
+    line-height: 2;
+    margin-top: 0.5rem;
+  }
+  .premium-feature-index {
+    padding-block: 4rem 2.5rem;
+  }
+  .premium-feature-rows {
+    display: grid;
+    gap: 0 2.5rem;
+  }
+  .premium-feature-rows article {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 1rem;
+    padding-block: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+  .premium-feature-number {
+    color: var(--primary-hover);
+    font-size: 0.8rem;
+    padding-top: 0.3rem;
+    direction: ltr;
+  }
+  .premium-feature-rows h3 {
+    font-size: 1.25rem;
+    font-weight: 650;
+  }
+  .premium-feature-rows article p:not(.premium-feature-number) {
+    margin-top: 0.75rem;
+    color: var(--muted-foreground);
+    line-height: 2;
+  }
+  .premium-roadmap-note {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-block: 1rem;
+    border-top: 1px solid var(--border);
+  }
+  .premium-audience-section {
+    padding-block: 5rem;
+    background: var(--card);
+  }
+  .premium-role-panel {
+    display: grid;
+    gap: 3rem;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background: var(--background);
+  }
+  .premium-role-copy h3 {
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.8;
+  }
+  .premium-role-copy > p:not(.premium-eyebrow) {
+    color: var(--muted-foreground);
+    line-height: 2;
+    margin-top: 1rem;
+  }
+  .premium-role-priorities > svg {
+    color: var(--primary-hover);
+    margin-bottom: 1.5rem;
+  }
+  .premium-role-priorities li {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .premium-role-priorities li > span {
+    flex-shrink: 0;
+    color: var(--primary-hover);
+    width: 1.5rem;
+    padding-top: 0.3rem;
+  }
+  .premium-role-priorities h4 {
+    font-weight: 650;
+    line-height: 1.8;
+  }
+  .premium-role-priorities p {
+    color: var(--muted-foreground);
+    font-size: 0.9rem;
+    line-height: 2;
+    margin-top: 0.4rem;
+  }
+  .premium-journey {
+    padding-block: 5rem;
+    background: var(--secondary);
+  }
+  .premium-journey-heading {
+    max-width: 48rem;
+  }
+  .premium-journey-steps {
+    display: grid;
+    gap: 2rem;
+    margin-block: 3rem 1rem;
+  }
+  .premium-journey-steps li {
+    border-top: 1px solid var(--border);
+    padding-top: 1.5rem;
+  }
+  .premium-journey-steps li > span {
+    display: inline-flex;
+    height: 2.75rem;
+    width: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.8rem;
+    background: var(--card);
+    color: var(--primary-hover);
+    font-weight: 700;
+  }
+  .premium-journey-steps h3 {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 650;
+  }
+  .premium-journey-steps p {
+    margin-top: 1rem;
+    color: var(--muted-foreground);
+    line-height: 2;
+    font-size: 0.95rem;
+  }
+  @media (min-width: 768px) {
+    .premium-feature-rows {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .premium-journey-steps {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .premium-detail-layout {
+      grid-template-columns: 1.25fr 0.75fr;
+      gap: 5rem;
+    }
+    .premium-problem-rows {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 3rem;
+    }
+    .premium-problem-rows li {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .premium-role-panel {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 4rem;
+      padding: 3rem;
+    }
+    .premium-journey-steps {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 479px) {
+    .premium-detail-intro {
+      padding-block: 1.25rem 3rem;
+    }
+    .premium-detail-emblem {
+      min-height: 19rem;
+      padding: 1.5rem;
+    }
+    .premium-role-panel {
+      padding: 1.3rem;
+      gap: 2rem;
+    }
+    .premium-problem,
+    .premium-audience-section,
+    .premium-journey {
+      padding-block: 3rem;
+    }
+    .premium-problem-rows li {
+      grid-template-columns: 2rem 1fr;
+      gap: 0.75rem;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .detail-emblem-symbol,
+    .detail-emblem-symbol svg {
+      transform: none;
+    }
+  }
+}

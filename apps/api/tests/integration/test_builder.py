@@ -134,6 +134,9 @@ async def test_builder_server_validation_rbac_and_publication_heading_rules(phon
         data["payload"]["document"] = visual_document()
         initial = (await write(client, "content", data)).json()
         data["payload"]["document"]["nodes"][0]["children"][0]["props"]["level"] = 1
+        data["payload"]["document"]["nodes"][0]["children"].append(
+            {"id": "another_heading", "type": "Heading", "props": {"title": "دوم", "level": 1}}
+        )
         saved = await write(
             client, f"content/{initial['id']}", data, initial["row_version"], "PATCH"
         )

@@ -237,7 +237,14 @@ export function ContentEditor({
           >
             پیش‌نمایش خصوصی
           </a>
-          {(payload.kind === "home" || payload.kind === "page") && <Link href={`/admin/content/${current.id}/builder`} className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-primary-hover">باز کردن صفحه‌ساز بصری</Link>}
+          {payload.kind !== "faq" && (
+            <Link
+              href={`/admin/content/${current.id}/builder`}
+              className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-primary-hover"
+            >
+              باز کردن صفحه‌ساز بصری
+            </Link>
+          )}
           <Link
             href={`/admin/content/${current.id}/revisions`}
             className="inline-flex min-h-11 items-center rounded-lg border border-input px-4 text-primary-hover"

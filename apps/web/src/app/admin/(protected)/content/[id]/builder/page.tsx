@@ -26,7 +26,7 @@ export default async function BuilderPage({
       getFaqs(),
       cmsGet<BuilderSettings>("builder/settings"),
     ]);
-  if (initial.payload.kind !== "page" && initial.payload.kind !== "home")
+  if (initial.payload.kind === "faq")
     notFound();
   return (
     <BuilderLoader

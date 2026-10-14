@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "./tokens.css";
 @import "./premium.css";
+@import "./premium-sections.css";
 
 @layer base {
   * { @apply border-border; }

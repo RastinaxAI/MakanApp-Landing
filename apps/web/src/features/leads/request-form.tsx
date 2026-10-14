@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import { useForm } from "react-hook-form";
 import { trackEvent, type ErrorKind } from "@/features/analytics/events";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +27,8 @@ const consentText =
   "با ذخیره اطلاعات این فرم و تماس درباره همین درخواست طبق سیاست حریم خصوصی موافقم.";
 export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   const demo = kind === "demo";
+  const instance = useId().replaceAll(":", "");
+  const formId = `${kind}-${instance}`;
   const {
     register,
     handleSubmit,
@@ -207,12 +209,12 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   ) {
     return (
       <div className={`space-y-2 ${options.wide ? "tablet:col-span-2" : ""}`}>
-        <Label htmlFor={`${kind}-${name}`}>
+        <Label htmlFor={`${formId}-${name}`}>
           {label}
           {options.optional ? " — اختیاری" : ""}
         </Label>
         <Input
-          id={`${kind}-${name}`}
+          id={`${formId}-${name}`}
           {...register(name)}
           type={options.type ?? "text"}
           dir={
@@ -241,12 +243,14 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
                       : 180
           }
           aria-invalid={!!errors[name]}
-          aria-describedby={errors[name] ? `${kind}-${name}-error` : undefined}
+          aria-describedby={
+            errors[name] ? `${formId}-${name}-error` : undefined
+          }
           className="min-h-12"
         />
         {errors[name] && (
           <p
-            id={`${kind}-${name}-error`}
+            id={`${formId}-${name}-error`}
             role="alert"
             className="text-sm text-destructive"
           >
@@ -259,9 +263,9 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   return (
     <section
       className="min-w-0 rounded-3xl border border-border bg-card p-5 shadow-soft tablet:p-8"
-      aria-labelledby={`${kind}-form-title`}
+      aria-labelledby={`${formId}-form-title`}
     >
-      <h2 id={`${kind}-form-title`} className="text-2xl font-semibold">
+      <h2 id={`${formId}-form-title`} className="text-2xl font-semibold">
         {demo ? "درخواست دمو و مشاوره" : "ارسال پیام"}
       </h2>
       {reference ? (
@@ -335,9 +339,9 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
               ) : (
                 <>
                   <div className="space-y-2">
-                    <Label htmlFor="contact-method">روش تماس</Label>
+                    <Label htmlFor={`${formId}-method`}>روش تماس</Label>
                     <select
-                      id="contact-method"
+                      id={`${formId}-method`}
                       {...register("contact_method")}
                       className="min-h-12 w-full rounded-lg border border-input bg-card px-3"
                     >
@@ -356,11 +360,11 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
                   {field("city", "شهر", { optional: true })}
                   {field("job_title", "سمت", { optional: true })}
                   <div className="space-y-2 tablet:col-span-2">
-                    <Label htmlFor="demo-students">
+                    <Label htmlFor={`${formId}-students`}>
                       تعداد تقریبی دانش‌آموزان — اختیاری
                     </Label>
                     <select
-                      id="demo-students"
+                      id={`${formId}-students`}
                       {...register("student_count_range")}
                       className="min-h-12 w-full rounded-lg border border-input bg-card px-3"
                     >
@@ -383,23 +387,23 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
                 field("subject", "موضوع", { wide: true })
               )}
               <div className="space-y-2 tablet:col-span-2">
-                <Label htmlFor={`${kind}-message`}>
+                <Label htmlFor={`${formId}-message`}>
                   {demo ? "توضیحات — اختیاری" : "پیام"}
                 </Label>
                 <Textarea
-                  id={`${kind}-message`}
+                  id={`${formId}-message`}
                   {...register("message")}
                   maxLength={3000}
                   aria-invalid={!!errors.message}
                   aria-describedby={
-                    errors.message ? `${kind}-message-error` : undefined
+                    errors.message ? `${formId}-message-error` : undefined
                   }
                   className="min-h-32"
                 />
                 {errors.message && (
                   <p
                     role="alert"
-                    id={`${kind}-message-error`}
+                    id={`${formId}-message-error`}
                     className="text-sm text-destructive"
                   >
                     {errors.message.message}
@@ -407,9 +411,9 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
                 )}
               </div>
               <div className="hidden" aria-hidden="true">
-                <label htmlFor={`${kind}-website`}>وب‌سایت</label>
+                <label htmlFor={`${formId}-website`}>وب‌سایت</label>
                 <input
-                  id={`${kind}-website`}
+                  id={`${formId}-website`}
                   {...register("website")}
                   tabIndex={-1}
                   autoComplete="off"
@@ -419,14 +423,14 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
                 <div className="flex items-start gap-3">
                   <input
                     type="checkbox"
-                    id={`${kind}-consent`}
+                    id={`${formId}-consent`}
                     {...register("consent")}
                     className="mt-2 size-5 shrink-0 accent-primary"
                     aria-invalid={!!errors.consent}
-                    aria-describedby={`${kind}-policy ${errors.consent ? `${kind}-consent-error` : ""}`}
+                    aria-describedby={`${formId}-policy ${errors.consent ? `${formId}-consent-error` : ""}`}
                   />
                   <label
-                    htmlFor={`${kind}-consent`}
+                    htmlFor={`${formId}-consent`}
                     className="text-sm leading-8"
                   >
                     {consentText}
@@ -434,7 +438,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
                 </div>
                 {errors.consent && (
                   <p
-                    id={`${kind}-consent-error`}
+                    id={`${formId}-consent-error`}
                     role="alert"
                     className="text-sm text-destructive"
                   >
@@ -456,7 +460,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
             </div>
           </CmsReady>
           <p
-            id={`${kind}-policy`}
+            id={`${formId}-policy`}
             className="mt-5 text-sm leading-8 text-muted-foreground"
           >
             اطلاعات شخصی تا ۱۸۰ روز پس از آخرین پیگیری نگهداری و سپس حذف می‌شود.{" "}

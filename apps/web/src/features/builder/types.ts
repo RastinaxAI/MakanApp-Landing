@@ -1,4 +1,5 @@
 import type { CmsContent, CmsSection, MediaAsset } from "@/features/cms/types";
+import type { CmsPayload } from "@/features/cms/types";
 import type { Audience, Feature } from "@/features/marketing/content";
 import type { FaqItem } from "@/features/marketing/faq-list";
 import type { LearningContent } from "@/features/learning/types";
@@ -185,4 +186,132 @@ export function legacyDocument(sections: CmsSection[]): VisualDocument {
       children: [],
     })),
   };
+}
+
+export function documentFromContent(
+  payload: CmsPayload,
+  features: Feature[] = [],
+): VisualDocument {
+  if (payload.kind === "home" || payload.kind === "page") {
+    if (payload.document) return payload.document;
+    if (payload.kind === "page" && !payload.sections.length) {
+      const escaped = payload.summary.replace(
+        /[&<>"']/g,
+        (letter) =>
+          ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#x27;",
+          })[letter]!,
+      );
+      return {
+        schema_version: 2,
+        globals: structuredClone(defaultGlobals),
+        nodes: [
+          {
+            id: "page_heading",
+            type: "Heading",
+            version: 1,
+            props: { title: payload.headline, level: 1 },
+            styles: emptyStyles(),
+            children: [],
+          },
+          {
+            id: "page_summary",
+            type: "RichText",
+            version: 1,
+            props: { body_html: `<p>${escaped}</p>` },
+            styles: emptyStyles(),
+            children: [],
+          },
+        ],
+      };
+    }
+    return legacyDocument(payload.sections);
+  }
+  if (payload.kind === "faq") return legacyDocument([]);
+  if (payload.kind !== "feature" && payload.kind !== "audience")
+    return legacyDocument([]);
+  if (payload.document) return payload.document;
+  const sections: CmsSection[] = [
+    {
+      type: "hero",
+      title: payload.headline,
+      kicker: payload.eyebrow,
+      description: payload.summary,
+      items: [],
+      cta_label:
+        payload.kind === "feature"
+          ? payload.readiness === "roadmap"
+            ? "امکانات آمادهٔ ماکان"
+            : "درخواست دموی ماکان"
+          : payload.cta,
+      cta_href:
+        payload.kind === "feature"
+          ? payload.readiness === "roadmap"
+            ? "/features"
+            : "/demo"
+          : payload.cta_href,
+      media_id: payload.kind === "feature" ? payload.image_media_id : undefined,
+    },
+  ];
+  if (payload.kind === "feature")
+    sections.push(
+      {
+        type: "benefits",
+        title: "کارکرد در مسیر مدرسه",
+        description: "",
+        items: payload.benefits,
+      },
+      {
+        type: "onboarding",
+        title: "مسیر استفاده",
+        description: "",
+        items: payload.workflow,
+      },
+    );
+  else
+    sections.push(
+      {
+        type: "challenge",
+        title: "نیازهای روزمرهٔ شما",
+        description: "",
+        items: payload.pains.map((description) => ({ title: "", description })),
+      },
+      {
+        type: "benefits",
+        title: "ماکان چگونه کمک می‌کند؟",
+        description: "",
+        items: payload.benefits,
+      },
+      {
+        type: "onboarding",
+        title: "مسیر همراهی",
+        description: "",
+        items: payload.journey,
+      },
+      {
+        type: "features",
+        title: "امکانات مرتبط",
+        description: "",
+        items: features
+          .filter((feature) => payload.related.includes(feature.slug))
+          .map((feature) => ({
+            title: feature.title,
+            description: feature.summary,
+            href: `/features/${feature.slug}`,
+          })),
+      },
+    );
+  if (payload.body_html)
+    sections.push({
+      type: "rich-text",
+      title: "",
+      description: "",
+      body_html: payload.body_html,
+      items: [],
+    });
+  return legacyDocument(sections);
 }

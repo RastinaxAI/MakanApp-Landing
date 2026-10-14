@@ -34,13 +34,18 @@ import {
 } from "./adapter";
 import {
   defaultGlobals,
-  legacyDocument,
+  documentFromContent,
   widgetLabels,
   type BuilderContext,
   type VisualDocument,
 } from "./types";
 import { AdvancedTools } from "./advanced-tools";
-import { BuilderTheme, DocumentRoot, GlobalFields } from "./theme";
+import {
+  BuilderPreview,
+  BuilderTheme,
+  DocumentRoot,
+  GlobalFields,
+} from "./theme";
 import type { DocumentGlobals } from "./types";
 import { validateDocument } from "./validation";
 
@@ -256,8 +261,8 @@ export function PageBuilder({
 }) {
   const [current, setCurrent] = useState(initial);
   const [initialDocument] = useState(() =>
-    initial.payload.kind === "home" || initial.payload.kind === "page"
-      ? initial.payload.document || legacyDocument(initial.payload.sections)
+    initial.payload.kind !== "faq"
+      ? documentFromContent(initial.payload, dataContext.features)
       : { schema_version: 2 as const, globals: defaultGlobals, nodes: [] },
   );
   const [data, setData] = useState<EditorData>(() =>
@@ -269,10 +274,7 @@ export function PageBuilder({
   const checkpoint = useRef(0);
   const latest = useRef(data);
   const [dirty, setDirty] = useState(
-    !(
-      (initial.payload.kind === "home" || initial.payload.kind === "page") &&
-      initial.payload.document
-    ),
+    !(initial.payload.kind !== "faq" && initial.payload.document),
   );
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
@@ -337,7 +339,7 @@ export function PageBuilder({
     try {
       if (!metadata.title.trim() || !metadata.headline.trim())
         throw new Error("عنوان برگه و تیتر اصلی را کامل کنید.");
-      if (current.payload.kind !== "home" && current.payload.kind !== "page")
+      if (current.payload.kind === "faq")
         throw new Error("این نوع محتوا با صفحه‌ساز سازگار نیست.");
       const document: VisualDocument = fromEditorData(snapshot, globals);
       document.purpose = initialDocument.purpose || "page";
@@ -474,6 +476,12 @@ export function PageBuilder({
             className="inline-flex min-h-11 items-center px-3 text-primary-hover"
           >
             برگه‌ها
+          </Link>
+          <Link
+            href={`/admin/content/${current.id}?mode=metadata`}
+            className="inline-flex min-h-11 items-center px-3 text-primary-hover"
+          >
+            اطلاعات فهرست معرفی
           </Link>
           <a
             href="/admin/media"
@@ -667,51 +675,69 @@ export function PageBuilder({
             : globals
         }
       >
-        <ToolsContext.Provider
+        <BuilderPreview.Provider
           value={{
-            globals,
-            busy: busy || current.is_archived,
-            publish: (value) => void save(true, value),
+            content: {
+              ...initial,
+              title: metadata.title,
+              payload:
+                current.payload.kind === "faq"
+                  ? current.payload
+                  : {
+                      ...current.payload,
+                      headline: metadata.headline,
+                      summary: metadata.summary,
+                    },
+            },
+            purpose: initialDocument.purpose || "page",
           }}
         >
-          <Puck
-            config={config}
-            data={data}
-            onChange={(value) => {
-              if (
-                canonicalJSON(
-                  fromEditorData(value, initialDocument.globals),
-                ) ===
-                canonicalJSON(
-                  fromEditorData(latest.current, initialDocument.globals),
+          <ToolsContext.Provider
+            value={{
+              globals,
+              busy: busy || current.is_archived,
+              publish: (value) => void save(true, value),
+            }}
+          >
+            <Puck
+              config={config}
+              data={data}
+              onChange={(value) => {
+                if (
+                  canonicalJSON(
+                    fromEditorData(value, initialDocument.globals),
+                  ) ===
+                  canonicalJSON(
+                    fromEditorData(latest.current, initialDocument.globals),
+                  )
                 )
-              )
-                return;
-              latest.current = value;
-              setData(value);
-              setDirty(true);
-            }}
-            onPublish={(value) => void save(true, value)}
-            dictionary={dictionary}
-            plugins={editorPlugins}
-            headerTitle="ویرایش بصری"
-            headerPath={`/${current.slug === "home" ? "" : current.slug}`}
-            height="min(1100px,84vh)"
-            viewports={editorViewports}
-            iframe={editorIframe}
-            overrides={{
-              iframe: RtlFrame,
-              headerActions: HeaderTools,
-            }}
-            permissions={{
-              edit: !busy && !current.is_archived,
-              drag: !busy && !current.is_archived,
-              delete: !busy && !current.is_archived,
-              duplicate: !busy && !current.is_archived,
-              insert: !busy && !current.is_archived,
-            }}
-          />
-        </ToolsContext.Provider>
+                  return;
+                latest.current = value;
+                setData(value);
+                setDirty(true);
+              }}
+              onPublish={(value) => void save(true, value)}
+              dictionary={dictionary}
+              plugins={editorPlugins}
+              headerTitle="ویرایش بصری"
+              headerPath={`/${current.slug === "home" ? "" : current.slug}`}
+              height="min(1100px,84vh)"
+              viewports={editorViewports}
+              iframe={editorIframe}
+              overrides={{
+                iframe: RtlFrame,
+                headerActions: HeaderTools,
+              }}
+              permissions={{
+                edit: !busy && !current.is_archived,
+                drag: !busy && !current.is_archived,
+                delete: !busy && !current.is_archived,
+                duplicate: !busy && !current.is_archived,
+                insert: !busy && !current.is_archived,
+              }}
+            />
+          </ToolsContext.Provider>
+        </BuilderPreview.Provider>
       </BuilderTheme.Provider>
     </div>
   );

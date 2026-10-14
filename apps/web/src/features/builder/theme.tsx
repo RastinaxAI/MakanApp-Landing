@@ -2,7 +2,16 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { defaultGlobals, type DocumentGlobals } from "./types";
 import { globalCSS } from "./styles";
+import type { CmsContent } from "@/features/cms/types";
+import { DocumentPrelude } from "./prelude";
+import { usePuck } from "@puckeditor/core";
+import { fromEditorData, type EditorConfig } from "./adapter";
+import type { VisualDocument } from "./types";
 export const BuilderTheme = createContext<DocumentGlobals>(defaultGlobals);
+export const BuilderPreview = createContext<{
+  content?: CmsContent;
+  purpose?: VisualDocument["purpose"];
+}>({});
 export function DocumentRoot({
   scope,
   children,
@@ -11,9 +20,16 @@ export function DocumentRoot({
   children: ReactNode;
 }) {
   const globals = useContext(BuilderTheme);
+  const preview = useContext(BuilderPreview);
+  const puck = usePuck<EditorConfig>();
+  const document = fromEditorData(puck.appState.data, globals);
+  document.purpose = preview.purpose;
   return (
     <div className="builder-document" data-builder-scope={scope}>
       <style>{globalCSS(globals, scope)}</style>
+      {preview.content && (
+        <DocumentPrelude content={preview.content} document={document} />
+      )}
       {children}
     </div>
   );

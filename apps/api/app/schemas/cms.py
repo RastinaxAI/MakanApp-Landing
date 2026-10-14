@@ -97,6 +97,7 @@ class FeaturePayload(StrictSchema):
     evidence_reference: str = Field(default="", max_length=500)
     image_media_id: UUID | None = None
     body_html: str = Field(default="", max_length=64000)
+    document: VisualDocument | None = None
     _html = field_validator("body_html")(clean_html)
 
 
@@ -114,6 +115,7 @@ class AudiencePayload(StrictSchema):
     cta_href: str = Field(default="/features", max_length=500)
     boundary: Text
     body_html: str = Field(default="", max_length=64000)
+    document: VisualDocument | None = None
     _html = field_validator("body_html")(clean_html)
     _link = field_validator("cta_href")(safe_link)
 

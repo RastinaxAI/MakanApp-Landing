@@ -194,18 +194,26 @@ async function FaqPageContent({ category }: { category?: string }) {
     </section>
   );
 }
-export async function PublicFeature({ slug }: { slug: string }) {
-  const content = await publicGet<CmsContent>(
-    `features/${encodeURIComponent(slug)}`,
-  );
-  return <CmsRenderer content={content} />;
-}
-export async function PublicAudience({ slug }: { slug: string }) {
-  const [content, features] = await Promise.all([
-    publicGet<CmsContent>(`audiences/${encodeURIComponent(slug)}`),
+async function PublicMarketingDetail(
+  kind: "features" | "audiences",
+  slug: string,
+) {
+  const [content, features, audiences, faqs] = await Promise.all([
+    publicGet<CmsContent>(`${kind}/${encodeURIComponent(slug)}`),
     getFeatures(),
+    getAudiences(),
+    getFaqs(),
   ]);
   return (
-    <CmsRenderer content={content} features={asFeatures(features.items)} />
+    <CmsRenderer
+      content={content}
+      features={asFeatures(features.items)}
+      audiences={asAudiences(audiences.items)}
+      faqs={asFaqs(faqs.items)}
+    />
   );
 }
+export const PublicFeature = ({ slug }: { slug: string }) =>
+  PublicMarketingDetail("features", slug);
+export const PublicAudience = ({ slug }: { slug: string }) =>
+  PublicMarketingDetail("audiences", slug);

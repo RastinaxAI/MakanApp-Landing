@@ -22,6 +22,7 @@ import {
   PremiumFeatureStory,
   PremiumHero,
 } from "@/features/marketing/premium";
+import { DetailIntroduction } from "@/features/marketing/premium-sections";
 import { AparatPlayer } from "@/features/learning/player";
 import { EditableHeading, WidgetCarousel, WidgetTabs } from "./interactive";
 import type { BuilderContext, VisualNode } from "./types";
@@ -361,30 +362,53 @@ export function Widget({
         <SectionContent
           {...context}
           section={p.legacy_section}
-          index={Number(node.id.replace(/\D/g, "")) || 0}
+          index={node.id}
         />
       ) : null;
       break;
     case "Hero":
-      output = (
-        <PremiumHero
-          section={{
-            type: "hero",
-            title: p.title || "",
-            accent: p.accent,
-            kicker: p.kicker,
-            description: p.text || "",
-            items: items.map((item) => ({
-              title: item.title || "",
-              description: item.text || "",
-            })),
-            cta_href: p.href,
-            cta_label: p.label,
-          }}
-          image={image}
-          privatePreview={context.privatePreview}
-        />
-      );
+      output =
+        context.content.payload.kind === "feature" ||
+        context.content.payload.kind === "audience" ? (
+          <DetailIntroduction
+            kind={context.content.payload.kind}
+            roadmap={
+              context.content.payload.kind === "feature" &&
+              context.content.payload.readiness === "roadmap"
+            }
+            slug={context.content.slug}
+            image={image}
+            privatePreview={context.privatePreview}
+            section={{
+              type: "hero",
+              title: p.title || "",
+              accent: p.accent,
+              kicker: p.kicker,
+              description: p.text || "",
+              items: [],
+              cta_label: p.label,
+              cta_href: p.href,
+            }}
+          />
+        ) : (
+          <PremiumHero
+            section={{
+              type: "hero",
+              title: p.title || "",
+              accent: p.accent,
+              kicker: p.kicker,
+              description: p.text || "",
+              items: items.map((item) => ({
+                title: item.title || "",
+                description: item.text || "",
+              })),
+              cta_href: p.href,
+              cta_label: p.label,
+            }}
+            image={image}
+            privatePreview={context.privatePreview}
+          />
+        );
       break;
     case "FeatureStory": {
       const feature = context.features.find(
@@ -392,6 +416,7 @@ export function Widget({
       );
       output = feature ? (
         <PremiumFeatureStory
+          storyId={`story-${node.id}`}
           feature={feature}
           privatePreview={context.privatePreview}
         />

@@ -374,7 +374,7 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
         from app.services.learning import publication_checks as learning_checks
 
         learning_checks(payload)
-    if payload.kind in ("home", "page") and payload.document is not None:
+    if payload.kind in ("home", "page", "feature", "audience") and payload.document is not None:
         if payload.document.purpose in ("template", "section"):
             expose = False
         nodes = payload.document.all_nodes()
@@ -384,19 +384,31 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
             or (node.type == "LegacySection" and node.props.legacy_section["type"] == "hero")
             for node in nodes
         )
-        if h1_count != (1 if payload.kind == "home" else 0) and not (
-            payload.document.purpose == "template" and h1_count <= 1
+        expected_h1 = 1 if payload.kind in ("home", "feature", "audience") else 0
+        if h1_count != expected_h1 and not (
+            payload.kind == "page"
+            and payload.document.purpose in ("page", "template")
+            and h1_count <= 1
         ):
             raise ApiProblem(
                 422,
                 "HEADING_STRUCTURE",
-                "خانه باید یک تیتر اصلی داشته باشد؛ تیتر اصلی برگه از مشخصات آن خوانده می‌شود.",
+                "تیتر اصلی باید یکتا باشد. خانه و معرفی محصول/مخاطب یک H1 دارند؛ "
+                "برگه بدون H1 از مشخصات خود تیتر می‌گیرد.",
             )
         if not nodes:
             raise ApiProblem(422, "INCOMPLETE_CONTENT", "سند صفحه خالی است.")
-        if payload.kind == "home" and payload.document.purpose != "page":
+        if payload.kind != "page" and payload.document.purpose != "page":
             raise ApiProblem(422, "INVALID_PURPOSE", "صفحهٔ خانه باید برگهٔ عمومی بماند.")
         for node in nodes:
+            if node.type in ("Hero", "Heading") and not node.props.title.strip():
+                raise ApiProblem(422, "INCOMPLETE_WIDGET", "عنوان ویجت را کامل کنید.")
+            if (
+                node.type == "LegacySection"
+                and node.props.legacy_section["type"] == "hero"
+                and not node.props.legacy_section["title"].strip()
+            ):
+                raise ApiProblem(422, "INCOMPLETE_WIDGET", "عنوان اصلی بخش موجود را کامل کنید.")
             references = (
                 [("feature", node.props.feature_slug)]
                 if node.type in ("FeatureStory", "ProductShowcase")

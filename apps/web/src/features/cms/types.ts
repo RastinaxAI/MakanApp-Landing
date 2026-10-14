@@ -43,6 +43,7 @@ export type FeaturePayload = {
   evidence_reference?: string;
   image_media_id?: string | null;
   body_html?: string;
+  document?: VisualDocument | null;
 };
 export type AudiencePayload = {
   kind: "audience";
@@ -58,6 +59,7 @@ export type AudiencePayload = {
   cta_href: string;
   boundary: string;
   body_html?: string;
+  document?: VisualDocument | null;
 };
 export type FaqPayload = {
   kind: "faq";

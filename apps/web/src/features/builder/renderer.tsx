@@ -5,6 +5,7 @@ import { Widget } from "./widget";
 import { globalCSS } from "./styles";
 import type { BuilderContext, VisualDocument, VisualNode } from "./types";
 import type { BuilderSite } from "./types";
+import { DocumentPrelude } from "./prelude";
 
 export async function BuilderRenderer({
   document,
@@ -58,6 +59,7 @@ export async function BuilderRenderer({
   return (
     <div data-builder-scope={scope} className="builder-document">
       <style>{globalCSS(globals, scope)}</style>
+      <DocumentPrelude content={context.content} document={document} />
       {render(document.nodes)}
     </div>
   );

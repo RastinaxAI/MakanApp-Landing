@@ -1,15 +1,22 @@
 import { SourceLink as Link } from "@/features/leads/source-link";
-import { Fragment, type ReactNode } from "react";
-import { ArrowLeft, Check, ShieldCheck } from "lucide-react";
+import { type ReactNode } from "react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/layout/container";
 import { SectionHeading } from "@/components/layout/section-heading";
-import { ProductVisual } from "@/components/marketing/product-visual";
-import { CallToAction } from "@/components/marketing/call-to-action";
+
+import {
+  PremiumHero,
+  PremiumDemoInvitation,
+} from "@/features/marketing/premium";
+import {
+  DetailIntroduction,
+  PremiumProblem,
+  PremiumFeatures,
+  PremiumAudiences,
+  PremiumJourney,
+} from "@/features/marketing/premium-sections";
 import { ContentGrid } from "@/components/marketing/content-grid";
-import { FeatureIcon } from "@/components/marketing/feature-icon";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { Button } from "@/components/ui/button";
-import { AudienceCard } from "@/features/marketing/audience-card";
+
 import { ProductPreview } from "@/features/marketing/product-preview";
 import { FaqList, type FaqItem } from "@/features/marketing/faq-list";
 import { MediaImage } from "./media-image";
@@ -30,7 +37,7 @@ export function SectionContent({
   section,
   index,
   ...props
-}: LegacyRendererProps & { section: CmsSection; index: number }) {
+}: LegacyRendererProps & { section: CmsSection; index: number | string }) {
   const {
     content,
     features = [],
@@ -40,72 +47,82 @@ export function SectionContent({
   } = props;
   const image = content.media.find((m) => m.id === section.media_id);
   const headingId = `cms-section-${index}`;
+  const extras = (
+    <>
+      {section.body_html && (
+        <RichText html={section.body_html} privatePreview={privatePreview} />
+      )}
+      {image && (
+        <div className="mt-7">
+          <MediaImage image={image} privatePreview={privatePreview} />
+        </div>
+      )}
+      {section.cta_label && (
+        <Link href={section.cta_href || "/demo"} className="premium-story-link">
+          {section.cta_label}
+          <ArrowLeft size={17} aria-hidden="true" />
+        </Link>
+      )}
+    </>
+  );
   if (section.type === "hero")
+    return content.payload.kind === "feature" ||
+      content.payload.kind === "audience" ? (
+      <DetailIntroduction
+        section={section}
+        kind={content.payload.kind}
+        roadmap={
+          content.payload.kind === "feature" &&
+          content.payload.readiness === "roadmap"
+        }
+        slug={content.slug}
+        image={image}
+        privatePreview={privatePreview}
+      />
+    ) : (
+      <PremiumHero
+        section={section}
+        image={image}
+        privatePreview={privatePreview}
+      />
+    );
+  if (["challenge", "benefits"].includes(section.type))
     return (
-      <section
-        className="brand-hero border-b border-border"
-        data-section="hero"
-        aria-labelledby="hero-title"
+      <PremiumProblem section={section} suffix={String(index)}>
+        {extras}
+      </PremiumProblem>
+    );
+  if (section.type === "features")
+    return (
+      <PremiumFeatures
+        section={section}
+        features={features}
+        suffix={String(index)}
+        stories={content.kind === "home"}
       >
-        <Container className="hero-grid">
-          <div>
-            <p className="brand-kicker mb-6 inline-flex items-center rounded-full border border-border bg-card px-4 py-1.5 text-sm text-primary-hover shadow-soft">
-              {section.kicker}
-            </p>
-            <h1 id="hero-title" className="hero-heading">
-              {section.title}
-              <br />
-              <span className="text-primary">{section.accent}</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg leading-9 text-muted-foreground">
-              {section.description}
-            </p>
-            {section.body_html && (
-              <RichText
-                html={section.body_html}
-                privatePreview={privatePreview}
-              />
-            )}
-            <div className="mt-8 flex flex-col gap-3 tablet:flex-row">
-              <Button asChild size="lg">
-                <Link href={section.cta_href || "/demo"}>
-                  {section.cta_label}
-                  <ArrowLeft aria-hidden="true" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="/features">مشاهده امکانات</Link>
-              </Button>
-            </div>
-            <div className="mt-7 flex flex-wrap gap-5 text-sm text-muted-foreground">
-              {section.items.map((item, i) => (
-                <span key={i} className="flex items-center gap-2">
-                  <Check
-                    size={16}
-                    className="text-primary"
-                    aria-hidden="true"
-                  />
-                  {item.title}
-                </span>
-              ))}
-            </div>
-          </div>
-          {image ? (
-            <MediaImage
-              image={image}
-              priority
-              privatePreview={privatePreview}
-            />
-          ) : (
-            <ProductVisual phone />
-          )}
-        </Container>
-      </section>
+        {extras}
+      </PremiumFeatures>
+    );
+  if (section.type === "audiences")
+    return (
+      <PremiumAudiences
+        section={section}
+        audiences={audiences}
+        suffix={String(index)}
+      >
+        {extras}
+      </PremiumAudiences>
+    );
+  if (section.type === "onboarding")
+    return (
+      <PremiumJourney section={section} suffix={String(index)}>
+        {extras}
+      </PremiumJourney>
     );
   if (section.type === "final-cta")
     return (
       <>
-        <CallToAction
+        <PremiumDemoInvitation
           title={section.title}
           description={section.description}
           label={section.cta_label}
@@ -204,55 +221,7 @@ export function SectionContent({
           title={section.title}
           description={section.description}
         />
-        {section.type === "features" ? (
-          <>
-            <div className="layout-grid">
-              {section.items.map((item, i) => (
-                <article
-                  key={i}
-                  className="brand-card flex min-w-0 flex-col rounded-2xl border border-border bg-background p-6"
-                >
-                  <FeatureIcon
-                    slug={item.href?.split("/").pop() || "school"}
-                    className="mb-5 text-primary-hover"
-                  />
-                  <h3 className="text-lg font-semibold">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-8 text-muted-foreground">
-                    {item.description}
-                  </p>
-                  {item.href && (
-                    <Link
-                      href={item.href}
-                      className="mt-auto inline-flex min-h-11 items-center gap-2 rounded-lg pt-5 font-medium text-primary-hover"
-                    >
-                      آشنایی با {item.title}
-                      <ArrowLeft size={16} aria-hidden="true" />
-                    </Link>
-                  )}
-                </article>
-              ))}
-            </div>
-            {features
-              .filter((f) => f.readiness === "roadmap")
-              .map((f) => (
-                <Link
-                  key={f.slug}
-                  href={`/features/${f.slug}`}
-                  className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-lg text-warning"
-                >
-                  <StatusBadge status={f.readiness} />
-                  آشنایی با مسیر {f.title} ماکان
-                  <ArrowLeft size={16} aria-hidden="true" />
-                </Link>
-              ))}
-          </>
-        ) : section.type === "audiences" ? (
-          <div className="layout-grid" data-testid="role-grid">
-            {audiences.map((a) => (
-              <AudienceCard key={a.slug} audience={a} />
-            ))}
-          </div>
-        ) : ["experience", "product-experience"].includes(section.type) ? (
+        {["experience", "product-experience"].includes(section.type) ? (
           <ProductPreview features={features} privatePreview={privatePreview} />
         ) : section.type === "faq" ? (
           <FaqList
@@ -264,23 +233,6 @@ export function SectionContent({
                 : faqs
             }
           />
-        ) : section.type === "onboarding" ? (
-          <ol className="layout-grid">
-            {section.items.map((item, i) => (
-              <li
-                key={i}
-                className="rounded-2xl border border-border bg-card p-6"
-              >
-                <span className="mb-5 inline-flex size-11 items-center justify-center rounded-full bg-secondary font-semibold text-primary-hover">
-                  {(i + 1).toLocaleString("fa-IR")}
-                </span>
-                <h3 className="text-lg font-semibold">{item.title}</h3>
-                <p className="mt-3 text-sm leading-8 text-muted-foreground">
-                  {item.description}
-                </p>
-              </li>
-            ))}
-          </ol>
         ) : (
           <ContentGrid
             media={content.media}

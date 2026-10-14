@@ -1,0 +1,23 @@
+{
+  "build": "passed",
+  "lint": "passed",
+  "typecheck": "passed",
+  "ruff": "passed",
+  "api_tests_passed": 4,
+  "browser_tests_passed": 3,
+  "engines": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "routes": 19,
+  "widths": [
+    360,
+    768,
+    1440
+  ],
+  "axe_violations": 0,
+  "conversion_main_applied": false,
+  "backup_restored_and_verified": true,
+  "full_api_suite": "reserved for final integration; preliminary run interrupted"
+}

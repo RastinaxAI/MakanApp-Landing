@@ -128,8 +128,22 @@ export function nodeCSS(node: VisualNode, scope = "", privatePreview = false) {
   )
     return "";
   const selector = `${scope ? `[data-builder-scope="${scope}"] ` : ""}[data-node-id="${node.id}"]`;
-  const rule = (style: StyleValues, suffix = "") =>
-    `${selector}${suffix}{${declarations(style, false, privatePreview)}}${selector}${suffix}>.builder-layout{${declarations(style, true)}}`;
+  const rule = (style: StyleValues, suffix = "") => {
+    const typography = Object.fromEntries(
+      Object.entries(style).filter(([key]) =>
+        [
+          "font_size",
+          "font_family",
+          "font_weight",
+          "line_height",
+          "letter_spacing",
+          "color",
+          "text_align",
+        ].includes(key),
+      ),
+    ) as StyleValues;
+    return `${selector}${suffix}{${declarations(style, false, privatePreview)}}${selector}${suffix}>.builder-layout{${declarations(style, true)}}${selector}${suffix} .builder-widget-title{${declarations(typography, false)}}`;
+  };
   return (
     rule(node.styles.base) +
     `@media(max-width:1023px){${rule(node.styles.tablet)}}` +

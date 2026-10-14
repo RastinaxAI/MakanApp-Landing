@@ -80,7 +80,7 @@ export function PremiumHero({
             <span className="h-px w-8 bg-current" />{" "}
             {section.kicker || "ماکان؛ همراه مدرسه"}
           </p>
-          <h1 id="hero-title">
+          <h1 id="hero-title" className="builder-widget-title">
             {section.title}
             <span>{section.accent}</span>
           </h1>
@@ -136,10 +136,12 @@ export function PremiumFeatureStory({
   feature,
   order = 1,
   privatePreview = false,
+  storyId,
 }: {
   feature: Feature;
   order?: number;
   privatePreview?: boolean;
+  storyId?: string;
 }) {
   const image = feature.media?.find(
     (asset) => asset.id === feature.image_media_id,
@@ -148,7 +150,7 @@ export function PremiumFeatureStory({
   return (
     <section
       className={`premium-story ${order % 2 === 0 ? "premium-story-reverse" : ""}`}
-      aria-labelledby={`story-${feature.slug}`}
+      aria-labelledby={storyId || `story-${feature.slug}`}
     >
       <Container className="premium-story-layout">
         <div className="premium-story-copy">
@@ -156,7 +158,12 @@ export function PremiumFeatureStory({
           <p className="premium-story-number">
             {String(order).padStart(2, "0")} <span>/ {feature.title}</span>
           </p>
-          <h2 id={`story-${feature.slug}`}>{feature.headline}</h2>
+          <h2
+            id={storyId || `story-${feature.slug}`}
+            className="builder-widget-title"
+          >
+            {feature.headline}
+          </h2>
           <p className="premium-story-summary">{feature.summary}</p>
           <ul className="premium-story-benefits">
             {feature.benefits.slice(0, 3).map((benefit, index) => (
@@ -243,7 +250,7 @@ export function PremiumDemoInvitation({
               <ShieldCheck size={18} aria-hidden="true" /> قدم بعدی، یک گفت‌وگوی
               روشن
             </p>
-            <h2>{title}</h2>
+            <h2 className="builder-widget-title">{title}</h2>
             <p>{description}</p>
           </div>
           <Link
