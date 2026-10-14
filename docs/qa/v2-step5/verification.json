@@ -1,0 +1,23 @@
+{
+  "build": "passed",
+  "lint": "passed",
+  "typecheck": "passed",
+  "ruff_apps_and_scripts": "passed",
+  "api_passed": 26,
+  "browser_passed": 3,
+  "engines": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "responsive_widths": [
+    360,
+    768,
+    1440
+  ],
+  "axe_violations": 0,
+  "drag_real_pointer_events": "passed",
+  "database_migration": "0008 to 0009 tested with existing request",
+  "main_database_migrated": false,
+  "external_crm_notifications": "not enabled; internal delivery is real PostgreSQL"
+}

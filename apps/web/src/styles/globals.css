@@ -3,6 +3,7 @@
 @import "./tokens.css";
 @import "./premium.css";
 @import "./premium-sections.css";
+@import "./crm.css";
 
 @layer base {
   * { @apply border-border; }

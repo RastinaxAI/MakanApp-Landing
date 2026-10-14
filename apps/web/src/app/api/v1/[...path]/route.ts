@@ -26,11 +26,20 @@ function failure(status: number, code: string) {
 async function bridge(request: Request, context: Context) {
   const path = (await context.params).path.join("/");
   const allowed =
-    /^(?:site\/builder|admin\/builder\/(?:library|settings|validate))$/.test(path) ||
-    /^admin\/(?:content|pages|features|audiences|faqs)\/[0-9a-f-]{36}\/revisions\/[0-9a-f-]{36}\/restore$/.test(path) ||
-    /^admin\/(?:auth\/(?:config|otp\/(?:request|verify|reauth))|settings\/sms(?:\/check)?)$/.test(path) ||
+    /^admin\/crm\/(?:dashboard|automations|schools(?:\/[0-9a-f-]{36}(?:\/customer)?)?|(?:contacts|opportunities|activities|demos|views)(?:\/[0-9a-f-]{36})?|notifications(?:\/[0-9a-f-]{36}\/read)?)$/.test(
+      path,
+    ) ||
+    /^(?:site\/builder|admin\/builder\/(?:library|settings|validate))$/.test(
+      path,
+    ) ||
+    /^admin\/(?:content|pages|features|audiences|faqs)\/[0-9a-f-]{36}\/revisions\/[0-9a-f-]{36}\/restore$/.test(
+      path,
+    ) ||
+    /^admin\/(?:auth\/(?:config|otp\/(?:request|verify|reauth))|settings\/sms(?:\/check)?)$/.test(
+      path,
+    ) ||
     /^(?:analytics\/(?:config|events)|admin\/analytics\/metrics)$/.test(path) ||
-    /^(?:forms\/token|leads\/demo|contact|admin\/leads(?:\/(?:assignees|metrics|[0-9a-f-]{36}(?:\/(?:notes|history))?))?)$/.test(
+    /^(?:forms\/token|leads\/demo|contact|admin\/leads(?:\/(?:assignees|metrics|[0-9a-f-]{36}(?:\/(?:notes|history|profile|customer))?))?)$/.test(
       path,
     ) ||
     /^(?:admin\/(?:learn\/(?:contents|series)|blog\/articles)(?:\/[0-9a-f-]{36}(?:\/(?:preview|revisions|publish|schedule|cancel-schedule|unpublish))?)?|admin\/learn\/(?:categories|tags)(?:\/[0-9a-f-]{36})?|learn\/(?:contents|series|categories|tags)(?:\/[\p{L}\p{N}_-]+)?|blog\/articles(?:\/[\p{L}\p{N}_-]+)?|learn\/views\/[0-9a-f-]{36}(?:\/ticket)?)$/u.test(
@@ -104,7 +113,9 @@ async function bridge(request: Request, context: Context) {
       body,
       cache: "no-store",
       redirect: "manual",
-      signal: AbortSignal.timeout(path === "admin/media" && request.method === "POST" ? 30000 : 12000),
+      signal: AbortSignal.timeout(
+        path === "admin/media" && request.method === "POST" ? 30000 : 12000,
+      ),
     });
     const out = new Headers({
       "Cache-Control": "no-store",
@@ -134,3 +145,4 @@ export const GET = bridge;
 export const POST = bridge;
 export const PATCH = bridge;
 export const DELETE = bridge;
+export const PUT = bridge;

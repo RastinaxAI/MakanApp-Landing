@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from app.api.v1.routes.admin import router as admin_router
 from app.api.v1.routes.analytics import router as analytics_router
 from app.api.v1.routes.cms import router as cms_router
+from app.api.v1.routes.crm import router as crm_router
 from app.api.v1.routes.health import router
 from app.api.v1.routes.leads import router as leads_router
 from app.api.v1.routes.learning import router as learning_router
@@ -61,6 +62,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(cms_router, prefix="/api/v1")
     app.include_router(learning_router, prefix="/api/v1")
     app.include_router(leads_router, prefix="/api/v1")
+    app.include_router(crm_router, prefix="/api/v1")
     app.include_router(seo_router, prefix="/api/v1")
     app.include_router(analytics_router, prefix="/api/v1")
     return app

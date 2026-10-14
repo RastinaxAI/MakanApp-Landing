@@ -116,6 +116,9 @@ class SubmissionResult(StrictSchema):
 
 
 class LeadQuery(PaginationQuery):
+    tag: str = Field(default="", max_length=60)
+    school_id: UUID | None = None
+    lead_id: UUID | None = None
     kind: Kind | None = None
     status: Status | None = None
     source: Source | None = None
@@ -150,6 +153,7 @@ class LeadSummary(StrictSchema):
     last_activity_at: datetime
     purged_at: datetime | None
     version: int
+    details: dict = Field(default_factory=dict)
 
 
 class LeadDetail(LeadSummary):

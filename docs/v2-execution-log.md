@@ -11,8 +11,8 @@
 | STEP 2 | پایان‌یافته؛ ۲۲۴ تست API، ۳ سناریوی مرورگر، Build/lint/typecheck؛ v2-core-editor.md |
 | STEP 3 | پایان‌یافته؛ ۴۳ تست API، سناریوهای ۳ مرورگر، Build/lint/typecheck؛ v2-advanced-editor.md |
 | STEP 4 | پایان‌یافته؛ ۴ تست انتقال/انتشار، ۳ مرورگر، ۱۹ مسیر، axe، Build/lint/typecheck/Ruff؛ v2-premium-website.md |
-| STEP 5 | در حال اجرا؛ ارتقای همان CRM |
-| STEP 6 | آغاز نشده |
+| STEP 5 | پایان‌یافته؛ ۲۶ تست API، سه مرورگر، Drag & Drop، axe، Build/lint/typecheck/Ruff؛ v2-demo-crm.md |
+| STEP 6 | در حال اجرا؛ یکپارچه‌سازی و استقرار محلی با حفظ داده |
 
 رنگ و لوگوی مصوب حفظ می‌شوند. تصاویر واقعی محصول در Workspace موجود نیستند؛ تصویرسازی‌ها با برچسب صریح از اسکرین‌شات محصول تفکیک می‌شوند و کنترل رسانه امکان جایگزینی با فایل تأییدشده را فراهم می‌کند.
 

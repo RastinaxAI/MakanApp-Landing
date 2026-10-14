@@ -15,7 +15,7 @@ from uuid import uuid4
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps/api"))
-from app.operations.backup_crypto import decrypt, encrypt, pack, sha256, unpack  # noqa: E402
+from app.operations.backup_crypto import decrypt, encrypt, pack, sha256, unpack
 
 
 def run(arguments):
@@ -106,7 +106,7 @@ def main():
         encrypt(stage / "snapshot.tar.gz", archive, key)
         encrypt(ROOT / ".env", environment, key)
         decrypt(archive, stage / "verified.tar.gz", key)
-        restored_metadata, manifest = unpack(stage / "verified.tar.gz", stage / "verified")
+        restored_metadata, _manifest = unpack(stage / "verified.tar.gz", stage / "verified")
         decrypt(environment, stage / "verified.env", key)
         if (stage / "verified.env").read_bytes() != (ROOT / ".env").read_bytes():
             raise RuntimeError("Environment backup verification failed")

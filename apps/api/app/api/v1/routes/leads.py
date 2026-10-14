@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_session
 from app.schemas.common import ErrorResponse, PaginatedResponse, PaginationQuery
+from app.schemas.crm import CrmQuery, CustomerRecord, ManualLeadInput, ProfileInput
 from app.schemas.leads import (
     Assignee,
     ContactSubmission,
@@ -21,7 +22,7 @@ from app.schemas.leads import (
     NoteInput,
     SubmissionResult,
 )
-from app.services import leads
+from app.services import crm, leads
 
 router = APIRouter(
     tags=["leads"],
@@ -75,6 +76,23 @@ def metrics(request: Request, session: SessionDep, query: Annotated[LeadQuery, Q
 @router.get("/admin/leads/{identifier}", response_model=LeadDetail)
 def detail(identifier: UUID, request: Request, session: SessionDep):
     return leads.detail(request, session, identifier)
+
+
+@router.post("/admin/leads", status_code=201, response_model=LeadDetail)
+def create_lead(data: ManualLeadInput, request: Request, session: SessionDep):
+    return crm.manual_lead(request, session, data)
+
+
+@router.patch("/admin/leads/{identifier}/profile", response_model=LeadDetail)
+def update_profile(identifier: UUID, data: ProfileInput, request: Request, session: SessionDep):
+    return crm.profile_update(request, session, identifier, data)
+
+
+@router.get("/admin/leads/{identifier}/customer", response_model=CustomerRecord)
+def customer(
+    identifier: UUID, request: Request, session: SessionDep, query: Annotated[CrmQuery, Query()]
+):
+    return crm.customer(request, session, identifier, query)
 
 
 @router.patch("/admin/leads/{identifier}", response_model=LeadDetail)

@@ -18,6 +18,7 @@ from app.models import LearningView
 from app.services.analytics import purge as analytics_purge
 from app.services.auth import now_utc
 from app.services.auth_maintenance import cleanup_expired
+from app.services.crm import automations, purge_schools
 from app.services.leads import purge as leads_purge
 
 LOCK = 74120410
@@ -45,6 +46,8 @@ def cycle(engine, max_batches=100):
                 "learning": learning_purge,
                 "leads": lambda s: leads_purge(s, 500),
                 "analytics": analytics_purge,
+                "crm_retention": purge_schools,
+                "crm_automations": automations,
             }
             for name, job in jobs.items():
                 totals = {}

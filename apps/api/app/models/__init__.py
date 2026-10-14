@@ -16,6 +16,17 @@ from app.models.cms import (
     SiteSetting,
 )
 from app.models.content import Page, PageRevision
+from app.models.crm import (
+    Activity,
+    Contact,
+    DemoSession,
+    LeadProfile,
+    Notification,
+    Opportunity,
+    SavedView,
+    School,
+    StageHistory,
+)
 from app.models.leads import Lead, LeadHistory, LeadNote, LeadReceipt
 from app.models.learning import (
     LearningCategory,
@@ -30,6 +41,15 @@ from app.models.learning import (
 from app.models.otp import AdminOtp, SmsConfiguration
 
 __all__ = [
+    "Activity",
+    "Contact",
+    "DemoSession",
+    "LeadProfile",
+    "Notification",
+    "Opportunity",
+    "SavedView",
+    "School",
+    "StageHistory",
     "AdminOtp",
     "SmsConfiguration",
     "AnalyticsEvent",

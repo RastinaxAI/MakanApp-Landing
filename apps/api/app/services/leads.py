@@ -199,6 +199,9 @@ def submit(data: DemoSubmission | ContactSubmission, kind: str, request: Request
                     lead_id=lead.id, changes={"status": {"from": None, "to": "new"}}, created_at=now
                 )
             )
+            from app.services.crm import ingest
+
+            ingest(session, lead)
             audit(
                 session,
                 request,
@@ -234,6 +237,18 @@ def projection(row, detail=False):
 
 def conditions(query: LeadQuery):
     result = []
+    from app.models.crm import LeadProfile
+
+    if query.tag:
+        result.append(
+            Lead.id.in_(select(LeadProfile.lead_id).where(LeadProfile.tags.contains([query.tag])))
+        )
+    if query.school_id:
+        result.append(
+            Lead.id.in_(select(LeadProfile.lead_id).where(LeadProfile.school_id == query.school_id))
+        )
+    if query.lead_id:
+        result.append(Lead.id == query.lead_id)
     for key in ("kind", "status", "source", "assigned_to"):
         if value := getattr(query, key):
             result.append(getattr(Lead, key) == value)
@@ -351,6 +366,12 @@ def update_lead(request, session, identifier, data: LeadUpdate):
                 )
             )
             audit(session, request, "lead.updated", admin.id, row.id, changes, "lead")
+            if "assigned_to" in changes and row.assigned_to:
+                from app.services.crm import notify
+
+                notify(
+                    session, "assigned", f"assigned:{row.id}:{row.version}", row.id, row.assigned_to
+                )
         return projection(row, True)
 
 
@@ -448,6 +469,9 @@ def purge(session, batch_size=1000, now=None):
         .with_for_update(skip_locked=True)
     ).all()
     for row in rows:
+        from app.services.crm import purge_copies
+
+        purge_copies(session, row, now)
         session.execute(delete(LeadNote).where(LeadNote.lead_id == row.id))
         session.execute(delete(LeadReceipt).where(LeadReceipt.lead_id == row.id))
         row.full_name = row.contact_value = row.fingerprint = None

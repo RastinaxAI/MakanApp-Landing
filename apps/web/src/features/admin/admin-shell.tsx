@@ -95,6 +95,12 @@ export function AdminShell({
     ...(profile.capabilities.includes("leads")
       ? [
           {
+            href: "/admin/crm",
+            label: "فروش و پروندهٔ مدارس",
+            icon: BarChart3,
+            group: "ارتباط با مشتری",
+          },
+          {
             href: "/admin/leads",
             label: "درخواست‌ها و پیگیری",
             icon: Users,
@@ -234,7 +240,11 @@ export function AdminShell({
               {navigation(true)}
             </SheetContent>
           </Sheet>
-          <Link href="/admin" prefetch={false} className="flex items-center gap-3 rounded-md">
+          <Link
+            href="/admin"
+            prefetch={false}
+            className="flex items-center gap-3 rounded-md"
+          >
             <Image
               src="/brand/makan-logo.png"
               alt=""

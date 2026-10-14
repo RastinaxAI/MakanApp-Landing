@@ -1,0 +1,60 @@
+@layer components {
+  .crm-control {
+    @apply min-h-12 w-full min-w-0 rounded-lg border border-input bg-card px-3 py-2 text-sm;
+  }
+  .crm-surface {
+    @apply min-w-0 rounded-2xl border border-border bg-card p-4 tablet:p-6;
+  }
+  .crm-heading {
+    @apply mb-4 flex flex-wrap items-center justify-between gap-3;
+  }
+  .crm-table-scroll {
+    @apply min-w-0 max-w-full overflow-x-auto rounded-xl border border-border bg-card;
+  }
+  .crm-table {
+    @apply w-full min-w-[650px] border-collapse text-start text-sm;
+  }
+  .crm-table th {
+    @apply bg-muted px-4 py-4 text-start font-semibold;
+  }
+  .crm-table td {
+    @apply border-t border-border px-4 py-4 leading-7;
+  }
+  .crm-table tbody tr:hover {
+    @apply bg-secondary/40;
+  }
+  .crm-chip {
+    @apply inline-flex min-h-8 items-center rounded-lg bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground;
+  }
+  .crm-empty {
+    @apply rounded-xl border border-dashed border-input px-6 py-10 text-center text-sm leading-8 text-muted-foreground;
+  }
+  .crm-board {
+    @apply grid max-w-full grid-flow-col auto-cols-[280px] gap-4 overflow-x-auto pb-5;
+  }
+  .crm-lane {
+    @apply min-h-56 rounded-xl border border-border bg-muted p-3;
+  }
+  .crm-lane:focus-within {
+    @apply border-ring;
+  }
+  .crm-opportunity {
+    @apply mb-3 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-xs;
+  }
+  .crm-metric {
+    @apply rounded-xl border border-border bg-card p-4;
+  }
+  .crm-metric strong {
+    @apply mt-3 block text-3xl font-semibold tabular-nums;
+  }
+  .crm-timeline {
+    @apply grid gap-0;
+  }
+  .crm-timeline li {
+    @apply relative border-s-2 border-border py-5 ps-6;
+  }
+  .crm-timeline li::before {
+    content: "";
+    @apply absolute -start-[6px] top-7 size-2.5 rounded-full bg-primary;
+  }
+}
