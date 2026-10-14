@@ -23,6 +23,9 @@ control = make_url(os.environ["TEST_DATABASE_ADMIN_URL"])
 if control.host != "127.0.0.1" or control.port != 15432 or control.database != "makan_test_control":
     raise RuntimeError("Only the dedicated loopback test database may be used")
 name = "makan_test_e2e_" + uuid4().hex
+base_url = os.environ.get("E2E_BASE_URL", "http://127.0.0.1:3100")
+if base_url not in ("http://127.0.0.1:3100", "http://127.0.0.1:3200"):
+    raise RuntimeError("Only dedicated loopback browser fixtures are allowed")
 admin_url = control.set(drivername="postgresql")
 owner = control.set(
     database=name, username="makan_migrator", password=os.environ["TEST_MIGRATION_DB_PASSWORD"]
@@ -60,7 +63,7 @@ try:
         auth_otp_debug=True,
         auth_otp_resend_seconds=1,
         auth_legacy_password_login=os.environ.get("E2E_OTP_ONLY") != "1",
-        auth_allowed_origins=["http://127.0.0.1:3100"],
+        auth_allowed_origins=[base_url],
         auth_login_ip_limit=1000,
         auth_login_account_limit=200,
         auth_challenge_limit=1000,

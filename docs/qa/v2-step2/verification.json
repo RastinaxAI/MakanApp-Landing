@@ -1,0 +1,20 @@
+{
+  "api_tests": 224,
+  "lint": "passed",
+  "typescript": "passed",
+  "production_build": "passed",
+  "engines": [
+    "chromium",
+    "firefox",
+    "webkit"
+  ],
+  "database_counts_preserved": {
+    "pages": 26,
+    "published": 26,
+    "revisions": 29,
+    "media": 0,
+    "leads": 0,
+    "admins": 1,
+    "head": "0008_phone_otp"
+  }
+}

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AdminRequestError, adminRequest, resetAdminNavigation } from "./client";
+import { CmsReady } from "@/features/cms/ready";
 
 export function normalizeDigits(value: string) {
   return value.replace(/[۰-۹٠-٩]/g, (digit) => String("۰۱۲۳۴۵۶۷۸۹".includes(digit) ? "۰۱۲۳۴۵۶۷۸۹".indexOf(digit) : "٠١٢٣٤٥٦٧٨٩".indexOf(digit)));
@@ -48,7 +49,7 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
       setError(error instanceof Error ? error.message : "ورود انجام نشد.");
     }
   });
-  return <form onSubmit={submit} noValidate className="space-y-6">
+  return <CmsReady disabled={isSubmitting} legend="ورود مدیر وب‌سایت"><form onSubmit={submit} noValidate className="space-y-6">
     {debug && <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm leading-7 text-amber-900"><strong>حالت توسعه فعال است</strong><p>پیامکی ارسال نمی‌شود. کد آزمایشی: <b dir="ltr" className="font-mono tracking-widest">111111</b></p></div>}
     <div className="space-y-2">
       <Label htmlFor="admin-phone">شماره همراه</Label>
@@ -64,5 +65,5 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
     <Button type="submit" className="h-12 w-full" disabled={isSubmitting}>{isSubmitting ? "در حال بررسی…" : sent ? "ورود به پنل" : "دریافت کد ورود"}<ArrowLeft aria-hidden="true" /></Button>
     {sent && <div className="flex items-center justify-between gap-3 text-sm"><Button type="button" variant="ghost" disabled={isSubmitting} onClick={() => { setSent(false); setError(""); }}>تغییر شماره</Button><Button type="button" variant="ghost" disabled={isSubmitting || remaining > 0} onClick={async () => { setError(""); try { await send(number); } catch(error) { setError(error instanceof Error ? error.message : "ارسال انجام نشد."); } }}>{remaining > 0 ? `ارسال دوباره (${remaining.toLocaleString("fa-IR")})` : "ارسال دوباره کد"}</Button></div>}
     <p className="flex items-center justify-center gap-2 text-xs text-muted-foreground"><ShieldCheck className="size-4" aria-hidden="true" /> ورود فقط برای مدیران ثبت‌شدهٔ وب‌سایت</p>
-  </form>;
+  </form></CmsReady>;
 }

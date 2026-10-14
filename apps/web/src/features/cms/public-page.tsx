@@ -48,6 +48,8 @@ export async function PublicPage({
     );
   }
   if (content.kind !== "page") notFound();
+  const dynamicSections = content.payload.kind === "page" && (content.payload.document || content.payload.sections.some((section) => ["faq", "trust", "audiences", "experience", "product-experience"].includes(section.type)));
+  const dynamicData = dynamicSections ? await Promise.all([getFeatures(), getAudiences(), getFaqs()]) : null;
   const extra =
     slug === "features"
       ? await getFeatures()
@@ -57,7 +59,7 @@ export async function PublicPage({
   return (
     <>
       <div id={slug === "privacy" ? "requests-policy" : undefined}>
-        <CmsRenderer content={content} />
+        <CmsRenderer content={content} features={dynamicData ? asFeatures(dynamicData[0].items) : []} audiences={dynamicData ? asAudiences(dynamicData[1].items) : []} faqs={dynamicData ? asFaqs(dynamicData[2].items) : []} />
       </div>
       {extra && (
         <section className="section-space">

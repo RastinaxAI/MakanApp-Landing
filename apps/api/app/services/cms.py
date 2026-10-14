@@ -93,6 +93,8 @@ def attach_media(session: Session, revision: PageRevision, data: dict):
 
 def create_revision(session: Session, item: Page, data: ContentInput, actor: UUID | None):
     payload = data.payload.model_dump(mode="json")
+    if payload.get("document") is not None:
+        payload["document"] = data.payload.document.model_dump(mode="json", exclude_none=True)
     if data.category_id:
         if data.payload.kind != "faq" or not session.get(FaqCategory, data.category_id):
             raise ApiProblem(422, "INVALID_CATEGORY", "دسته پرسش معتبر نیست.")
@@ -356,8 +358,25 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
         from app.services.learning import publication_checks as learning_checks
 
         learning_checks(payload)
+    if payload.kind in ("home", "page") and payload.document is not None:
+        nodes = payload.document.all_nodes()
+        h1_count = sum(
+            node.type == "Hero"
+            or (node.type == "Heading" and node.props.level == 1)
+            or (node.type == "LegacySection" and node.props.legacy_section["type"] == "hero")
+            for node in nodes
+        )
+        if h1_count != (1 if payload.kind == "home" else 0):
+            raise ApiProblem(
+                422,
+                "HEADING_STRUCTURE",
+                "خانه باید یک تیتر اصلی داشته باشد؛ تیتر اصلی برگه از مشخصات آن خوانده می‌شود.",
+            )
+        if not nodes:
+            raise ApiProblem(422, "INCOMPLETE_CONTENT", "سند صفحه خالی است.")
     if not headline.strip() or (
         payload.kind == "home"
+        and payload.document is None
         and not next(s.title for s in payload.sections if s.type == "hero").strip()
     ):
         raise ApiProblem(422, "INCOMPLETE_CONTENT", "عنوان عمومی محتوا نباید خالی باشد.")
@@ -380,6 +399,43 @@ def publication_checks(session: Session, item: Page, revision: PageRevision, exp
         if expose and revision.content_json.get("visibility", True):
             media.visibility = "public"
     revision.reviewed_at = now_utc()
+
+
+def restore_revision(
+    request: Request, session: Session, resource: str, entity_id: UUID, revision_id: UUID
+):
+    """Create a new working snapshot; published content and all historical data remain intact."""
+    with session.begin():
+        admin = authorize(request, session, True)
+        item = entity(session, resource, entity_id, True)
+        expected_version(request, item.row_version)
+        if item.is_archived:
+            raise ApiProblem(409, "ARCHIVED", "محتوای بایگانی‌شده قابل بازیابی برای ویرایش نیست.")
+        previous = session.get(PageRevision, revision_id)
+        if not previous or previous.page_id != item.id:
+            raise ApiProblem(404, "NOT_FOUND", "نسخه یافت نشد.")
+        data = ContentInput(
+            slug=item.slug.split(":", 1)[-1],
+            title=previous.title,
+            payload=previous.content_json["payload"],
+            seo=previous.seo_json,
+            visibility=previous.content_json.get("visibility", True),
+            sort_order=previous.content_json.get("sort_order", 0),
+            category_id=previous.category_id,
+        )
+        revision = create_revision(session, item, data, admin.id)
+        item.row_version += 1
+        audit(
+            session,
+            request,
+            "content.restored_to_draft",
+            admin.id,
+            item.id,
+            {"source_revision_id": str(revision_id), "revision_no": revision.revision_no},
+            "content",
+        )
+        session.flush()
+        return projection(item, revision, True, session)
 
 
 def transition(

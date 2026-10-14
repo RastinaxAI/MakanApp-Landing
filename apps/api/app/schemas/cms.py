@@ -4,6 +4,7 @@ from uuid import UUID
 
 from pydantic import EmailStr, Field, TypeAdapter, field_validator, model_validator
 
+from app.schemas.builder import VisualDocument
 from app.schemas.common import PaginationQuery, StrictSchema
 from app.schemas.learning import LearningPayload
 from app.services.html_safety import clean_html, safe_link
@@ -66,9 +67,12 @@ class LandingPayload(StrictSchema):
     summary: Text
     sections: list[Section] = Field(default_factory=list, max_length=24)
     legal_draft: bool = False
+    document: VisualDocument | None = None
 
     @model_validator(mode="after")
     def unique_home_sections(self):
+        if self.document is not None:
+            return self
         if self.kind == "home":
             types = [section.type for section in self.sections]
             if types.count("hero") != 1:

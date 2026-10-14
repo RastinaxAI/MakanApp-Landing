@@ -348,6 +348,15 @@ def publish(
     return cms.transition(request, session, resource, entity_id, "publish", data.revision_id)
 
 
+@router.post(
+    "/admin/{resource}/{entity_id}/revisions/{revision_id}/restore", response_model=AdminContent
+)
+def restore(
+    resource: Resource, entity_id: UUID, revision_id: UUID, request: Request, session: SessionDep
+):
+    return cms.restore_revision(request, session, resource, entity_id, revision_id)
+
+
 @router.post("/admin/{resource}/{entity_id}/schedule", response_model=AdminContent)
 def schedule(
     resource: Resource, entity_id: UUID, data: ScheduleAction, request: Request, session: SessionDep

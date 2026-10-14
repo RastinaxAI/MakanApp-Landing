@@ -26,6 +26,7 @@ function failure(status: number, code: string) {
 async function bridge(request: Request, context: Context) {
   const path = (await context.params).path.join("/");
   const allowed =
+    /^admin\/(?:content|pages|features|audiences|faqs)\/[0-9a-f-]{36}\/revisions\/[0-9a-f-]{36}\/restore$/.test(path) ||
     /^admin\/(?:auth\/(?:config|otp\/(?:request|verify|reauth))|settings\/sms(?:\/check)?)$/.test(path) ||
     /^(?:analytics\/(?:config|events)|admin\/analytics\/metrics)$/.test(path) ||
     /^(?:forms\/token|leads\/demo|contact|admin\/leads(?:\/(?:assignees|metrics|[0-9a-f-]{36}(?:\/(?:notes|history))?))?)$/.test(

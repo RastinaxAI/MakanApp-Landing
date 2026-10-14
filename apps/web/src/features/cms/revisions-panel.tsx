@@ -59,6 +59,14 @@ export function RevisionsPanel({
       setBusy(false);
     }
   }
+  async function restore(id: string) {
+    setBusy(true); setMessage("");
+    try {
+      const result = await adminRequest<AdminContent>(`content/${content.id}/revisions/${id}/restore`, "POST", undefined, current.row_version);
+      setCurrent(result); setMessage("نسخهٔ قبلی به پیش‌نویس تازه بازیابی شد؛ نسخهٔ عمومی حفظ شد.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "بازیابی انجام نشد."); }
+    finally { setBusy(false); }
+  }
   return (
     <CmsReady disabled={busy}>
       <div className="space-y-6">
@@ -103,6 +111,7 @@ export function RevisionsPanel({
                 >
                   انتشار این نسخه
                 </Button>
+                <Button variant="outline" disabled={busy} onClick={() => void restore(item.id)}>بازیابی برای ویرایش</Button>
               </div>
               {confirm === item.id && (
                 <div className="space-y-3 rounded-xl bg-warning-soft p-4">

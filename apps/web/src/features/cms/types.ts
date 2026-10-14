@@ -1,3 +1,4 @@
+import type { VisualDocument } from "@/features/builder/types";
 export type CmsBlock = {
   title: string;
   description: string;
@@ -25,6 +26,7 @@ export type LandingPayload = {
   summary: string;
   sections: CmsSection[];
   legal_draft?: boolean;
+  document?: VisualDocument | null;
 };
 export type FeaturePayload = {
   kind: "feature";
