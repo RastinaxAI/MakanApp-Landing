@@ -1,0 +1,250 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\OmidrezaBagheriyan\\AppData\\Local\\npm-cache\\_npx\\387698761821791d\\node_modules\\node\\bin\\node.exe",
+      "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.v2.config.ts",
+      "--max-failures=1",
+      "--project=chromium",
+      "builder.spec.ts"
+    ],
+    "configFile": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\playwright.v2.config.ts",
+    "rootDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "snapshotDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "actionTimeout": 30000,
+          "baseURL": "http://127.0.0.1:3200",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/v2-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "builder.spec.ts",
+      "file": "builder.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "visual canvas creates nested content, changes mobile style, saves refreshes publishes real demo and restores",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [
+                {
+                  "type": "media labels",
+                  "description": "جست‌وجوی تصاویر این صفحه / فایل تصویر / متن جایگزین تصویر"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 52598,
+                  "error": {
+                    "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('نام و نام خانوادگی', { exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"text\" maxlength=\"120\" name=\"full_name\" data-slot=\"input\" autocomplete=\"name\" aria-invalid=\"false\" id=\"demo-_R_16n4anpfbivb_-full_name\" class=\"h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:poi…/>\u001b[22m\n\u001b[2m    - fill(\"پذیرش صفحه‌ساز 4bafd927\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+                    "stack": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('نام و نام خانوادگی', { exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"text\" maxlength=\"120\" name=\"full_name\" data-slot=\"input\" autocomplete=\"name\" aria-invalid=\"false\" id=\"demo-_R_16n4anpfbivb_-full_name\" class=\"h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:poi…/>\u001b[22m\n\u001b[2m    - fill(\"پذیرش صفحه‌ساز 4bafd927\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n    at C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\builder.spec.ts:171:6",
+                    "location": {
+                      "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\builder.spec.ts",
+                      "column": 6,
+                      "line": 171
+                    },
+                    "snippet": "  169 |   await page\n  170 |     .getByLabel(\"نام و نام خانوادگی\", { exact: true })\n> 171 |     .fill(\"پذیرش صفحه‌ساز \" + randomUUID().slice(0, 8));\n      |      ^\n  172 |   await page.getByLabel(\"شماره تماس\", { exact: true }).fill(\"09120000001\");\n  173 |   await page\n  174 |     .getByLabel(\"نام مدرسه یا مؤسسه\", { exact: true })"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\builder.spec.ts",
+                        "column": 6,
+                        "line": 171
+                      },
+                      "message": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByLabel('نام و نام خانوادگی', { exact: true })\u001b[22m\n\u001b[2m    - locator resolved to <input type=\"text\" maxlength=\"120\" name=\"full_name\" data-slot=\"input\" autocomplete=\"name\" aria-invalid=\"false\" id=\"demo-_R_16n4anpfbivb_-full_name\" class=\"h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:poi…/>\u001b[22m\n\u001b[2m    - fill(\"پذیرش صفحه‌ساز 4bafd927\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying fill action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    58 × waiting for element to be visible, enabled and editable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying fill action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n\n\n  169 |   await page\n  170 |     .getByLabel(\"نام و نام خانوادگی\", { exact: true })\n> 171 |     .fill(\"پذیرش صفحه‌ساز \" + randomUUID().slice(0, 8));\n      |      ^\n  172 |   await page.getByLabel(\"شماره تماس\", { exact: true }).fill(\"09120000001\");\n  173 |   await page\n  174 |     .getByLabel(\"نام مدرسه یا مؤسسه\", { exact: true })\n    at C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\builder.spec.ts:171:6"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T02:15:07.063Z",
+                  "annotations": [
+                    {
+                      "type": "media labels",
+                      "description": "جست‌وجوی تصاویر این صفحه / فایل تصویر / متن جایگزین تصویر"
+                    }
+                  ],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\builder-visual-canvas-crea-27b74-shes-real-demo-and-restores-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\builder-visual-canvas-crea-27b74-shes-real-demo-and-restores-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\builder-visual-canvas-crea-27b74-shes-real-demo-and-restores-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\builder.spec.ts",
+                    "column": 6,
+                    "line": 171
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "eb8c965bfed0363de8d0-6468a2f8c5ad72f26d0a",
+          "file": "builder.spec.ts",
+          "line": 9,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-26T02:15:06.348Z",
+    "duration": 54895.868,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

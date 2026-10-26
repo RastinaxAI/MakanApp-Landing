@@ -1,6 +1,13 @@
 "use client";
 import { CmsReady } from "./ready";
 import { useState } from "react";
+import { FolderTree, Pencil, Search } from "lucide-react";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  AdminEmpty,
+  AdminNotice,
+} from "@/features/admin/page-kit";
 import { Button } from "@/components/ui/button";
 import { TextField } from "./fields";
 import { adminRequest } from "@/features/admin/client";
@@ -11,6 +18,8 @@ export function CategoriesPanel({ initial }: { initial: FaqCategory[] }) {
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [order, setOrder] = useState(0);
+  const [search, setSearch] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   async function action(remove = false) {
@@ -31,9 +40,11 @@ export function CategoriesPanel({ initial }: { initial: FaqCategory[] }) {
         if (page >= data.pagination.pages) break;
       }
       setItems(categories);
+      setConfirmDelete(false);
       setId(null);
       setTitle("");
       setSlug("");
+      setOrder(0);
       setMessage("دسته‌بندی ذخیره شد.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "عملیات دسته انجام نشد.");
@@ -41,78 +52,160 @@ export function CategoriesPanel({ initial }: { initial: FaqCategory[] }) {
       setBusy(false);
     }
   }
+  const visible = items.filter(
+    (item) => item.title.includes(search) || item.slug.includes(search),
+  );
   return (
     <CmsReady disabled={busy}>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-semibold">دسته‌های پرسش متداول</h1>
-        {message && (
-          <p role="status" className="rounded-xl bg-secondary p-4">
-            {message}
-          </p>
-        )}
-        <section className="space-y-4 rounded-2xl border border-border bg-card p-6">
-          <h2 className="text-xl font-semibold">
-            {id ? "ویرایش دسته" : "دسته جدید"}
-          </h2>
-          <TextField
-            label="نام دسته"
-            value={title}
-            onChange={setTitle}
-            maxLength={180}
-          />
-          <TextField
-            label="آدرس دسته"
-            value={slug}
-            onChange={setSlug}
-            dir="ltr"
-            maxLength={160}
-          />
-          <TextField
-            label="ترتیب دسته"
-            value={String(order)}
-            onChange={(v) => setOrder(Number(v) || 0)}
-            dir="ltr"
-            maxLength={5}
-          />
-          <div className="flex flex-wrap gap-3">
-            <Button
-              disabled={busy || !title.trim() || !slug.trim()}
-              onClick={() => action()}
+      <div className="admin-page">
+        <AdminPageHeader
+          title="دسته‌های پرسش متداول"
+          eyebrow="راهنمای مخاطبان"
+          icon={FolderTree}
+          description="سؤال‌های مرتبط را در دسته‌های روشن و مرتب قرار دهید."
+        />
+        {message && <AdminNotice>{message}</AdminNotice>}
+        <div className="admin-editor-layout admin-editor-first">
+          <AdminPanel
+            title={id ? "ویرایش دسته" : "دسته جدید"}
+            description="نام و ترتیب نمایش دسته را مشخص کنید."
+          >
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void action();
+              }}
             >
-              ذخیره دسته
-            </Button>
-            {id && (
+              <TextField
+                label="نام دسته"
+                value={title}
+                onChange={setTitle}
+                maxLength={180}
+              />
+              <TextField
+                label="آدرس دسته"
+                value={slug}
+                onChange={setSlug}
+                dir="ltr"
+                maxLength={160}
+              />
+              <TextField
+                label="ترتیب دسته"
+                value={String(order)}
+                onChange={(v) => setOrder(Number(v) || 0)}
+                dir="ltr"
+                maxLength={5}
+              />
               <Button
-                disabled={busy}
-                variant="outline"
-                onClick={() => action(true)}
+                className="w-full"
+                type="submit"
+                disabled={busy || !title.trim() || !slug.trim()}
               >
-                حذف دسته بدون استفاده
+                ذخیره دسته
               </Button>
+              {id && (
+                <>
+                  <Button
+                    className="w-full text-destructive"
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setConfirmDelete(true)}
+                  >
+                    حذف دسته بدون استفاده
+                  </Button>
+                  <Button
+                    className="w-full"
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      setId(null);
+                      setTitle("");
+                      setSlug("");
+                      setOrder(0);
+                      setConfirmDelete(false);
+                    }}
+                  >
+                    انصراف از ویرایش
+                  </Button>
+                </>
+              )}
+              {confirmDelete && (
+                <div className="space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <p className="text-xs leading-7 text-amber-900">
+                    حذف فقط برای دستهٔ بدون استفاده انجام می‌شود. این دسته حذف
+                    شود؟
+                  </p>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => void action(true)}
+                  >
+                    تأیید حذف دسته
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => setConfirmDelete(false)}
+                  >
+                    انصراف
+                  </Button>
+                </div>
+              )}
+            </form>
+          </AdminPanel>
+          <AdminPanel title="فهرست دسته‌ها" count={items.length}>
+            <label className="relative mb-5 block">
+              <span className="sr-only">جست‌وجوی دسته‌های پرسش</span>
+              <Search
+                className="pointer-events-none absolute start-3 top-3.5 size-4 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <input
+                className="min-h-11 w-full rounded-lg border border-slate-200 bg-white ps-10 pe-3 text-sm"
+                placeholder="نام دسته را جست‌وجو کنید…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </label>
+            {visible.length ? (
+              <ul className="admin-record-list">
+                {visible.map((item) => (
+                  <li key={item.id} className="admin-record">
+                    <div className="min-w-0">
+                      <h2 className="break-words text-sm font-semibold">
+                        {item.title}
+                      </h2>
+                      <p className="mt-2 break-all text-xs text-muted-foreground">
+                        <bdi>{item.slug}</bdi> · ترتیب{" "}
+                        {item.sort_order.toLocaleString("fa-IR")}
+                      </p>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        setId(item.id);
+                        setTitle(item.title);
+                        setSlug(item.slug);
+                        setOrder(item.sort_order);
+                        setConfirmDelete(false);
+                      }}
+                    >
+                      <Pencil aria-hidden="true" />
+                      ویرایش {item.title}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <AdminEmpty
+                title="دسته‌ای پیدا نشد"
+                description="یک دستهٔ تازه اضافه کنید یا جست‌وجو را تغییر دهید."
+                icon={FolderTree}
+              />
             )}
-          </div>
-        </section>
-        <ul className="space-y-3">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card p-5"
-            >
-              <span>{item.title}</span>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setId(item.id);
-                  setTitle(item.title);
-                  setSlug(item.slug);
-                  setOrder(item.sort_order);
-                }}
-              >
-                ویرایش {item.title}
-              </Button>
-            </li>
-          ))}
-        </ul>
+          </AdminPanel>
+        </div>
       </div>
     </CmsReady>
   );

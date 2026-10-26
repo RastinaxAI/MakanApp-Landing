@@ -1,5 +1,6 @@
 "use client";
 import { CmsReady } from "./ready";
+import { AdminPageHeader } from "@/features/admin/page-kit";
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -60,39 +61,55 @@ export function RevisionsPanel({
     }
   }
   async function restore(id: string) {
-    setBusy(true); setMessage("");
+    setBusy(true);
+    setMessage("");
     try {
-      const result = await adminRequest<AdminContent>(`content/${content.id}/revisions/${id}/restore`, "POST", undefined, current.row_version);
-      setCurrent(result); setMessage("نسخهٔ قبلی به پیش‌نویس تازه بازیابی شد؛ نسخهٔ عمومی حفظ شد.");
-    } catch (error) { setMessage(error instanceof Error ? error.message : "بازیابی انجام نشد."); }
-    finally { setBusy(false); }
+      const result = await adminRequest<AdminContent>(
+        `content/${content.id}/revisions/${id}/restore`,
+        "POST",
+        undefined,
+        current.row_version,
+      );
+      setCurrent(result);
+      setMessage("نسخهٔ قبلی به پیش‌نویس تازه بازیابی شد؛ نسخهٔ عمومی حفظ شد.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "بازیابی انجام نشد.");
+    } finally {
+      setBusy(false);
+    }
   }
   return (
     <CmsReady disabled={busy}>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-semibold">تاریخچه نسخه‌های محتوا</h1>
-        <Link
-          href={`/admin/content/${content.id}`}
-          className="inline-flex min-h-11 items-center text-primary-hover"
-        >
-          بازگشت به ویرایش
-        </Link>
+      <div className="admin-page">
+        <AdminPageHeader
+          title="تاریخچه نسخه‌های محتوا"
+          eyebrow="نسخه‌ها و بازیابی"
+          description={current.title}
+          back={{ href: "/admin/content", label: "محتوای سایت" }}
+          actions={
+            <Link
+              href={`/admin/content/${content.id}`}
+              className="inline-flex min-h-11 items-center text-primary-hover"
+            >
+              بازگشت به ویرایش
+            </Link>
+          }
+        />
         {message && (
           <p role="status" className="rounded-xl bg-secondary p-4">
             {message}
           </p>
         )}
-        <ul className="space-y-4">
+        <ul className="admin-revision-list">
           {data.items.map((item) => (
-            <li
-              key={item.id}
-              className="space-y-4 rounded-xl border border-border bg-card p-5"
-            >
+            <li key={item.id} className="space-y-4">
               <h2 className="text-xl font-semibold">
                 نسخه {item.revision_no.toLocaleString("fa-IR")} · {item.title}
               </h2>
               <p>
-                {new Date(item.created_at).toLocaleString("fa-IR")}{" "}
+                {new Date(item.created_at).toLocaleString("fa-IR", {
+                  timeZone: "Asia/Tehran",
+                })}{" "}
                 {item.id === current.published_revision_id
                   ? "· نسخه عمومی فعلی"
                   : ""}
@@ -111,7 +128,13 @@ export function RevisionsPanel({
                 >
                   انتشار این نسخه
                 </Button>
-                <Button variant="outline" disabled={busy} onClick={() => void restore(item.id)}>بازیابی برای ویرایش</Button>
+                <Button
+                  variant="outline"
+                  disabled={busy}
+                  onClick={() => void restore(item.id)}
+                >
+                  بازیابی برای ویرایش
+                </Button>
               </div>
               {confirm === item.id && (
                 <div className="space-y-3 rounded-xl bg-warning-soft p-4">

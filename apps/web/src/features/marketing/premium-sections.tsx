@@ -4,6 +4,13 @@ import {
   ChevronLeft,
   MessageCircle,
   GraduationCap,
+  BookOpen,
+  Building2,
+  ChartNoAxesCombined,
+  PanelsTopLeft,
+  Sparkles,
+  Users,
+  type LucideIcon,
 } from "lucide-react";
 import { SourceLink as Link } from "@/features/leads/source-link";
 import { Container } from "@/components/layout/container";
@@ -15,6 +22,18 @@ import type { Audience, Feature } from "./content";
 import { PremiumFeatureStory } from "./premium";
 import { RoleStory } from "./role-story";
 import type { WidgetItem } from "@/features/builder/types";
+
+const detailIcons: Record<string, LucideIcon> = {
+  messenger: MessageCircle,
+  school: GraduationCap,
+  reports: ChartNoAxesCombined,
+  workspace: PanelsTopLeft,
+  ai: Sparkles,
+  schools: Building2,
+  teachers: BookOpen,
+  students: GraduationCap,
+  parents: Users,
+};
 
 export function DetailIntroduction({
   section,
@@ -31,6 +50,7 @@ export function DetailIntroduction({
   privatePreview?: boolean;
   roadmap?: boolean;
 }) {
+  const DetailIcon = detailIcons[slug] || GraduationCap;
   return (
     <section
       className={`premium-detail-intro premium-detail-${kind}`}
@@ -86,7 +106,7 @@ export function DetailIntroduction({
             ) : (
               <>
                 <div className="detail-emblem-symbol" aria-hidden="true">
-                  {slug === "messenger" ? <MessageCircle /> : <GraduationCap />}
+                  <DetailIcon />
                 </div>
                 <p>
                   {kind === "feature"

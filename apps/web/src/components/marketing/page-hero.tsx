@@ -21,7 +21,7 @@ export function PageHero({
   ctaHref?: string;
 }) {
   return (
-    <section className="brand-hero border-b border-border py-10 tablet:py-16 desktop:py-20">
+    <section className="public-page-hero brand-hero border-b border-border py-10 tablet:py-16 desktop:py-20">
       <Container>
         <nav
           aria-label="مسیر صفحه"
@@ -44,10 +44,18 @@ export function PageHero({
           )}
           <span aria-current="page">{title}</span>
         </nav>
-        <div className="max-w-3xl">
+        <div className="public-page-hero-copy max-w-3xl">
           <p className="section-kicker mb-4">{eyebrow}</p>
-          <h1 className="hero-heading">{title}</h1>
-          <p className="mt-6 text-lg text-muted-foreground">{description}</p>
+          <h1
+            className={`hero-heading${title.length > 22 ? " public-title-multiline" : ""}`}
+          >
+            {title}
+          </h1>
+          <p
+            className={`mt-6 text-lg text-muted-foreground${description.length > 80 ? " public-summary-multiline" : ""}`}
+          >
+            {description}
+          </p>
           {children && <div className="mt-5">{children}</div>}
           {ctaLabel && ctaHref && (
             <Button asChild size="lg" className="mt-8">

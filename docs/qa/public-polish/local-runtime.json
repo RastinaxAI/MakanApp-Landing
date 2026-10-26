@@ -1,0 +1,115 @@
+{
+  "url": "http://127.0.0.1:3100",
+  "checks": [
+    {
+      "path": "/",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/features",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/demo",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/admin/login",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/admin/builder",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/content",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/health/ready",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/api/v1/admin/content",
+      "expected": 401,
+      "actual": 401
+    },
+    {
+      "path": "/this-page-does-not-exist-public-polish",
+      "expected": 404,
+      "actual": 404
+    },
+    {
+      "path": "/admin/learn",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/learn/taxonomy",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/media",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/faq-categories",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/accounts",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/settings",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/settings/sms",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/audit",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/security",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/crm",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/leads",
+      "expected": 307,
+      "actual": 307
+    },
+    {
+      "path": "/admin/analytics",
+      "expected": 307,
+      "actual": 307
+    }
+  ]
+}

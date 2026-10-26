@@ -159,7 +159,13 @@ function EditableWidget({
   useEffect(() => {
     const cleanup = Array.from(
       wrapper.current?.querySelectorAll<HTMLElement>('[role="tablist"]') || [],
-    ).map((list) => registerOverlayPortal(list, { disableDrag: true }));
+    )
+      .filter(
+        (list) =>
+          list.closest("[data-node-id]")?.getAttribute("data-node-id") ===
+          fields.id,
+      )
+      .map((list) => registerOverlayPortal(list, { disableDrag: true }));
     return () => cleanup.forEach((remove) => remove?.());
   }, [type, fields.id, fields.items?.length, fields.legacy_section?.type]);
   const viewport = Number(puck.appState.ui.viewports.current.width);
@@ -219,7 +225,15 @@ function EditableWidget({
             type === "Heading" ? { title: value } : { body_html: value },
           )
         }
-        onItemSelect={(index) => reveal(fields.id, index)}
+        onItemSelect={(index) => {
+          reveal(fields.id, index);
+          const itemSelector = puck.getSelectorForId(fields.id);
+          if (itemSelector)
+            puck.dispatch({
+              type: "setUi",
+              ui: { itemSelector, plugin: { current: "fields" } },
+            });
+        }}
         activeItemIndex={focus.node === fields.id ? focus.index : undefined}
       >
         {slot && slot({ className: "builder-layout", minEmptyHeight: 100 })}

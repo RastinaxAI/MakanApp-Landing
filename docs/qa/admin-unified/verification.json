@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-26",
+  "scope": "Unify all existing admin routes using the approved content manager design",
+  "routes": [
+    "/admin",
+    "/admin/accounts",
+    "/admin/analytics",
+    "/admin/audit",
+    "/admin/builder",
+    "/admin/content",
+    "/admin/content/[id]",
+    "/admin/content/[id]/builder",
+    "/admin/content/[id]/revisions",
+    "/admin/crm",
+    "/admin/crm/leads/[id]",
+    "/admin/crm/schools/[id]",
+    "/admin/faq-categories",
+    "/admin/leads",
+    "/admin/leads/[id]",
+    "/admin/learn",
+    "/admin/learn/[id]",
+    "/admin/learn/new",
+    "/admin/learn/preview/[id]",
+    "/admin/learn/taxonomy",
+    "/admin/login",
+    "/admin/media",
+    "/admin/preview/[id]",
+    "/admin/security",
+    "/admin/settings",
+    "/admin/settings/sms"
+  ],
+  "checks": {
+    "production_build": "passed",
+    "typescript": "passed",
+    "eslint": "passed",
+    "diff_check": "passed",
+    "compose_config": "passed",
+    "docker_build": "passed",
+    "local_smoke": "22 passed"
+  },
+  "browser": {
+    "passed": 49,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "reports": [
+      "browser-v2-admin-unified-all.json",
+      "browser-v2-admin-refresh-all.json",
+      "browser-v2-content-manager-chromium.json",
+      "browser-v2-library-chromium.json",
+      "browser-v2-crm-chromium.json",
+      "browser-v2-builder-chromium.json",
+      "browser-legacy-learning-chromium.json"
+    ],
+    "responsive_widths": [
+      1440,
+      1200,
+      1024,
+      768,
+      480,
+      360
+    ],
+    "automated_accessibility": "axe WCAG 2 A/AA and 2.2 AA; desktop and mobile"
+  },
+  "database": {
+    "schema_changed": false,
+    "migrations_added": [],
+    "checksums_equal": true,
+    "before": "database-before.json",
+    "after": "database-after.json",
+    "pages_preserved": 26,
+    "revisions_preserved": 50,
+    "migration": "0009_demo_crm",
+    "crm_checksums_equal": true,
+    "crm_tables_checked": 9
+  },
+  "docker": {
+    "services_healthy": 4,
+    "build_log": "docker-web-build.log",
+    "rollback_image": "makan-admin-unified-before:20261026",
+    "deployed_build": {
+      "build_id": "yYN3EPIX4eYszAcFeP4UO",
+      "admin_unified_bundle_present": true
+    },
+    "runtime": "local-runtime.json"
+  },
+  "api_contracts_changed": [],
+  "main_makan_backend_changed": false,
+  "limitations": [
+    "No live SMS provider connection was tested or changed",
+    "Account, media and audit searches apply to the current page",
+    "Automated accessibility checks are not a complete manual WCAG certification"
+  ],
+  "commit": null,
+  "pushed": false,
+  "reference_route": "/admin/content",
+  "public_site_design_changed": false,
+  "initial_attempts": {
+    "builder_token_timeout": "attempt-builder-token-timeout.json",
+    "unchanged_isolated_rerun": "passed"
+  }
+}

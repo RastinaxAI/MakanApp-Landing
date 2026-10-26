@@ -1,5 +1,12 @@
 "use client";
 import { useState } from "react";
+import { Tags, FolderTree, Search, Pencil, Trash2 } from "lucide-react";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  AdminEmpty,
+  AdminNotice,
+} from "@/features/admin/page-kit";
 import { CmsReady } from "@/features/cms/ready";
 import { TextField } from "@/features/cms/fields";
 import { Button } from "@/components/ui/button";
@@ -21,6 +28,7 @@ export function TaxonomyPanel({
   const [order, setOrder] = useState(0);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   function clear() {
     setCurrent(null);
@@ -70,128 +78,213 @@ export function TaxonomyPanel({
       setBusy(false);
     }
   }
+  const visible = items[type].filter(
+    (item) => item.title.includes(search) || item.slug.includes(search),
+  );
   return (
     <CmsReady disabled={busy}>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-semibold">
-          دسته‌ها و برچسب‌های آموزش و وبلاگ
-        </h1>
-        {message && (
-          <p role="status" className="rounded-xl bg-secondary p-4">
-            {message}
-          </p>
-        )}
-        <label className="block">
-          نوع
-          <select
-            className="ms-3 min-h-11 rounded-lg border border-input px-3"
-            value={type}
-            onChange={(e) => {
-              setType(e.target.value as typeof type);
-              clear();
-              setDeleteId(null);
-            }}
-          >
-            <option value="categories">دسته‌بندی</option>
-            <option value="tags">برچسب</option>
-          </select>
-        </label>
-        <section className="grid gap-5 rounded-xl border border-border bg-card p-5 tablet:grid-cols-2">
-          <label className="block">
-            بخش
+      <div className="admin-page">
+        <AdminPageHeader
+          title="دسته‌ها و برچسب‌های آموزش و وبلاگ"
+          eyebrow="سازمان‌دهی محتوا"
+          icon={Tags}
+          description="به آموزش‌ها و مقاله‌ها ساختار بدهید تا مخاطب محتوای مرتبط را راحت‌تر پیدا کند."
+        />
+        {message && <AdminNotice>{message}</AdminNotice>}
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <label className="grid gap-2 text-xs text-muted-foreground">
+            نوع
             <select
-              className="ms-3 min-h-11 rounded-lg border border-input px-3"
-              value={domain}
-              disabled={!!current}
-              onChange={(e) => setDomain(e.target.value as typeof domain)}
+              className="min-h-11 rounded-lg border border-border bg-white px-4 text-sm text-foreground"
+              value={type}
+              aria-label="نوع"
+              onChange={(e) => {
+                setType(e.target.value as typeof type);
+                clear();
+                setDeleteId(null);
+              }}
             >
-              <option value="learn">مرکز آموزش</option>
-              <option value="blog">وبلاگ</option>
+              <option value="categories">دسته‌بندی</option>
+              <option value="tags">برچسب</option>
             </select>
           </label>
-          <TextField
-            label="عنوان دسته یا برچسب"
-            value={title}
-            onChange={setTitle}
-            maxLength={180}
-          />
-          <TextField
-            label="آدرس دسته یا برچسب"
-            dir="ltr"
-            value={slug}
-            onChange={setSlug}
-            maxLength={160}
-            disabled={!!current}
-          />
-          <label>
-            ترتیب
+          <label className="relative min-w-0">
+            <span className="sr-only">جست‌وجوی دسته یا برچسب</span>
+            <Search
+              className="pointer-events-none absolute start-3 top-3.5 size-4 text-muted-foreground"
+              aria-hidden="true"
+            />
             <input
-              className="ms-3 min-h-11 rounded-lg border border-input px-3"
-              type="number"
-              min={0}
-              max={10000}
-              value={order}
-              onChange={(e) => setOrder(Number(e.target.value))}
+              className="min-h-11 max-w-full rounded-lg border border-border bg-white ps-10 pe-3 text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="جست‌وجو در عنوان و آدرس…"
             />
           </label>
-          <div className="flex gap-3">
-            <Button type="button" onClick={save}>
-              ذخیره دسته یا برچسب
-            </Button>
-            {current && (
-              <Button type="button" variant="outline" onClick={clear}>
-                انصراف از ویرایش
-              </Button>
-            )}
-          </div>
-        </section>
-        <ul className="space-y-4">
-          {items[type].map((item) => (
-            <li
-              key={item.id}
-              className="flex flex-wrap items-center gap-4 rounded-xl border border-border p-4"
+        </div>
+        <div className="admin-editor-layout admin-editor-first">
+          <AdminPanel
+            title={
+              current
+                ? "ویرایش مورد انتخاب‌شده"
+                : type === "categories"
+                  ? "افزودن دسته‌بندی"
+                  : "افزودن برچسب"
+            }
+            description="عنوان خوانا و آدرس کوتاه انتخاب کنید."
+          >
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void save();
+              }}
             >
-              <h2 className="text-lg font-semibold">
-                {item.title} · {item.domain === "learn" ? "آموزش" : "وبلاگ"}
-              </h2>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => {
-                  setCurrent(item);
-                  setDomain(item.domain);
-                  setSlug(item.slug);
-                  setTitle(item.title);
-                  setOrder(item.sort_order);
-                }}
-              >
-                ویرایش {item.title}
+              <label className="grid gap-2 text-sm">
+                بخش
+                <select
+                  className="min-h-11 rounded-lg border border-input bg-white px-3"
+                  value={domain}
+                  aria-label="بخش"
+                  disabled={!!current}
+                  onChange={(e) => setDomain(e.target.value as typeof domain)}
+                >
+                  <option value="learn">مرکز آموزش</option>
+                  <option value="blog">وبلاگ</option>
+                </select>
+              </label>
+              <TextField
+                label="عنوان دسته یا برچسب"
+                value={title}
+                onChange={setTitle}
+                maxLength={180}
+              />
+              <TextField
+                label="آدرس دسته یا برچسب"
+                dir="ltr"
+                value={slug}
+                onChange={setSlug}
+                maxLength={160}
+                disabled={!!current}
+              />
+              <label className="grid gap-2 text-sm">
+                ترتیب
+                <input
+                  className="min-h-11 w-full rounded-lg border border-input bg-white px-3"
+                  type="number"
+                  min={0}
+                  max={10000}
+                  value={order}
+                  onChange={(e) => setOrder(Number(e.target.value))}
+                />
+              </label>
+              <Button className="w-full text-xs" type="submit">
+                ذخیره دسته یا برچسب
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setDeleteId(item.id)}
-              >
-                حذف {item.title}
-              </Button>
-              {deleteId === item.id && (
-                <>
-                  <p>حذف مورد استفاده‌شده در نسخه‌ها ممکن نیست.</p>
-                  <Button type="button" onClick={() => remove(item.id)}>
-                    تأیید حذف {item.title}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setDeleteId(null)}
-                  >
-                    انصراف
-                  </Button>
-                </>
+              {current && (
+                <Button
+                  className="w-full"
+                  type="button"
+                  variant="ghost"
+                  onClick={clear}
+                >
+                  انصراف از ویرایش
+                </Button>
               )}
-            </li>
-          ))}
-        </ul>
+            </form>
+          </AdminPanel>
+          <AdminPanel
+            title={
+              type === "categories"
+                ? "دسته‌بندی‌های ثبت‌شده"
+                : "برچسب‌های ثبت‌شده"
+            }
+            count={visible.length}
+          >
+            {visible.length ? (
+              <ul className="admin-record-list">
+                {visible.map((item) => (
+                  <li key={item.id} className="admin-record">
+                    <div className="flex min-w-0 items-start gap-3">
+                      <span className="admin-page-symbol">
+                        {type === "categories" ? (
+                          <FolderTree className="size-4" aria-hidden="true" />
+                        ) : (
+                          <Tags className="size-4" aria-hidden="true" />
+                        )}
+                      </span>
+                      <div className="min-w-0">
+                        <h2 className="break-words text-sm font-semibold">
+                          {item.title}
+                        </h2>
+                        <p className="mt-2 break-all text-xs text-muted-foreground">
+                          {item.domain === "learn" ? "آموزش" : "وبلاگ"} ·{" "}
+                          <bdi>{item.slug}</bdi>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="text-xs"
+                        onClick={() => {
+                          setCurrent(item);
+                          setDomain(item.domain);
+                          setSlug(item.slug);
+                          setTitle(item.title);
+                          setOrder(item.sort_order);
+                        }}
+                      >
+                        <Pencil aria-hidden="true" />
+                        ویرایش {item.title}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        className="text-xs text-destructive"
+                        onClick={() => setDeleteId(item.id)}
+                      >
+                        <Trash2 aria-hidden="true" />
+                        حذف {item.title}
+                      </Button>
+                    </div>
+                    {deleteId === item.id && (
+                      <div className="w-full space-y-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+                        <p className="text-xs leading-7 text-amber-900">
+                          حذف مورد استفاده‌شده در نسخه‌ها ممکن نیست.
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            className="text-xs"
+                            onClick={() => void remove(item.id)}
+                          >
+                            تأیید حذف {item.title}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setDeleteId(null)}
+                          >
+                            انصراف
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <AdminEmpty
+                title="موردی پیدا نشد"
+                description="یک دسته یا برچسب تازه اضافه کنید یا عبارت جست‌وجو را تغییر دهید."
+                icon={Tags}
+              />
+            )}
+          </AdminPanel>
+        </div>
       </div>
     </CmsReady>
   );

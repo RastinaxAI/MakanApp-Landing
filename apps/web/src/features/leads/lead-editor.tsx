@@ -66,8 +66,8 @@ export function LeadEditor({
       </p>
     );
   return (
-    <section className="mt-6 rounded-2xl border border-border bg-card p-5 tablet:p-7">
-      <h2 className="mb-5 text-xl font-semibold">مدیریت پیگیری</h2>
+    <section className="admin-section-surface">
+      <h2 className="admin-section-title">مدیریت پیگیری</h2>
       {message && (
         <p role="status" className="mb-4 text-primary-hover">
           {message}

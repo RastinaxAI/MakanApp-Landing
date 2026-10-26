@@ -1,5 +1,6 @@
 "use client";
 import { CmsReady } from "./ready";
+import { AdminPageHeader } from "@/features/admin/page-kit";
 import { useState } from "react";
 import Link from "next/link";
 import * as z from "@/lib/validation";
@@ -187,35 +188,19 @@ export function ContentEditor({
   }
   return (
     <CmsReady disabled={busy}>
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold">ویرایش محتوا</h1>
-            <p className="mt-3 text-muted-foreground">
-              نسخه {current.revision_no.toLocaleString("fa-IR")} ·{" "}
-              {
-                {
-                  archived: "بایگانی",
-                  published: "دارای نسخه عمومی",
-                  scheduled: "دارای برنامه انتشار",
-                  draft: "پیش‌نویس",
-                }[current.publication_state]
-              }
-            </p>
-          </div>
-          <Link
-            href="/admin/content"
-            className="min-h-11 rounded-lg p-3 text-primary-hover"
-          >
-            فهرست محتوا
-          </Link>
-        </div>
+      <div className="admin-page">
+        <AdminPageHeader
+          title="ویرایش محتوا"
+          eyebrow="مدیریت محتوای سایت"
+          description={`${title} · نسخه ${current.revision_no.toLocaleString("fa-IR")} · ${{ archived: "بایگانی", published: "دارای نسخه عمومی", scheduled: "دارای برنامه انتشار", draft: "پیش‌نویس" }[current.publication_state]}`}
+          back={{ href: "/admin/content", label: "فهرست محتوا" }}
+        />
         {message && (
           <p role="status" className="rounded-xl bg-secondary p-4 leading-8">
             {message}
           </p>
         )}
-        <div className="flex flex-wrap gap-3 rounded-2xl border border-border bg-card p-5">
+        <div className="admin-toolbar">
           <Button
             type="button"
             disabled={busy || current.is_archived}

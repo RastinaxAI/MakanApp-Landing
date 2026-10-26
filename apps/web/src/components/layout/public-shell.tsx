@@ -22,6 +22,7 @@ export function PublicShell({
 }) {
   return (
     <div
+      className="public-site"
       style={
         globals
           ? ({

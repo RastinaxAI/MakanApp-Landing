@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
-import { login, drag } from "./helpers";
+import { login, drag, selectElement } from "./helpers";
 import type { AdminContent, CmsPage } from "../../src/features/cms/types";
 
 test("reusable sections, undo redo, viewport resize and autosave survive refresh", async ({
@@ -10,6 +10,9 @@ test("reusable sections, undo redo, viewport resize and autosave survive refresh
 }, info) => {
   await login(page);
   await page.goto("/admin/builder");
+  await page
+    .getByRole("button", { name: "ساخت طرح جدید", exact: true })
+    .click();
   const name = "قالب پذیرش " + randomUUID().slice(0, 8);
   await page.getByLabel("نام قالب تازه", { exact: true }).fill(name);
   await page
@@ -26,13 +29,19 @@ test("reusable sections, undo redo, viewport resize and autosave survive refresh
   await drag(page, "عنوان", slot);
   const text = canvas.getByRole("textbox", { name: "ویرایش عنوان در صفحه" });
   await text.fill(name);
+  await expect(text).toHaveText(name);
   await text.blur();
+  await expect(text).toHaveText(name);
   const headingId = await canvas
     .locator('[data-widget="Heading"]')
     .getAttribute("data-node-id");
+  await selectElement(page, headingId!);
+  await expect(
+    page.getByLabel("عنوان", { exact: true }).filter({ visible: true }),
+  ).toHaveValue(name);
   await page
-    .getByLabel("انتخاب عنصر صفحه", { exact: true })
-    .selectOption(headingId!);
+    .getByRole("button", { name: "بخش‌های آماده", exact: true })
+    .click();
   await page
     .getByText("قالب، بخش آماده و کپی / جای‌گذاری", { exact: true })
     .click();
@@ -61,10 +70,8 @@ test("reusable sections, undo redo, viewport resize and autosave survive refresh
   await expect(canvas.locator('[data-widget="Heading"]')).toHaveCount(1);
   await page.getByRole("button", { name: "انجام دوباره", exact: true }).click();
   await expect(canvas.locator('[data-widget="Heading"]')).toHaveCount(2);
-  await page
-    .getByLabel("انتخاب عنصر صفحه", { exact: true })
-    .selectOption(headingId!);
-  await page.getByLabel("نمای صفحه‌ساز", { exact: true }).selectOption("390");
+  await selectElement(page, headingId!);
+  await page.getByRole("button", { name: "نمای موبایل", exact: true }).click();
   const heading = canvas.locator(`[data-node-id="${headingId}"]`);
   const oldWidth = await heading.evaluate(
     (element) => element.getBoundingClientRect().width,
@@ -89,6 +96,7 @@ test("reusable sections, undo redo, viewport resize and autosave survive refresh
   expect(saved.payload.document?.purpose).toBe("template");
   const children = saved.payload.document?.nodes[0]?.children || [];
   expect(new Set(children.map((node) => node.id)).size).toBe(2);
+  expect(children.every((node) => node.props.title === name)).toBe(true);
   expect(
     children.find((node) => node.id === headingId)?.styles.mobile.width,
   ).toMatch(/px$/);
@@ -119,6 +127,9 @@ test("header builder publishes binds draft isolation and restores the original s
 }) => {
   await login(page);
   await page.goto("/admin/builder");
+  await page
+    .getByRole("button", { name: "ساخت طرح جدید", exact: true })
+    .click();
   const name = "سربرگ پذیرش " + randomUUID().slice(0, 8);
   await page.getByLabel("نام قالب تازه", { exact: true }).fill(name);
   await page
@@ -145,13 +156,16 @@ test("header builder publishes binds draft isolation and restores the original s
   ).toBeVisible();
   const identifier = page.url().split("/").at(-2)!;
   await page.goto("/admin/builder");
+  await page.getByRole("tab", { name: "طراحی سراسری", exact: true }).click();
   await page
     .getByLabel("اتصال سربرگ", { exact: true })
     .selectOption(identifier);
   await page
     .getByRole("button", { name: "ذخیره طراحی سراسری", exact: true })
     .click();
-  await expect(page.getByRole("status")).toContainText("ذخیره شدند");
+  await expect(
+    page.getByRole("status").filter({ hasText: "ذخیره شدند" }),
+  ).toBeVisible();
   await page.goto("/");
   await expect(
     page.getByRole("banner").getByRole("link", { name, exact: true }),
@@ -160,9 +174,7 @@ test("header builder publishes binds draft isolation and restores the original s
   const buttonId = await canvas
     .locator('[data-widget="Button"]')
     .getAttribute("data-node-id");
-  await page
-    .getByLabel("انتخاب عنصر صفحه", { exact: true })
-    .selectOption(buttonId!);
+  await selectElement(page, buttonId!);
   await page
     .getByLabel("متن دکمه", { exact: true })
     .filter({ visible: true })
@@ -178,11 +190,14 @@ test("header builder publishes binds draft isolation and restores the original s
     page.getByRole("banner").getByRole("link", { name, exact: true }),
   ).toBeVisible();
   await page.goto("/admin/builder");
+  await page.getByRole("tab", { name: "طراحی سراسری", exact: true }).click();
   await page.getByLabel("اتصال سربرگ", { exact: true }).selectOption("");
   await page
     .getByRole("button", { name: "ذخیره طراحی سراسری", exact: true })
     .click();
-  await expect(page.getByRole("status")).toContainText("ذخیره شدند");
+  await expect(
+    page.getByRole("status").filter({ hasText: "ذخیره شدند" }),
+  ).toBeVisible();
   await page.goto("/");
   await expect(
     page.getByRole("banner").getByRole("link", { name, exact: true }),

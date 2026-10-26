@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { mkdir } from "node:fs/promises";
-import { login, drag } from "./helpers";
+import { login, drag, selectElement } from "./helpers";
 import type { AdminContent } from "../../src/features/cms/types";
 
 test("element controls edit tab text and image, upload in canvas, reload publish and preserve homepage tabs", async ({
@@ -14,6 +14,7 @@ test("element controls edit tab text and image, upload in canvas, reload publish
   page.on("pageerror", (error) => errors.push(error.message));
   await login(page);
   await page.goto("/admin/content");
+  await page.getByRole("button", { name: "افزودن محتوا", exact: true }).click();
   const slug = `tab-edit-${info.project.name}-${randomUUID().slice(0, 8)}`;
   await page
     .getByLabel("عنوان محتوای جدید", { exact: true })
@@ -26,11 +27,8 @@ test("element controls edit tab text and image, upload in canvas, reload publish
   await page
     .getByRole("button", { name: "ایجاد پیش‌نویس", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/admin\/content\/[0-9a-f-]{36}$/);
-  const id = page.url().split("/").pop()!;
-  await page
-    .getByRole("link", { name: "باز کردن صفحه‌ساز بصری", exact: true })
-    .click();
+  await expect(page).toHaveURL(/\/admin\/content\/[0-9a-f-]{36}\/builder$/);
+  const id = page.url().split("/").at(-2)!;
   const canvas = page.frameLocator("iframe").first();
   await drag(page, "تب‌ها", canvas.getByTestId("dropzone:root:default-zone"));
   await expect(
@@ -138,24 +136,19 @@ test("element controls edit tab text and image, upload in canvas, reload publish
       .locator('[data-widget="Tabs"]')
       .getByRole("tab", { name: "معرفی مدرسه", exact: true }),
   ).toBeVisible();
-  await page
-    .getByLabel("انتخاب عنصر صفحه", { exact: true })
-    .filter({ visible: true })
-    .selectOption(
-      saved.payload.document!.nodes.find((node) => node.type === "Tabs")!.id,
-    );
+  await selectElement(
+    page,
+    saved.payload.document!.nodes.find((node) => node.type === "Tabs")!.id,
+  );
   await expect(
     page.getByLabel("عنوان تب", { exact: true }).filter({ visible: true }),
   ).toHaveValue("معرفی مدرسه");
   await expect(
     canvas.getByRole("img", { name: "تصویر تب پذیرش" }),
   ).toBeVisible();
-  await mkdir(path.resolve("../../docs/qa/builder-elementor"), {
+  await mkdir(path.resolve("../../docs/qa/builder-studio"), {
     recursive: true,
   });
-  await page
-    .getByRole("button", { name: "ویرایش تمام‌صفحه", exact: true })
-    .click();
   await page
     .getByRole("button", { name: "تصویر داخل تب", exact: true })
     .click();
@@ -168,13 +161,10 @@ test("element controls edit tab text and image, upload in canvas, reload publish
   ).toBe(true);
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/builder-elementor/editor-desktop-${info.project.name}.png`,
+      `../../docs/qa/builder-studio/editor-desktop-${info.project.name}.png`,
     ),
     fullPage: true,
   });
-  await page
-    .getByRole("button", { name: "خروج از تمام‌صفحه", exact: true })
-    .click();
   await page.goto(`/admin/preview/${id}?revision=${saved.revision_id}`);
   await expect(page.getByRole("img", { name: "تصویر تب پذیرش" })).toBeVisible();
   await page.goto(`/admin/content/${id}/builder`);
@@ -211,7 +201,7 @@ test("element controls edit tab text and image, upload in canvas, reload publish
   ).toBe(true);
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/builder-elementor/tabs-mobile-${info.project.name}.png`,
+      `../../docs/qa/builder-studio/tabs-mobile-${info.project.name}.png`,
     ),
     fullPage: true,
   });
@@ -268,11 +258,8 @@ test("element controls edit tab text and image, upload in canvas, reload publish
     audienceSection.getByRole("img", { name: "تصویر تب پذیرش" }),
   ).toBeVisible();
   await page.setViewportSize({ width: 390, height: 844 });
-  await page
-    .getByRole("button", { name: "ویرایش تمام‌صفحه", exact: true })
-    .click();
   await page.getByRole("button", { name: "ویرایش عنصر", exact: true }).click();
-  await page.getByLabel("نمای صفحه‌ساز", { exact: true }).selectOption("390");
+  await page.getByRole("button", { name: "نمای موبایل", exact: true }).click();
   await expect(
     page.getByLabel("تیتر داخل تب", { exact: true }).filter({ visible: true }),
   ).toBeVisible();
@@ -282,7 +269,7 @@ test("element controls edit tab text and image, upload in canvas, reload publish
     .fill("ویرایش تب از موبایل");
   await page.screenshot({
     path: path.resolve(
-      `../../docs/qa/builder-elementor/editor-mobile-${info.project.name}.png`,
+      `../../docs/qa/builder-studio/editor-mobile-${info.project.name}.png`,
     ),
     fullPage: true,
   });

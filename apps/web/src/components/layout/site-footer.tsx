@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
+import { ArrowUpLeft } from "lucide-react";
 import { Brand } from "@/components/layout/brand";
 import type { CmsSettings, CmsImageRef } from "@/features/cms/types";
 
@@ -22,15 +23,28 @@ const groups = [
   },
 ] as const;
 
-export function SiteFooter({ settings, logo }: { settings?: CmsSettings; logo?: CmsImageRef }) {
+export function SiteFooter({
+  settings,
+  logo,
+}: {
+  settings?: CmsSettings;
+  logo?: CmsImageRef;
+}) {
   const siteConfig = settings?.general;
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="site-container grid gap-8 py-12 tablet:grid-cols-2 desktop:grid-cols-[1.4fr_1fr_1fr_1.25fr]">
+    <footer className="public-footer border-t border-border bg-card">
+      <div className="site-container public-footer-intro">
+        <p>آموزش، با ارتباط بهتر.</p>
+        <Link href="/demo">
+          ماکان را برای مدرسه‌تان ببینید <ArrowUpLeft aria-hidden="true" />
+        </Link>
+      </div>
+      <div className="public-footer-grid site-container grid gap-8 py-12 tablet:grid-cols-2 desktop:grid-cols-[1.4fr_1fr_1fr_1.25fr]">
         <div>
-          <Brand name={siteConfig?.brand_name} logo={logo}/>
+          <Brand name={siteConfig?.brand_name} logo={logo} />
           <p className="mt-5 max-w-xs text-sm text-muted-foreground">
-            {siteConfig?.tagline || "ارتباط و مدیریت آموزش، در یک فضای یکپارچه؛ برای مدرسه، معلم، خانواده و دانش‌آموز."}
+            {siteConfig?.tagline ||
+              "ارتباط و مدیریت آموزش، در یک فضای یکپارچه؛ برای مدرسه، معلم، خانواده و دانش‌آموز."}
           </p>
         </div>
         {groups.map((group) => (
@@ -84,7 +98,10 @@ export function SiteFooter({ settings, logo }: { settings?: CmsSettings; logo?: 
       </div>
       <div className="border-t border-border">
         <div className="site-container flex flex-wrap items-center justify-between gap-3 py-5 text-sm text-muted-foreground">
-          <span>{siteConfig?.brand_name || "ماکان"} · {siteConfig?.tagline || "ارتباط و مدیریت آموزش"}</span>
+          <span>
+            {siteConfig?.brand_name || "ماکان"} ·{" "}
+            {siteConfig?.tagline || "ارتباط و مدیریت آموزش"}
+          </span>
           <nav aria-label="اطلاعات حقوقی" className="flex flex-wrap gap-5">
             <Link
               href="/privacy"

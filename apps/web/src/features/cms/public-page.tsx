@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { visibleNodes } from "@/features/builder/types";
 import { notFound } from "next/navigation";
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { Container } from "@/components/layout/container";
 import { FeatureCard } from "@/features/marketing/feature-card";
 import { AudienceCard } from "@/features/marketing/audience-card";
@@ -79,7 +79,14 @@ export async function PublicPage({
         : null;
   return (
     <>
-      <div id={slug === "privacy" ? "requests-policy" : undefined}>
+      <div
+        id={slug === "privacy" ? "requests-policy" : undefined}
+        className={
+          ["privacy", "terms"].includes(slug)
+            ? "public-reading-page"
+            : slug === "solutions" ? "public-index-header" : undefined
+        }
+      >
         <CmsRenderer
           content={content}
           features={dynamicData ? asFeatures(dynamicData[0].items) : []}

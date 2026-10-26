@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { ArrowLeft } from "lucide-react";
 import { FeatureIcon } from "@/components/marketing/feature-icon";
 import { StatusBadge } from "@/components/ui/status-badge";

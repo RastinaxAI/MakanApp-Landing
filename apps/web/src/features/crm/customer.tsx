@@ -2,7 +2,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, Phone, Plus, Pencil } from "lucide-react";
+import { Phone, Plus, Pencil } from "lucide-react";
+import { AdminPageHeader } from "@/features/admin/page-kit";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { date, statuses } from "@/features/leads/types";
@@ -108,29 +109,13 @@ export function Customer360({
     );
   };
   return (
-    <div className="grid gap-6">
-      <header className="crm-heading">
-        <div>
-          <Link
-            prefetch={false}
-            href="/admin/crm"
-            className="text-sm text-primary"
-          >
-            فروش و پروندهٔ مدارس
-          </Link>
-          <h1 className="mt-3 text-3xl font-semibold leading-12">
-            {data.school?.name || lead?.full_name || "پروندهٔ حذف‌شده"}
-          </h1>
-          <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            نمای یکپارچهٔ اطلاعات، درخواست‌ها و پیگیری‌ها
-          </p>
-        </div>
-        <Building2
-          size={40}
-          className="rounded-xl bg-secondary p-2 text-primary"
-          aria-hidden="true"
-        />
-      </header>
+    <div className="admin-page">
+      <AdminPageHeader
+        title={data.school?.name || lead?.full_name || "پروندهٔ حذف‌شده"}
+        eyebrow="پروندهٔ ارتباط با مدرسه"
+        description="نمای یکپارچهٔ اطلاعات، درخواست‌ها و پیگیری‌ها"
+        back={{ href: "/admin/crm", label: "فروش و پروندهٔ مدارس" }}
+      />
       <div className="grid gap-5 desktop:grid-cols-[300px_1fr]">
         <aside className="grid content-start gap-5">
           <section className="crm-surface">

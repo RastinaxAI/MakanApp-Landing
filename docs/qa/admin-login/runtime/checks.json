@@ -1,0 +1,51 @@
+{
+  "checks": [
+    {
+      "browser": "chromium",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "browser": "firefox",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "browser": "firefox",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "browser": "firefox",
+      "width": 1440,
+      "passed": true
+    },
+    {
+      "browser": "webkit",
+      "width": 320,
+      "passed": true
+    },
+    {
+      "browser": "webkit",
+      "width": 768,
+      "passed": true
+    },
+    {
+      "browser": "webkit",
+      "width": 1440,
+      "passed": true
+    }
+  ],
+  "public_page_checks": 3,
+  "production_auth_mutations": 0
+}

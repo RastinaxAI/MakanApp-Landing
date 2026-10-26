@@ -17,12 +17,16 @@ export default async function EditorPage({
 }) {
   if (!(await requireContentAdmin())) return <CmsDenied />;
   const { id } = await params;
-  const [initial, assets, categories] = await Promise.all([
-    cmsGet<AdminContent>(`content/${encodeURIComponent(id)}`),
+  const initial = await cmsGet<AdminContent>(`content/${encodeURIComponent(id)}`);
+  if (
+    initial.payload.kind !== "faq" &&
+    (await searchParams).mode !== "metadata"
+  )
+    redirect(`/admin/content/${initial.id}/builder`);
+  const [assets, categories] = await Promise.all([
     cmsAssets(),
     cmsAll<FaqCategory>("faq-categories"),
   ]);
-  if (initial.payload.kind !== "faq" && initial.payload.document && (await searchParams).mode !== "metadata") redirect(`/admin/content/${initial.id}/builder`);
   return (
     <ContentEditor initial={initial} assets={assets} categories={categories} />
   );

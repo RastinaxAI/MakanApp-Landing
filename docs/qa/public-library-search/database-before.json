@@ -1,0 +1,44 @@
+{
+  "audit_cutoff": "2026-10-26 12:34:07.484045+00",
+  "pages": {
+    "count": 26,
+    "checksum": "6aaa0677c491deb7aa34a831240804c0"
+  },
+  "page_revisions": {
+    "count": 50,
+    "checksum": "ef3ef85a27773c16aa586b98a8c8b945"
+  },
+  "media_assets": {
+    "count": 0,
+    "checksum": "d751713988987e9331980363e24189ce"
+  },
+  "leads": {
+    "count": 0,
+    "checksum": "d751713988987e9331980363e24189ce"
+  },
+  "admins": {
+    "count": 1,
+    "checksum": "99b1e783d47e60ff8f99d2e652dac8cd"
+  },
+  "faq_categories": {
+    "count": 1,
+    "checksum": "ddda8cdea21103322ba065d01b9e3ac0"
+  },
+  "learning_categories": {
+    "count": 0,
+    "checksum": "d751713988987e9331980363e24189ce"
+  },
+  "learning_tags": {
+    "count": 0,
+    "checksum": "d751713988987e9331980363e24189ce"
+  },
+  "site_settings": {
+    "count": 2,
+    "checksum": "b5e8c048478c4744010f3b06b5e12ea0"
+  },
+  "audit_logs": {
+    "count": 67,
+    "checksum": "f19a6eae3010221670db93ed972c6a4c"
+  },
+  "migration": "0009_demo_crm"
+}

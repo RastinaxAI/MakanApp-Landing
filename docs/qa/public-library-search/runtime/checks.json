@@ -1,0 +1,95 @@
+{
+  "origin": "http://127.0.0.1:3100",
+  "checks": [
+    {
+      "browser": "chromium",
+      "width": 320,
+      "route": "learn",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 320,
+      "route": "blog",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 320,
+      "route": "solutions",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 768,
+      "route": "learn",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 768,
+      "route": "blog",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 768,
+      "route": "solutions",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 1440,
+      "route": "learn",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 1440,
+      "route": "blog",
+      "passed": true
+    },
+    {
+      "browser": "chromium",
+      "width": 1440,
+      "route": "solutions",
+      "passed": true
+    },
+    {
+      "browser": "firefox",
+      "width": 360,
+      "route": "learn",
+      "passed": true
+    },
+    {
+      "browser": "firefox",
+      "width": 360,
+      "route": "blog",
+      "passed": true
+    },
+    {
+      "browser": "firefox",
+      "width": 360,
+      "route": "solutions",
+      "passed": true
+    },
+    {
+      "browser": "webkit",
+      "width": 360,
+      "route": "learn",
+      "passed": true
+    },
+    {
+      "browser": "webkit",
+      "width": 360,
+      "route": "blog",
+      "passed": true
+    },
+    {
+      "browser": "webkit",
+      "width": 360,
+      "route": "solutions",
+      "passed": true
+    }
+  ]
+}

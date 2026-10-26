@@ -1,0 +1,40 @@
+{
+  "url": "http://127.0.0.1:3100",
+  "checks": [
+    {
+      "path": "/",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/features",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/demo",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/admin/login",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/health/ready",
+      "expected": 200,
+      "actual": 200
+    },
+    {
+      "path": "/api/v1/admin/content",
+      "expected": 401,
+      "actual": 401
+    },
+    {
+      "path": "/this-page-does-not-exist-studio-check",
+      "expected": 404,
+      "actual": 404
+    }
+  ]
+}

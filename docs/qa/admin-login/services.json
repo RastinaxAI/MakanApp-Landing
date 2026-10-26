@@ -1,0 +1,26 @@
+[
+  {
+    "Service": "api",
+    "Health": "healthy",
+    "State": "running",
+    "Image": "makan-landing-dev-api"
+  },
+  {
+    "Service": "db",
+    "Health": "healthy",
+    "State": "running",
+    "Image": "postgres:17.11-alpine"
+  },
+  {
+    "Service": "maintenance",
+    "Health": "healthy",
+    "State": "running",
+    "Image": "makan-landing-dev-maintenance"
+  },
+  {
+    "Service": "web",
+    "Health": "healthy",
+    "State": "running",
+    "Image": "makan-landing-dev-web:0.10.0"
+  }
+]

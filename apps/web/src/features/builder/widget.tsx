@@ -308,20 +308,11 @@ export function Widget({
       break;
     case "DemoForm":
     case "ContactForm":
-      output = context.editing ? (
-        <div className="rounded-xl border border-dashed border-primary bg-secondary p-8">
-          <h3 className="text-xl font-semibold">
-            {node.type === "DemoForm"
-              ? "فرم واقعی درخواست دمو"
-              : "فرم واقعی تماس"}
-          </h3>
-          <p className="mt-3">
-            در صفحهٔ منتشرشده به سامانهٔ درخواست‌های سایت متصل است. هنگام طراحی،
-            ثبت درخواست انجام نمی‌شود.
-          </p>
-        </div>
-      ) : (
-        <RequestForm kind={node.type === "DemoForm" ? "demo" : "contact"} />
+      output = (
+        <RequestForm
+          kind={node.type === "DemoForm" ? "demo" : "contact"}
+          preview={context.editing}
+        />
       );
       break;
     case "Pricing":

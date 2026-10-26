@@ -1,5 +1,5 @@
 "use client";
-import { useState, createElement, type ReactNode } from "react";
+import { useState, useRef, useLayoutEffect, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { RichText } from "@/features/cms/rich-text";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -19,21 +19,53 @@ export function EditableHeading({
   editing?: boolean;
   onEdit?: (value: string) => void;
 }) {
-  return createElement(
-    `h${Math.max(1, Math.min(6, level))}`,
-    {
-      contentEditable: editing || undefined,
-      suppressContentEditableWarning: true,
-      role: editing ? "textbox" : undefined,
-      "aria-label": editing ? "ویرایش عنوان در صفحه" : undefined,
-      onBlur: editing
-        ? (event: React.FocusEvent<HTMLElement>) =>
-            onEdit?.((event.currentTarget.textContent || "").slice(0, 180))
-        : undefined,
-      className: "builder-heading",
-      style: { fontSize: "inherit" },
-    },
-    title,
+  const element = useRef<HTMLHeadingElement>(null);
+  useLayoutEffect(() => {
+    const heading = element.current;
+    if (
+      editing &&
+      heading &&
+      heading.ownerDocument.activeElement !== heading &&
+      heading.textContent !== title
+    )
+      heading.textContent = title;
+  }, [title, level, editing]);
+  const commit = (heading: HTMLElement) =>
+    onEdit?.((heading.textContent || "").slice(0, 180));
+  const Heading = `h${Math.max(1, Math.min(6, level))}` as
+    "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
+  return (
+    <Heading
+      ref={element}
+      contentEditable={editing || undefined}
+      suppressContentEditableWarning
+      role={editing ? "textbox" : undefined}
+      aria-label={editing ? "ویرایش عنوان در صفحه" : undefined}
+      onInput={
+        editing
+          ? (event: React.FormEvent<HTMLElement>) => {
+              if (!(event.nativeEvent as InputEvent).isComposing)
+                commit(event.currentTarget);
+            }
+          : undefined
+      }
+      onCompositionEnd={
+        editing
+          ? (event: React.CompositionEvent<HTMLElement>) =>
+              commit(event.currentTarget)
+          : undefined
+      }
+      onBlur={
+        editing
+          ? (event: React.FocusEvent<HTMLElement>) =>
+              commit(event.currentTarget)
+          : undefined
+      }
+      className="builder-heading"
+      style={{ fontSize: "inherit" }}
+    >
+      {editing ? undefined : title}
+    </Heading>
   );
 }
 export function WidgetTabs({
@@ -67,7 +99,21 @@ export function WidgetTabs({
     >
       <TabsList className="h-auto flex-wrap" aria-label="بخش‌های محتوا">
         {items.map((item, index) => (
-          <TabsTrigger key={index} value={String(index)} className="min-h-11">
+          <TabsTrigger
+            key={index}
+            value={String(index)}
+            className="min-h-11"
+            onClick={
+              onItemSelect
+                ? (event) => {
+                    // Radix changes value on pointer-down. Select again on click, after
+                    // the surrounding draggable container has processed its selection.
+                    event.stopPropagation();
+                    onItemSelect(index);
+                  }
+                : undefined
+            }
+          >
             {item.title}
           </TabsTrigger>
         ))}

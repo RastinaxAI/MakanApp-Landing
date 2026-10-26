@@ -1,0 +1,192 @@
+.admin-page {
+  display: grid;
+  min-width: 0;
+  gap: 1.5rem;
+}
+.admin-page :is(input:not([type="checkbox"]), select, textarea) {
+  max-width: 100%;
+  min-width: 0;
+}
+.admin-page :focus-visible {
+  outline-color: var(--ring);
+}
+.admin-workspace .admin-page :focus-visible {
+  outline-color: var(--ring);
+}
+.admin-page-symbol {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  border: 1px solid #dbe8ff;
+  border-radius: 0.75rem;
+  background: #edf4ff;
+  color: var(--primary);
+}
+.admin-surface {
+  min-width: 0;
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: white;
+}
+.admin-surface-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  border-bottom: 1px solid #edf1f7;
+}
+.admin-surface-body {
+  min-width: 0;
+  padding: 1.25rem;
+}
+.admin-notice {
+  border: 1px solid #d4e4fd;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: #edf4ff;
+  color: #1c4f9c;
+  font-size: 0.875rem;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.admin-page .admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+.admin-page .admin-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: 0.625rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.admin-page
+  .admin-tab:is(
+    [aria-current="page"],
+    [aria-pressed="true"],
+    [data-state="active"]
+  ) {
+  background: white;
+  border-color: var(--border);
+  color: var(--primary-hover);
+  font-weight: 600;
+}
+.admin-page .admin-tab:hover {
+  background: white;
+  color: var(--primary-hover);
+}
+.admin-editor-layout {
+  display: grid;
+  min-width: 0;
+  align-items: start;
+  gap: 1.5rem;
+}
+.admin-editor-layout > * {
+  min-width: 0;
+}
+.admin-record-list {
+  margin: -1.25rem;
+}
+.admin-record {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid #edf1f7;
+}
+.admin-record:last-child {
+  border-bottom: 0;
+}
+.admin-record:hover {
+  background: #fafcff;
+}
+.admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.5rem;
+  font-size: 0.6875rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.admin-page .admin-form-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+.admin-help {
+  border: 1px solid #dce8fc;
+  border-radius: 0.75rem;
+  background: #f1f6ff;
+  padding: 1rem;
+  color: #1c4f9c;
+  font-size: 0.75rem;
+  line-height: 1.9;
+}
+.admin-page .admin-settings-fields > :is(div, label) {
+  min-width: 0;
+}
+.admin-page .admin-settings-fields > label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.admin-page .admin-settings-fields select {
+  width: 100%;
+}
+.admin-page .admin-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid #edf1f7;
+  padding: 1rem 1.25rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.admin-page .admin-security-section {
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+.admin-page .admin-security-section h2 {
+  font-size: 1rem;
+}
+.admin-page .admin-security-section p {
+  font-size: 0.8125rem;
+  line-height: 1.9;
+}
+@media (min-width: 700px) {
+  .admin-page .admin-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .admin-editor-layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+  .admin-editor-layout.admin-editor-first {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+}
+@media (max-width: 479px) {
+  .admin-page-heading > div > div:first-child > .admin-page-symbol {
+    display: none;
+  }
+  .admin-page .admin-record {
+    gap: 0.75rem;
+  }
+}

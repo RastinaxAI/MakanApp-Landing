@@ -1,0 +1,175 @@
+ Image makan-landing-dev-web:0.10.0 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.07kB done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile:
+#2 transferring dockerfile: 1.70kB 0.5s done
+#2 DONE 1.4s
+
+#3 [internal] load metadata for docker.io/library/node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66
+#3 DONE 2.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 278B 0.1s done
+#4 DONE 0.2s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [dependencies 1/5] FROM docker.io/library/node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66
+#6 resolve docker.io/library/node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66
+#6 resolve docker.io/library/node:24.21.0-trixie-slim@sha256:173f125896c3b47ddf056734c7ea789d04595a6a08769a8f78e0df642781fb66 0.1s done
+#6 DONE 0.2s
+
+#5 [internal] load build context
+#5 transferring context: 129.45kB 1.6s done
+#5 DONE 1.9s
+
+#7 [dependencies 2/5] WORKDIR /srv/makan
+#7 CACHED
+
+#8 [dependencies 3/5] COPY package.json package-lock.json ./
+#8 CACHED
+
+#9 [dependencies 4/5] COPY apps/web/package.json ./apps/web/package.json
+#9 CACHED
+
+#10 [dependencies 5/5] RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
+#10 CACHED
+
+#11 [builder 1/2] COPY apps/web ./apps/web
+#11 DONE 9.5s
+
+#12 [builder 2/2] RUN npm run build --workspace @makan/web
+#12 29.52 
+#12 29.52 > @makan/web@0.2.0 build
+#12 29.52 > next build --webpack
+#12 29.52 
+#12 39.65 ▲ Next.js 16.4.0 (webpack)
+#12 45.98 ✓ Running next.config.ts took 6.3s
+#12 46.24 - Experiments (use with caution):
+#12 46.24   · cpus: 1
+#12 46.24   · optimizePackageImports
+#12 46.24   ✓ webpackMemoryOptimizations
+#12 46.24 
+#12 46.52   Creating an optimized production build ...
+#12 485.4 ✓ Compiled successfully in 7.0min
+#12 485.4   Running TypeScript ...
+#12 505.3   Finished TypeScript in 19.9s ...
+#12 505.3   Collecting page data using 1 worker ...
+#12 509.2   Generating static pages using 1 worker (0/5) ...
+#12 509.6   Generating static pages using 1 worker (1/5) 
+#12 509.6   Generating static pages using 1 worker (2/5) 
+#12 509.6   Generating static pages using 1 worker (3/5) 
+#12 511.0 ✓ Generating static pages using 1 worker (5/5) in 1797ms
+#12 512.3   Finalizing page optimization ...
+#12 512.3   Collecting build traces ...
+#12 552.5 
+#12 552.5 Route (app)
+#12 552.5 ┌ ƒ /
+#12 552.5 ├ ○ /_not-found
+#12 552.5 ├ ƒ /[slug]
+#12 552.5 ├ ƒ /about
+#12 552.5 ├ ƒ /admin
+#12 552.5 ├ ƒ /admin/accounts
+#12 552.5 ├ ƒ /admin/analytics
+#12 552.5 ├ ƒ /admin/audit
+#12 552.5 ├ ƒ /admin/builder
+#12 552.5 ├ ƒ /admin/content
+#12 552.5 ├ ƒ /admin/content/[id]
+#12 552.5 ├ ƒ /admin/content/[id]/builder
+#12 552.5 ├ ƒ /admin/content/[id]/revisions
+#12 552.5 ├ ƒ /admin/crm
+#12 552.5 ├ ƒ /admin/crm/leads/[id]
+#12 552.5 ├ ƒ /admin/crm/schools/[id]
+#12 552.5 ├ ƒ /admin/faq-categories
+#12 552.5 ├ ƒ /admin/leads
+#12 552.5 ├ ƒ /admin/leads/[id]
+#12 552.5 ├ ƒ /admin/learn
+#12 552.5 ├ ƒ /admin/learn/[id]
+#12 552.5 ├ ƒ /admin/learn/new
+#12 552.5 ├ ƒ /admin/learn/preview/[id]
+#12 552.5 ├ ƒ /admin/learn/taxonomy
+#12 552.5 ├ ƒ /admin/login
+#12 552.5 ├ ƒ /admin/media
+#12 552.5 ├ ƒ /admin/preview/[id]
+#12 552.5 ├ ƒ /admin/security
+#12 552.5 ├ ƒ /admin/settings
+#12 552.5 ├ ƒ /admin/settings/sms
+#12 552.5 ├ ƒ /api/v1/[...path]
+#12 552.5 ├ ƒ /blog
+#12 552.5 ├ ƒ /blog/[slug]
+#12 552.5 ├ ƒ /contact
+#12 552.5 ├ ƒ /demo
+#12 552.5 ├ ƒ /design-system
+#12 552.5 ├ ƒ /design-system/v2
+#12 552.5 ├ ƒ /faq
+#12 552.5 ├ ƒ /features
+#12 552.5 ├ ƒ /features/[slug]
+#12 552.5 ├ ƒ /health/live
+#12 552.5 ├ ƒ /health/ready
+#12 552.5 ├ ƒ /learn
+#12 552.5 ├ ƒ /learn/articles/[slug]
+#12 552.5 ├ ƒ /learn/categories/[slug]
+#12 552.5 ├ ƒ /learn/series
+#12 552.5 ├ ƒ /learn/series/[slug]
+#12 552.5 ├ ƒ /learn/sitemap/[id]
+#12 552.5 ├ ƒ /learn/videos/[slug]
+#12 552.5 ├ ƒ /privacy
+#12 552.5 ├ ƒ /robots.txt
+#12 552.5 ├ ƒ /sitemap.xml
+#12 552.5 ├ ƒ /sitemaps/pages/sitemap/[id]
+#12 552.5 ├ ƒ /solutions
+#12 552.5 ├ ƒ /solutions/[slug]
+#12 552.5 └ ƒ /terms
+#12 552.5 
+#12 552.5 
+#12 552.5 ƒ Proxy (Middleware)
+#12 552.5 
+#12 552.5 ○  (Static)   prerendered as static content
+#12 552.5 ƒ  (Dynamic)  server-rendered on demand
+#12 552.5 
+#12 DONE 554.1s
+
+#13 [runtime 3/8] RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*     && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx         /opt/yarn* /usr/local/bin/yarn /usr/local/bin/yarnpkg
+#13 CACHED
+
+#14 [runtime 4/8] RUN groupadd --gid 10001 web && useradd --uid 10001 --gid web --no-create-home web
+#14 CACHED
+
+#15 [runtime 5/8] COPY --from=builder --chown=10001:10001 /srv/makan/apps/web/.next/standalone ./
+#15 DONE 7.9s
+
+#16 [runtime 6/8] COPY --from=builder --chown=10001:10001 /srv/makan/apps/web/.next/static ./apps/web/.next/static
+#16 DONE 3.0s
+
+#17 [runtime 7/8] COPY --from=builder --chown=10001:10001 /srv/makan/apps/web/public ./apps/web/public
+#17 DONE 0.4s
+
+#18 [runtime 8/8] RUN mkdir -p /srv/makan/apps/web/.next/cache && chown -R 10001:10001 /srv/makan/apps/web/.next/cache
+#18 DONE 12.2s
+
+#19 exporting to image
+#19 exporting layers
+#19 exporting layers 4.2s done
+#19 exporting manifest sha256:db35399041550f68cfd8c2b53a29aae8c1bca1578a5d5945b617422636e43665
+#19 exporting manifest sha256:db35399041550f68cfd8c2b53a29aae8c1bca1578a5d5945b617422636e43665 0.2s done
+#19 exporting config sha256:bebe9bfe7a4745cc2f0ad5da94891a48386598e332ad6f2b535066b9204847ca
+#19 exporting config sha256:bebe9bfe7a4745cc2f0ad5da94891a48386598e332ad6f2b535066b9204847ca 0.2s done
+#19 exporting attestation manifest sha256:b5be8e5a9f226f78f9e8807d3e23b5b217647112edb9ce33f27b8af75d3ddc53
+#19 exporting attestation manifest sha256:b5be8e5a9f226f78f9e8807d3e23b5b217647112edb9ce33f27b8af75d3ddc53 0.3s done
+#19 exporting manifest list sha256:7d273e2584926f9dfdc08445de62c658515ea67141c8fcd0261a0ee9e193f248
+#19 exporting manifest list sha256:7d273e2584926f9dfdc08445de62c658515ea67141c8fcd0261a0ee9e193f248 0.1s done
+#19 naming to docker.io/library/makan-landing-dev-web:0.10.0 done
+#19 unpacking to docker.io/library/makan-landing-dev-web:0.10.0
+#19 unpacking to docker.io/library/makan-landing-dev-web:0.10.0 3.4s done
+#19 DONE 8.9s
+
+#20 resolving provenance for metadata file
+#20 DONE 0.3s
+ Image makan-landing-dev-web:0.10.0 Built 

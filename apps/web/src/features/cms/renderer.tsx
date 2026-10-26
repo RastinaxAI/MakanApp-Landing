@@ -112,7 +112,13 @@ export function CmsRenderer(props: LegacyRendererProps) {
       {!props.privatePreview && (
         <ContentSeo content={props.content} faqs={visibleFaqs} />
       )}
-      <CmsBody {...props} />
+      {props.privatePreview ? (
+        <div className="public-site">
+          <CmsBody {...props} />
+        </div>
+      ) : (
+        <CmsBody {...props} />
+      )}
     </>
   );
 }

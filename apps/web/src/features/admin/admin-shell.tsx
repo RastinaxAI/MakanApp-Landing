@@ -41,7 +41,8 @@ export function AdminShell({
   children: ReactNode;
 }) {
   const path = usePathname();
-  const canvas = path.endsWith("/builder");
+  const canvas = /^\/admin\/content\/[^/]+\/builder$/.test(path);
+  const preview = /^\/admin\/(?:learn\/)?preview\//.test(path);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
@@ -299,7 +300,7 @@ export function AdminShell({
         <main
           id="admin-main"
           tabIndex={-1}
-          className={`mx-auto min-w-0 ${canvas ? "max-w-none p-3" : "max-w-[1440px] p-4 tablet:p-6 desktop:p-8"}`}
+          className={`mx-auto min-w-0 ${canvas ? "admin-canvas-main max-w-none p-3" : `${preview ? "admin-preview-main" : path === "/admin/content" ? "admin-reference-main" : "admin-app-main"} max-w-[1440px] p-4 tablet:p-6 desktop:p-8`}`}
         >
           {error && (
             <p

@@ -22,35 +22,53 @@ export function CapabilityMap({ compact = false }: { compact?: boolean }) {
   return (
     <figure className={`makan-capability-map ${compact ? "is-compact" : ""}`}>
       <div className="map-label">
-        <span className="size-2 rounded-full bg-primary" /> یک فضای مشترک برای
-        مدرسه
+        <span /> مدرسه، در یک قاب
       </div>
-      <div className="map-orbit" aria-hidden="true" />
       <div className="map-center">
         <Image
           src="/brand/makan-logo.png"
           alt="ماکان"
-          width={88}
-          height={88}
-          sizes="88px"
+          width={76}
+          height={76}
+          sizes="76px"
           className="rounded-2xl"
         />
-        <span>ماکان</span>
+        <div>
+          <strong>ماکان</strong>
+          <span>ارتباط و یادگیری، کنار هم.</span>
+        </div>
       </div>
-      <div className="map-node map-school">
-        <GraduationCap aria-hidden="true" />
-        <span>مدرسه</span>
-        <small>کلاس، تکلیف و آزمون</small>
+      <div className="map-modules">
+        <div className="map-node map-school">
+          <GraduationCap aria-hidden="true" />
+          <div>
+            <strong>مدرسه</strong>
+            <small>کلاس، تکلیف و آزمون</small>
+          </div>
+          <ArrowUpLeft aria-hidden="true" />
+        </div>
+        <div className="map-node map-messages">
+          <MessageCircle aria-hidden="true" />
+          <div>
+            <strong>پیام‌رسان</strong>
+            <small>گفت‌وگو، گروه و کانال</small>
+          </div>
+          <ArrowUpLeft aria-hidden="true" />
+        </div>
+        <div className="map-node map-family">
+          <Users aria-hidden="true" />
+          <div>
+            <strong>خانواده</strong>
+            <small>همراه مسیر یادگیری</small>
+          </div>
+          <ArrowUpLeft aria-hidden="true" />
+        </div>
       </div>
-      <div className="map-node map-messages">
-        <MessageCircle aria-hidden="true" />
-        <span>پیام‌رسان</span>
-        <small>گفت‌وگو و هماهنگی</small>
-      </div>
-      <div className="map-node map-family">
-        <Users aria-hidden="true" />
-        <span>خانواده</span>
-        <small>همراه مسیر یادگیری</small>
+      <div className="map-roles">
+        <span>مدیر</span>
+        <span>معلم</span>
+        <span>دانش‌آموز</span>
+        <span>والد</span>
       </div>
       <figcaption>
         نقشهٔ تصویری قابلیت‌ها؛ این تصویر اسکرین‌شات محصول نیست.

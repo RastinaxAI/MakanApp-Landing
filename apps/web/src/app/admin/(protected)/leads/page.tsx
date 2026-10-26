@@ -1,3 +1,5 @@
+import { AdminPageHeader } from "@/features/admin/page-kit";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-api";
 import { cmsGet, CmsDenied } from "@/features/cms/admin-data";
@@ -73,13 +75,13 @@ export default async function LeadsPage({
     );
   }
   return (
-    <>
-      <h1 className="text-3xl font-semibold">درخواست‌ها و پیگیری</h1>
-      <p className="mt-3 leading-8 text-muted-foreground">
-        درخواست‌های دمو و پیام‌های تماس؛ اطلاعات شخصی فقط برای مالک و فروش قابل
-        دسترسی است.
-      </p>
-      <div className="my-6 grid gap-3 tablet:grid-cols-3">
+    <div className="admin-page">
+      <AdminPageHeader
+        title="درخواست‌ها و پیگیری"
+        eyebrow="ارتباط با مخاطبان"
+        description="درخواست‌های دمو و پیام‌های تماس را بررسی کنید و مسئول و اقدام بعدی هر درخواست را مشخص کنید."
+      />
+      <div className="grid gap-3 tablet:grid-cols-3 min-[1280px]:grid-cols-5">
         {[
           ["کل درخواست‌های بازه", metrics.total],
           ["دمو", metrics.demo],
@@ -98,7 +100,7 @@ export default async function LeadsPage({
           </section>
         ))}
       </div>
-      <p className="mb-6 text-sm leading-7 text-muted-foreground">
+      <p className="admin-help">
         آمار بر زمان ایجاد درخواست در بازه انتخابی و آخرین وضعیت ثبت‌شده محاسبه
         می‌شود؛ شامل رکوردهای بی‌نام پس از حذف اطلاعات است. این اعداد نرخ تبدیل
         بازدید نیستند. پایان بازه شامل نمی‌شود و تاریخ‌ها میلادی، ساعت صفر UTC
@@ -106,7 +108,7 @@ export default async function LeadsPage({
       </p>
       <form
         method="get"
-        className="grid grid-cols-1 gap-4 rounded-2xl border border-border bg-card p-5 tablet:grid-cols-2 desktop:grid-cols-3"
+        className="grid grid-cols-1 items-end gap-4 rounded-2xl border border-border bg-card p-5 tablet:grid-cols-2 desktop:grid-cols-3"
       >
         <label className="grid min-w-0 gap-2 text-sm">
           جست‌وجو
@@ -124,7 +126,9 @@ export default async function LeadsPage({
         {select(
           "assigned_to",
           "مسئول پیگیری",
-          Object.fromEntries(assignees.map((a) => [a.id, a.phone || a.email || "مدیر"])),
+          Object.fromEntries(
+            assignees.map((a) => [a.id, a.phone || a.email || "مدیر"]),
+          ),
         )}
         {[
           ["date_from", "تاریخ ایجاد از"],
@@ -145,28 +149,25 @@ export default async function LeadsPage({
             />
           </label>
         ))}
-        <button className="min-h-12 rounded-lg bg-primary px-5 text-primary-foreground">
+        <Button type="submit" variant="secondary">
           اعمال فیلتر
-        </button>
+        </Button>
         <Link
           href="/admin/leads"
           prefetch={false}
-          className="inline-flex min-h-12 items-center text-primary-hover"
+          className="inline-flex min-h-11 items-center text-xs text-primary-hover"
         >
           پاک‌کردن فیلترها
         </Link>
       </form>
-      <div className="mt-6 grid gap-4">
+      <div className="admin-request-list">
         {data.items.length === 0 && (
-          <p className="rounded-xl border border-dashed border-input p-6">
+          <p className="px-5 py-12 text-center text-sm text-muted-foreground">
             درخواستی با این فیلترها ثبت نشده است.
           </p>
         )}
         {data.items.map((lead) => (
-          <article
-            key={lead.id}
-            className="min-w-0 rounded-2xl border border-border bg-card p-5"
-          >
+          <article key={lead.id} className="min-w-0">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="min-w-0 max-w-full text-xl font-semibold [overflow-wrap:anywhere]">
                 <Link
@@ -224,6 +225,6 @@ export default async function LeadsPage({
           </Link>
         )}
       </nav>
-    </>
+    </div>
   );
 }

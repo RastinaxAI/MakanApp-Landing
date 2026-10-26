@@ -1,0 +1,77 @@
+{
+  "date": "2026-10-26",
+  "scope": "Redesign of nine existing admin workspaces",
+  "routes": [
+    "/admin/learn",
+    "/admin/learn/taxonomy",
+    "/admin/media",
+    "/admin/faq-categories",
+    "/admin/accounts",
+    "/admin/settings",
+    "/admin/settings/sms",
+    "/admin/audit",
+    "/admin/security"
+  ],
+  "checks": {
+    "production_build": "passed",
+    "typescript": "passed",
+    "eslint": "passed",
+    "diff_check": "passed",
+    "compose_config": "passed",
+    "docker_build": "passed",
+    "local_smoke": "18 passed"
+  },
+  "browser": {
+    "passed": 22,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "engines": [
+      "chromium",
+      "firefox",
+      "webkit"
+    ],
+    "reports": [
+      "browser-v2-admin-refresh-all.json",
+      "browser-v2-builder-chromium.json"
+    ],
+    "responsive_widths": [
+      1440,
+      1200,
+      1024,
+      768,
+      480,
+      360
+    ],
+    "automated_accessibility": "axe WCAG 2 A/AA and 2.2 AA; desktop and mobile"
+  },
+  "database": {
+    "schema_changed": false,
+    "migrations_added": [],
+    "checksums_equal": true,
+    "before": "database-before.json",
+    "after": "database-after.json",
+    "pages_preserved": 26,
+    "revisions_preserved": 50,
+    "migration": "0009_demo_crm"
+  },
+  "docker": {
+    "services_healthy": 4,
+    "build_log": "docker-web-build.log",
+    "rollback_image": "makan-admin-web-before:20261026",
+    "deployed_build": {
+      "build_id": "XbGmhWHPV7Kw5tfXto55F",
+      "admin_refresh_bundle_present": true
+    },
+    "runtime": "local-runtime.json"
+  },
+  "api_contracts_changed": [],
+  "main_makan_backend_changed": false,
+  "limitations": [
+    "No live SMS provider connection was tested or changed",
+    "Account, media and audit searches apply to the current page",
+    "Automated accessibility checks are not a complete manual WCAG certification"
+  ],
+  "commit": null,
+  "pushed": false
+}

@@ -131,7 +131,7 @@ def main():
     parser.add_argument("gate", choices=["build", "backend", "browser"])
     parser.add_argument(
         "--phase",
-        choices=["v2-step5", "v2-step6", "builder-elementor"],
+        choices=["v2-step5", "v2-step6", "builder-elementor", "builder-studio", "builder-library", "content-manager", "admin-refresh", "admin-unified", "public-polish", "public-library-search", "admin-login"],
         default="v2-step6",
     )
     parser.add_argument(
@@ -143,11 +143,19 @@ def main():
             "all",
             "crm",
             "builder",
+            "studio",
+            "library",
+            "content-manager",
+            "admin-refresh",
+            "admin-unified",
             "elementor",
             "advanced",
             "theme",
             "widgets",
             "public-upgrade",
+            "public-polish",
+            "public-library-search",
+            "admin-login",
             "visual-regression",
             "admin",
             "cms",
@@ -163,6 +171,7 @@ def main():
         default="all",
     )
     parser.add_argument("--dev", action="store_true")
+    parser.add_argument("--max-failures", type=int, choices=range(0, 101), default=1)
     parser.add_argument("--update-snapshots", action="store_true")
     parser.add_argument(
         "--suite", choices=["v2", "legacy", "legacy-seo", "legacy-otp"], default="v2"
@@ -264,7 +273,7 @@ def main():
                 "--config=playwright.v2.config.ts"
                 if args.suite == "v2"
                 else "--config=playwright.v2-legacy.config.ts",
-                "--max-failures=1",
+                f"--max-failures={args.max_failures}",
             )
             if args.project != "all":
                 argv.append(f"--project={args.project}")

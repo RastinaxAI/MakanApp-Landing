@@ -33,20 +33,22 @@ export default async function Page({
   });
   return (
     <>
-      <p className="mb-5 rounded-xl bg-secondary p-4">
+      <p className="admin-preview-toolbar mb-5">
         پیش‌نمایش خصوصی؛ اطلاعات این نسخه هنوز لزوماً عمومی نیست.
       </p>
-      <LearningArticle
-        privatePreview
-        content={{
-          ...content,
-          related,
-          items,
-          series: [],
-          previous: null,
-          next: null,
-        }}
-      />
+      <div className="public-site">
+        <LearningArticle
+          privatePreview
+          content={{
+            ...content,
+            related,
+            items,
+            series: [],
+            previous: null,
+            next: null,
+          }}
+        />
+      </div>
     </>
   );
 }

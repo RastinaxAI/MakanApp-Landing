@@ -11,5 +11,7 @@ export default async function Page() {
     cmsAll<Taxonomy>("learn/categories"),
     cmsAll<Taxonomy>("learn/tags"),
   ]);
-  return <TaxonomyPanel categories={categories} tags={tags} />;
+  return (
+    <TaxonomyPanel categories={categories} tags={tags} />
+  );
 }

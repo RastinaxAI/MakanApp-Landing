@@ -1,3 +1,4 @@
+import { ArrowUpLeft, BookOpen, Layers, Play } from "lucide-react";
 import { SourceLink as Link } from "@/features/leads/source-link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/layout/container";
@@ -9,6 +10,7 @@ import { publicGet, pageMetadata, getPage } from "@/lib/public-api";
 import { CmsRenderer } from "@/features/cms/renderer";
 import type { CmsPage } from "@/features/cms/types";
 import { AparatPlayer } from "./player";
+import { LibrarySearch, type LibraryFilter } from "./library-search";
 import { QualifiedView, type ViewPolicy } from "./view";
 import { LearningSeo } from "@/features/seo/structured-data";
 import {
@@ -64,10 +66,32 @@ export function LearningCards({
         return (
           <article
             key={item.id}
-            className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
+            className="public-learning-card flex flex-col gap-4 rounded-2xl border border-border bg-card p-5 shadow-sm"
           >
-            {image && (
-              <MediaImage image={image} privatePreview={privatePreview} />
+            {image ? (
+              <div className="public-learning-cover">
+                <MediaImage image={image} privatePreview={privatePreview} />
+              </div>
+            ) : (
+              <div
+                className={`public-learning-cover public-learning-cover-${item.kind}`}
+                aria-hidden="true"
+              >
+                {item.kind === "video" ? (
+                  <Play />
+                ) : item.kind === "series" ? (
+                  <Layers />
+                ) : (
+                  <BookOpen />
+                )}
+                <span>
+                  {item.kind === "video"
+                    ? "تماشا کنید"
+                    : item.kind === "series"
+                      ? "قدم به قدم"
+                      : "بخوانید و یاد بگیرید"}
+                </span>
+              </div>
             )}
             <p className="text-sm text-muted-foreground">
               {item.kind === "video"
@@ -89,6 +113,11 @@ export function LearningCards({
                 }
               >
                 {item.payload.headline}
+                <ArrowUpLeft
+                  className="public-learning-arrow"
+                  size={20}
+                  aria-hidden="true"
+                />
               </Link>
             </h3>
             <p className="flex-1 leading-8 text-muted-foreground">
@@ -143,86 +172,60 @@ export async function Library({
   if (header.payload.kind !== "page") notFound();
   if (categoryData)
     header.payload = { ...header.payload, headline: categoryData.title };
-  function select(
-    name: string,
-    label: string,
-    options: Record<string, string>,
-  ) {
-    return (
-      <label className="space-y-2">
-        <span className="block text-sm">{label}</span>
-        <select
-          name={name}
-          defaultValue={query.get(name) || ""}
-          className="min-h-11 w-full rounded-lg border border-input bg-card px-3"
-        >
-          <option value="">همه</option>
-          {Object.entries(options).map(([key, value]) => (
-            <option key={key} value={key}>
-              {value}
-            </option>
-          ))}
-        </select>
-      </label>
-    );
-  }
+  const filters: LibraryFilter[] = [
+    { name: "audience", label: "مخاطب", options: audiences },
+    { name: "topic", label: "موضوع", options: topics },
+    ...(domain === "learn"
+      ? [
+          {
+            name: "type",
+            label: "نوع محتوا",
+            options: { article: "متنی", video: "ویدیو" },
+          },
+        ]
+      : []),
+    { name: "level", label: "سطح", options: levels },
+    ...(!category
+      ? [
+          {
+            name: "category",
+            label: "دسته‌بندی",
+            options: Object.fromEntries(
+              categories.items.map((item) => [item.slug, item.title]),
+            ),
+          },
+        ]
+      : []),
+    {
+      name: "tag",
+      label: "برچسب",
+      options: Object.fromEntries(
+        tags.items.map((item) => [item.slug, item.title]),
+      ),
+    },
+    {
+      name: "sort",
+      label: "مرتب‌سازی",
+      options: { newest: "جدیدترین", popular: "بازدید واجد شرایط" },
+    },
+  ];
   const path = category
     ? `/learn/categories/${encodeURIComponent(category)}`
     : `/${domain}`;
   return (
     <>
-      <CmsRenderer content={header} />
+      <div className="public-index-header">
+        <CmsRenderer content={header} />
+      </div>
       <section className="section-space">
         <Container>
-          <form
-            action={path}
-            className="mb-8 grid gap-4 rounded-2xl border border-border bg-card p-5 tablet:grid-cols-2 desktop:grid-cols-4"
-            aria-label="فیلتر آموزش‌ها"
-          >
-            <label className="space-y-2">
-              <span className="block text-sm">جست‌وجو</span>
-              <input
-                name="q"
-                defaultValue={query.get("q") || ""}
-                maxLength={100}
-                className="min-h-11 w-full rounded-lg border border-input px-3"
-              />
-            </label>
-            {select("audience", "مخاطب", audiences)}
-            {select("topic", "موضوع", topics)}
-            {domain === "learn" &&
-              select("type", "نوع محتوا", { article: "متنی", video: "ویدیو" })}
-            {select("level", "سطح", levels)}
-            {!category &&
-              select(
-                "category",
-                "دسته‌بندی",
-                Object.fromEntries(
-                  categories.items.map((c) => [c.slug, c.title]),
-                ),
-              )}
-            {select(
-              "tag",
-              "برچسب",
-              Object.fromEntries(tags.items.map((c) => [c.slug, c.title])),
-            )}
-            {select("sort", "مرتب‌سازی", {
-              newest: "جدیدترین",
-              popular: "بازدید واجد شرایط",
-            })}
-            <button
-              className="min-h-11 rounded-lg bg-primary px-4 text-primary-foreground"
-              type="submit"
-            >
-              اعمال فیلترها
-            </button>
-            <Link
-              href={path}
-              className="inline-flex min-h-11 items-center text-primary-hover"
-            >
-              پاک‌کردن فیلترها
-            </Link>
-          </form>
+          <LibrarySearch
+            key={`${path}?${query}`}
+            path={path}
+            domain={domain}
+            filters={filters}
+            values={Object.fromEntries(query)}
+          />
           {data.items.length ? (
             <>
               <p className="mb-5 text-muted-foreground">
@@ -231,7 +234,7 @@ export async function Library({
               <LearningCards items={data.items} />
             </>
           ) : (
-            <div className="rounded-2xl border border-dashed border-input p-8">
+            <div className="public-library-empty rounded-2xl border border-dashed border-input p-8">
               <h2 className="text-xl font-semibold">
                 {data.pagination.total === 0 && query.size === 1
                   ? "هنوز مطلبی منتشر نشده است."
@@ -372,7 +375,7 @@ export function LearningArticle({
         title={p.headline}
         description={p.summary}
       />
-      <Container className="max-w-5xl">
+      <Container className="public-learning-article max-w-5xl">
         <p className="mb-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
           <span>{p.audiences.map((role) => audiences[role]).join("، ")}</span>
           <span>

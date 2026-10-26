@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";

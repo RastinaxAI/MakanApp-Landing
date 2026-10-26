@@ -1,0 +1,837 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\OmidrezaBagheriyan\\AppData\\Local\\npm-cache\\_npx\\387698761821791d\\node_modules\\node\\bin\\node.exe",
+      "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.v2.config.ts",
+      "--max-failures=1",
+      "public-polish.spec.ts"
+    ],
+    "configFile": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\playwright.v2.config.ts",
+    "rootDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 1,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "snapshotDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "actionTimeout": 30000,
+          "baseURL": "http://127.0.0.1:3200",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "firefox",
+        "testDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "snapshotDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "actionTimeout": 30000,
+          "baseURL": "http://127.0.0.1:3200",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:157.0) Gecko/20100101 Firefox/157.0",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "firefox"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "firefox"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "webkit",
+        "testDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "snapshotDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "actionTimeout": 30000,
+          "baseURL": "http://127.0.0.1:3200",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1792,
+            "height": 1120
+          },
+          "deviceScaleFactor": 2,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "webkit"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "webkit"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/v2-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "public-polish.spec.ts",
+      "file": "public-polish.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 360px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16266,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:09:50.492Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-7b6c93e13602791361bd",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 768px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 14584,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:10:08.240Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-0baab1e79705ad5f0a39",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17352,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:10:22.841Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-b35ea712f2f7c6789972",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "mobile navigation, role tabs, FAQ and reduced motion stay usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:10:40.204Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-3cd41570ad63eb5e6921",
+          "file": "public-polish.spec.ts",
+          "line": 99,
+          "column": 5
+        },
+        {
+          "title": "redesigned demo and contact forms persist real requests in CRM",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6770,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:10:43.656Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-628b34709a87b00b4efe",
+          "file": "public-polish.spec.ts",
+          "line": 150,
+          "column": 5
+        },
+        {
+          "title": "small phone and intermediate breakpoints keep the header, hero and fields usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3828,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:10:50.440Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-936808da07aa306098db",
+          "file": "public-polish.spec.ts",
+          "line": 213,
+          "column": 5
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 360px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26700,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:10:55.913Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-f65409728914ddc70c12",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 768px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:11:24.354Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-85ccacbfc1af5b596891",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 26694,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:11:46.802Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-6394d1db9ce492f2d7dc",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "mobile navigation, role tabs, FAQ and reduced motion stay usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4650,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:12:13.514Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-6bc6b70bd6aedab4f56a",
+          "file": "public-polish.spec.ts",
+          "line": 99,
+          "column": 5
+        },
+        {
+          "title": "redesigned demo and contact forms persist real requests in CRM",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 6459,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:12:18.180Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-40bda5f0cec7565c470f",
+          "file": "public-polish.spec.ts",
+          "line": 150,
+          "column": 5
+        },
+        {
+          "title": "small phone and intermediate breakpoints keep the header, hero and fields usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "firefox",
+              "projectName": "firefox",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5336,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:12:24.651Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-3685ad0065600b7f2c34",
+          "file": "public-polish.spec.ts",
+          "line": 213,
+          "column": 5
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 360px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 33485,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:12:32.062Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-46e1e4e59aaffde3abe0",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 768px",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 25304,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 4\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"/127.0.0.1:3200/solutions/parents?_rsc=Ib4vSHLDKhqETXEb due to access control checks.\",\u001b[39m\n\u001b[31m+   \"/127.0.0.1:3200/solutions/students?_rsc=Ib4vSHLDKhqETXEb due to access control checks.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 4\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"/127.0.0.1:3200/solutions/parents?_rsc=Ib4vSHLDKhqETXEb due to access control checks.\",\u001b[39m\n\u001b[31m+   \"/127.0.0.1:3200/solutions/students?_rsc=Ib4vSHLDKhqETXEb due to access control checks.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n    at C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\public-polish.spec.ts:95:20",
+                    "location": {
+                      "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\public-polish.spec.ts",
+                      "column": 20,
+                      "line": 95
+                    },
+                    "snippet": "  93 |         });\n  94 |     }\n> 95 |     expect(errors).toEqual([]);\n     |                    ^\n  96 |   });\n  97 | }\n  98 |"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\public-polish.spec.ts",
+                        "column": 20,
+                        "line": 95
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 4\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"/127.0.0.1:3200/solutions/parents?_rsc=Ib4vSHLDKhqETXEb due to access control checks.\",\u001b[39m\n\u001b[31m+   \"/127.0.0.1:3200/solutions/students?_rsc=Ib4vSHLDKhqETXEb due to access control checks.\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n  93 |         });\n  94 |     }\n> 95 |     expect(errors).toEqual([]);\n     |                    ^\n  96 |   });\n  97 | }\n  98 |\n    at C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\public-polish.spec.ts:95:20"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T03:13:05.978Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\public-polish-public-pages-ed588--accessible-layout-at-768px-webkit\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\public-polish-public-pages-ed588--accessible-layout-at-768px-webkit\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\public-polish-public-pages-ed588--accessible-layout-at-768px-webkit\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\public-polish.spec.ts",
+                    "column": 20,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-09940ecef015da8165c6",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "public pages preserve content, SEO and accessible layout at 1440px",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-16e593af8ea9575f7506",
+          "file": "public-polish.spec.ts",
+          "line": 40,
+          "column": 7
+        },
+        {
+          "title": "mobile navigation, role tabs, FAQ and reduced motion stay usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-39b07ffb8a9e6aef85e0",
+          "file": "public-polish.spec.ts",
+          "line": 99,
+          "column": 5
+        },
+        {
+          "title": "redesigned demo and contact forms persist real requests in CRM",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-7fccedc243aca154e2c6",
+          "file": "public-polish.spec.ts",
+          "line": 150,
+          "column": 5
+        },
+        {
+          "title": "small phone and intermediate breakpoints keep the header, hero and fields usable",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "webkit",
+              "projectName": "webkit",
+              "results": [],
+              "status": "skipped"
+            }
+          ],
+          "id": "2aba62d8b337ef8d6434-577c5de42507bd635f18",
+          "file": "public-polish.spec.ts",
+          "line": 213,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "message": "\u001b[31mTesting stopped early after 1 maximum allowed failures.\u001b[39m"
+    }
+  ],
+  "stats": {
+    "startTime": "2026-10-26T03:09:49.600Z",
+    "duration": 222405.778,
+    "expected": 13,
+    "skipped": 4,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

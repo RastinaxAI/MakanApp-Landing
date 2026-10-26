@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { BookOpen } from "lucide-react";
 import { PageHero } from "@/components/marketing/page-hero";
 import { Container } from "@/components/layout/container";

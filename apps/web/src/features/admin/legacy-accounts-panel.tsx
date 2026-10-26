@@ -1,4 +1,5 @@
 "use client";
+import { AdminPageHeader } from "./page-kit";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "@/lib/validation";
@@ -25,7 +26,13 @@ const schema = z.object({
   password: z.string().min(15, "رمز باید حداقل ۱۵ نویسه باشد.").max(128),
   role: z.enum(["owner", "editor", "sales"]),
 });
-export function LegacyAccountsPanel({ initial, currentId }: { initial: Result; currentId: string }) {
+export function LegacyAccountsPanel({
+  initial,
+  currentId,
+}: {
+  initial: Result;
+  currentId: string;
+}) {
   const [data, setData] = useState(initial);
   const [password, setPassword] = useState("");
   const [code, setCode] = useState("");
@@ -127,12 +134,12 @@ export function LegacyAccountsPanel({ initial, currentId }: { initial: Result; c
     }
   }
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-semibold">حساب‌های مدیران</h1>
-      <p className="leading-8 text-muted-foreground">
-        حساب‌های مدیریت همین وب‌سایت را ایجاد کنید و نقش یا وضعیت آن‌ها را تغییر
-        دهید. آخرین مالک فعال قابل غیرفعال‌سازی نیست.
-      </p>
+    <div className="admin-page">
+      <AdminPageHeader
+        title="حساب‌های مدیران"
+        eyebrow="تیم مدیریت وب‌سایت"
+        description="حساب‌های مدیریت همین وب‌سایت را ایجاد کنید و نقش یا وضعیت آن‌ها را تغییر دهید. آخرین مالک فعال قابل غیرفعال‌سازی نیست."
+      />
       {message && (
         <p
           role="status"
@@ -324,7 +331,9 @@ export function LegacyAccountsPanel({ initial, currentId }: { initial: Result; c
                 >
                   <span className="text-sm">
                     آخرین فعالیت:{" "}
-                    {new Date(item.last_seen_at).toLocaleString("fa-IR", { timeZone: "Asia/Tehran" })}
+                    {new Date(item.last_seen_at).toLocaleString("fa-IR", {
+                      timeZone: "Asia/Tehran",
+                    })}
                   </span>
                   <Button
                     variant="outline"

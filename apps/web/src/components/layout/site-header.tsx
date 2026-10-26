@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
+import { usePathname } from "next/navigation";
 import { ArrowLeft, Menu } from "lucide-react";
 import { Brand } from "@/components/layout/brand";
 import { Button } from "@/components/ui/button";
@@ -17,19 +18,35 @@ import {
 import { publicNavigation } from "@/lib/site-navigation";
 import type { CmsImageRef } from "@/features/cms/types";
 
-export function SiteHeader({ appUrl, brandName, logo }: { appUrl?: string; brandName?: string; logo?: CmsImageRef }) {
+export function SiteHeader({
+  appUrl,
+  brandName,
+  logo,
+}: {
+  appUrl?: string;
+  brandName?: string;
+  logo?: CmsImageRef;
+}) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const active = (href: string) =>
+    pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
   return (
     <header className="site-header sticky top-0 z-[var(--z-sticky)] border-b border-border bg-card/95 backdrop-blur-md">
       <div className="site-container flex min-h-22 items-center justify-between gap-4">
-        <Brand name={brandName} logo={logo}/>
+        <Brand name={brandName} logo={logo} />
         <nav
           aria-label="ناوبری اصلی"
           className="hidden items-center gap-1 desktop:flex"
         >
           {publicNavigation.map((item) => (
-            <Link key={item.href} href={item.href} className="navigation-link">
+            <Link
+              key={item.href}
+              href={item.href}
+              className="navigation-link"
+              aria-current={active(item.href) ? "page" : undefined}
+            >
               {item.label}
             </Link>
           ))}
@@ -40,7 +57,7 @@ export function SiteHeader({ appUrl, brandName, logo }: { appUrl?: string; brand
               ورود به ماکان
             </a>
           )}
-          <Button asChild className="hidden min-h-11 tablet:inline-flex">
+          <Button asChild className="public-header-cta min-h-11">
             <Link href="/demo">
               درخواست دمو <ArrowLeft aria-hidden="true" />
             </Link>
@@ -58,7 +75,7 @@ export function SiteHeader({ appUrl, brandName, logo }: { appUrl?: string; brand
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="w-[min(88vw,360px)]"
+              className="public-mobile-menu w-[min(88vw,360px)]"
               dir="rtl"
             >
               <SheetHeader className="border-b border-border pb-6 text-start">
@@ -76,6 +93,7 @@ export function SiteHeader({ appUrl, brandName, logo }: { appUrl?: string; brand
                     <Link
                       href={item.href}
                       className="navigation-link text-base"
+                      aria-current={active(item.href) ? "page" : undefined}
                     >
                       {item.label}
                     </Link>

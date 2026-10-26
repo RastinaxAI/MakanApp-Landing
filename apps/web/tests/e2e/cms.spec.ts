@@ -215,6 +215,7 @@ test("CMS UI creates, previews privately, publishes and restores an immutable re
 }, info) => {
   await login(page);
   await page.goto("/admin/content");
+  await page.getByRole("button", { name: "افزودن محتوا", exact: true }).click();
   const slug = `ui-${info.project.name}`;
   await page
     .getByLabel("عنوان محتوای جدید", { exact: true })
@@ -307,7 +308,8 @@ test("CMS UI creates, previews privately, publishes and restores an immutable re
     .fill("صفحه ایجادشده از پنل");
   await page.getByRole("button", { name: "اعمال فیلتر", exact: true }).click();
   const row = page.getByRole("listitem").filter({ hasText: slug });
-  await row.getByRole("button", { name: "بایگانی", exact: true }).click();
+  await row.getByRole("button", { name: /گزینه‌های/ }).click();
+  await page.getByRole("menuitem", { name: "بایگانی", exact: true }).click();
   await row.getByRole("button", { name: "تأیید بایگانی", exact: true }).click();
   await expect(row).toHaveCount(0);
   const archived = (await (
@@ -414,6 +416,7 @@ test("CMS media upload stays private until publication and protects referenced f
 }, info) => {
   await login(page);
   await page.goto("/admin/media");
+  await page.getByRole("button", { name: "افزودن تصویر", exact: true }).click();
   const alt = `تصویر پذیرش ${info.project.name}`;
   await expect(page.getByLabel("فایل تصویر", { exact: true })).toBeEnabled();
   await page

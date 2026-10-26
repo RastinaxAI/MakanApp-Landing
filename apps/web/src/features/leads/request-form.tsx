@@ -1,5 +1,5 @@
 "use client";
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import { useEffect, useRef, useState, useId } from "react";
 import { useForm } from "react-hook-form";
 import { trackEvent, type ErrorKind } from "@/features/analytics/events";
@@ -19,7 +19,13 @@ type Token = {
 type Fields = FormFields;
 const consentText =
   "با ذخیره اطلاعات این فرم و تماس درباره همین درخواست طبق سیاست حریم خصوصی موافقم.";
-export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
+export function RequestForm({
+  kind,
+  preview = false,
+}: {
+  kind: "demo" | "contact";
+  preview?: boolean;
+}) {
   const demo = kind === "demo";
   const instance = useId().replaceAll(":", "");
   const formId = `${kind}-${instance}`;
@@ -39,7 +45,8 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
         ]);
         return await zodResolver(requestSchema(kind))(values, context, options);
       } catch {
-        const message = "اعتبارسنجی فرم آماده نشد؛ اتصال را بررسی و دوباره تلاش کنید.";
+        const message =
+          "اعتبارسنجی فرم آماده نشد؛ اتصال را بررسی و دوباره تلاش کنید.";
         setMessage(message);
         return { values: {}, errors: { root: { type: "network", message } } };
       }
@@ -72,6 +79,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   const attempt = useRef<{ body: string; key: string } | null>(null);
   const loadedAt = useRef(0);
   async function loadToken() {
+    if (preview) return;
     setTokenBusy(true);
     setMessage("");
     try {
@@ -102,6 +110,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
     }
   }
   useEffect(() => {
+    if (preview) return;
     let active = true;
     async function initialize() {
       try {
@@ -131,10 +140,10 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
     return () => {
       active = false;
     };
-  }, [kind]);
+  }, [kind, preview]);
   async function submit(data: Fields) {
     let errorKind: ErrorKind = "network";
-    if (!token) return;
+    if (preview || !token) return;
     setMessage("");
     // Minimal wait applies only to immediate autofill; no personal data is stored in browser storage.
     const delay = 1100 - (Date.now() - loadedAt.current);
@@ -269,7 +278,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
   }
   return (
     <section
-      className="min-w-0 rounded-3xl border border-border bg-card p-5 shadow-soft tablet:p-8"
+      className="public-request-form min-w-0 rounded-3xl border border-border bg-card p-5 shadow-soft tablet:p-8"
       aria-labelledby={`${formId}-form-title`}
     >
       <h2 id={`${formId}-form-title`} className="text-2xl font-semibold">
@@ -304,8 +313,16 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
           data-request-kind={kind}
           noValidate
           onSubmit={(event) => {
+            if (preview) {
+              event.preventDefault();
+              return;
+            }
             void handleSubmit(submit, (failures) => {
-              if (demo) trackEvent("demo_form_submit_error", failures.root?.type === "network" ? "network" : "validation");
+              if (demo)
+                trackEvent(
+                  "demo_form_submit_error",
+                  failures.root?.type === "network" ? "network" : "validation",
+                );
             })(event);
           }}
           className="mt-6"
@@ -324,7 +341,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
               {error}
             </p>
           )}
-          {!token && (
+          {!token && !preview && (
             <Button
               type="button"
               variant="outline"
@@ -336,7 +353,7 @@ export function RequestForm({ kind }: { kind: "demo" | "contact" }) {
             </Button>
           )}
           <CmsReady
-            disabled={isSubmitting || !token}
+            disabled={preview || isSubmitting || !token}
             legend={demo ? "اطلاعات درخواست دمو" : "اطلاعات تماس"}
           >
             <div className="grid gap-5 tablet:grid-cols-2">

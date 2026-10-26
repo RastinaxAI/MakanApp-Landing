@@ -420,7 +420,7 @@ export function RecordEditor({
         <Dialog.Overlay className="fixed inset-0 z-dialog bg-foreground/30" />
         <Dialog.Content
           dir="rtl"
-          className="fixed inset-x-3 top-[5vh] z-dialog mx-auto max-h-[90vh] max-w-2xl overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-overlay tablet:p-7"
+          className="admin-dialog fixed inset-x-3 top-[5vh] z-dialog mx-auto max-h-[90vh] max-w-2xl overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-overlay tablet:p-7"
         >
           <div className="flex items-center justify-between gap-4">
             <Dialog.Title className="text-xl font-semibold">

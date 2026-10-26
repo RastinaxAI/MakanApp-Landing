@@ -32,5 +32,12 @@ export default async function Page({
   const data = await cmsGet<CmsPage<LearningAdmin>>(
     `${resourceFor(kind)}?${q}`,
   );
-  return <LearningList kind={kind} data={data} />;
+  return (
+    <LearningList
+      kind={kind}
+      data={data}
+      query={q.get("q") || ""}
+      status={q.get("status") || ""}
+    />
+  );
 }

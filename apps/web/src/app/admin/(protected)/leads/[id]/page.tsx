@@ -1,3 +1,4 @@
+import { AdminPageHeader } from "@/features/admin/page-kit";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/admin-api";
 import { cmsGet, CmsDenied } from "@/features/cms/admin-data";
@@ -98,20 +99,15 @@ export default async function LeadPage({
     </nav>
   );
   return (
-    <>
-      <Link
-        href="/admin/leads"
-        prefetch={false}
-        className="mb-4 inline-flex min-h-11 items-center text-primary-hover"
-      >
-        بازگشت به درخواست‌ها
-      </Link>
-      <h1 className="text-3xl font-semibold [overflow-wrap:anywhere]">
-        {lead.kind === "demo" ? "درخواست دمو" : "پیام تماس"}:{" "}
-        {lead.full_name ?? "اطلاعات حذف‌شده"}
-      </h1>
-      <section className="mt-6 min-w-0 rounded-2xl border border-border bg-card p-5 tablet:p-7">
-        <h2 className="text-xl font-semibold">اطلاعات درخواست</h2>
+    <div className="admin-page">
+      <AdminPageHeader
+        title={`${lead.kind === "demo" ? "درخواست دمو" : "پیام تماس"}: ${lead.full_name ?? "اطلاعات حذف‌شده"}`}
+        eyebrow="جزئیات درخواست"
+        description="اطلاعات ثبت‌شده، وضعیت پیگیری، یادداشت‌ها و تاریخچهٔ ارتباط را یکجا مرور کنید."
+        back={{ href: "/admin/leads", label: "بازگشت به درخواست‌ها" }}
+      />
+      <section className="admin-section-surface">
+        <h2 className="admin-section-title">اطلاعات درخواست</h2>
         <p dir="ltr" className="my-4 break-all font-mono text-sm">
           {lead.reference_id}
         </p>
@@ -162,8 +158,8 @@ export default async function LeadPage({
         </dl>
       </section>
       <LeadEditor key={lead.id} initial={lead} assignees={assignees} />
-      <section className="mt-6 rounded-2xl border border-border bg-card p-5">
-        <h2 className="text-xl font-semibold">یادداشت‌های داخلی</h2>
+      <section className="admin-section-surface">
+        <h2 className="admin-section-title">یادداشت‌های داخلی</h2>
         {notes.items.length === 0 && (
           <p className="mt-4 text-muted-foreground">یادداشتی موجود نیست.</p>
         )}
@@ -179,8 +175,8 @@ export default async function LeadPage({
         ))}
         {pages(notes, "notes_page", notePage)}
       </section>
-      <section className="mt-6 rounded-2xl border border-border bg-card p-5">
-        <h2 className="text-xl font-semibold">تاریخچه پیگیری</h2>
+      <section className="admin-section-surface">
+        <h2 className="admin-section-title">تاریخچه پیگیری</h2>
         {history.items.map((event) => (
           <article key={event.id} className="mt-5 border-t border-border pt-4">
             <h3 className="break-all text-sm text-muted-foreground">
@@ -200,6 +196,6 @@ export default async function LeadPage({
         ))}
         {pages(history, "history_page", historyPage)}
       </section>
-    </>
+    </div>
   );
 }

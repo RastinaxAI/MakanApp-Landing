@@ -5,6 +5,7 @@ import { Plus, Search, RefreshCw, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { adminRequest } from "@/features/admin/client";
+import { AdminPageHeader } from "@/features/admin/page-kit";
 import { date, sources, statuses } from "@/features/leads/types";
 import { CrmDashboard } from "./dashboard";
 import { Pipeline } from "./pipeline";
@@ -331,31 +332,28 @@ export function CrmWorkbench({
     );
   }
   return (
-    <div className="grid gap-6">
-      <header className="crm-heading">
-        <div>
-          <p className="text-sm text-primary">ماکان / ارتباط با مدارس</p>
-          <h1 className="mt-2 text-3xl font-semibold">فروش و درخواست دمو</h1>
-          <p className="mt-3 text-sm leading-7 text-muted-foreground">
-            از اولین درخواست تا جلسهٔ دمو و نتیجهٔ فروش؛ یک پرونده برای تمام
-            ارتباط‌ها
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={reload}
-            disabled={busy}
-            aria-label="تازه‌سازی CRM"
-          >
-            <RefreshCw aria-hidden="true" />
-          </Button>
-          <Button onClick={() => setEditor({ resource: "leads" })}>
-            <Plus aria-hidden="true" />
-            ثبت سریع لید
-          </Button>
-        </div>
-      </header>
+    <div className="admin-page">
+      <AdminPageHeader
+        title="فروش و درخواست دمو"
+        eyebrow="ارتباط با مدارس"
+        description="از اولین درخواست تا جلسهٔ دمو و نتیجهٔ فروش؛ یک پرونده برای تمام ارتباط‌ها."
+        actions={
+          <>
+            <Button
+              variant="outline"
+              onClick={reload}
+              disabled={busy}
+              aria-label="تازه‌سازی CRM"
+            >
+              <RefreshCw aria-hidden="true" />
+            </Button>
+            <Button onClick={() => setEditor({ resource: "leads" })}>
+              <Plus aria-hidden="true" />
+              ثبت سریع لید
+            </Button>
+          </>
+        }
+      />
       {error && (
         <p
           role="alert"
@@ -600,11 +598,14 @@ export function CrmWorkbench({
                 </p>
               )}
             </div>
-            {list.items.length
-              ? table()
-              : !busy && (
-                  <p className="crm-empty">رکوردی برای این فیلتر وجود ندارد.</p>
-                )}
+            {tab === key &&
+              (list.items.length
+                ? table()
+                : !busy && (
+                    <p className="crm-empty">
+                      رکوردی برای این فیلتر وجود ندارد.
+                    </p>
+                  ))}
           </TabsContent>
         ))}
         <TabsContent value="opportunities">
@@ -620,7 +621,10 @@ export function CrmWorkbench({
         <TabsContent value="notifications">
           <h2 className="mb-5 text-xl font-semibold">اعلان‌های شما</h2>
           <div className="grid gap-3">
-            {(list.items as Notification[]).map((row) => (
+            {(tab === "notifications"
+              ? (list.items as Notification[])
+              : []
+            ).map((row) => (
               <article
                 key={row.id}
                 className={`crm-surface flex flex-wrap items-center justify-between gap-4 ${row.read_at ? "opacity-80" : "border-primary"}`}

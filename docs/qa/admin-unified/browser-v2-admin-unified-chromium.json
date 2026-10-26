@@ -1,0 +1,309 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\OmidrezaBagheriyan\\AppData\\Local\\npm-cache\\_npx\\387698761821791d\\node_modules\\node\\bin\\node.exe",
+      "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.v2.config.ts",
+      "--max-failures=0",
+      "--project=chromium",
+      "admin-unified.spec.ts"
+    ],
+    "configFile": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\playwright.v2.config.ts",
+    "rootDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "firefox",
+        "name": "firefox",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      },
+      {
+        "outputDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "webkit",
+        "name": "webkit",
+        "testDir": "C:/Users/OmidrezaBagheriyan/Desktop/MakanWebsite/apps/web/tests/v2",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 180000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "chromium",
+        "testDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "snapshotDir": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2",
+        "testIgnore": [],
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 180000,
+        "use": {
+          "actionTimeout": 30000,
+          "baseURL": "http://127.0.0.1:3200",
+          "screenshot": "only-on-failure",
+          "trace": "retain-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "chromium"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/v2-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "admin-unified.spec.ts",
+      "file": "admin-unified.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "login shares the content desk language and keeps the real two stage OTP flow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 7497,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T01:55:10.230Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b82e4e5cdd3b9a85dda3-cd97bb64bcabb826ce59",
+          "file": "admin-unified.spec.ts",
+          "line": 109,
+          "column": 5
+        },
+        {
+          "title": "all remaining admin routes and nested editors follow the approved content reference",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 600000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 65023,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T01:55:18.193Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "b82e4e5cdd3b9a85dda3-3fe133b44fbeb7e6f253",
+          "file": "admin-unified.spec.ts",
+          "line": 128,
+          "column": 5
+        },
+        {
+          "title": "CRM views filters and real record dialog retain the shared layout",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 300000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 27727,
+                  "error": {
+                    "message": "Error: crm-view-کانبان فروش 360\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: crm-view-کانبان فروش 360\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at review (C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts:86:8)\n    at C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts:290:5",
+                    "location": {
+                      "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts",
+                      "column": 8,
+                      "line": 86
+                    },
+                    "snippet": "  84 |         `${name} ${width}`,\n  85 |       )\n> 86 |       .toBe(true);\n     |        ^\n  87 |     const axe = await new AxeBuilder({ page })\n  88 |       .withTags([\"wcag2a\", \"wcag2aa\", \"wcag21aa\", \"wcag22aa\"])\n  89 |       .analyze();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts",
+                        "column": 8,
+                        "line": 86
+                      },
+                      "message": "Error: crm-view-کانبان فروش 360\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  84 |         `${name} ${width}`,\n  85 |       )\n> 86 |       .toBe(true);\n     |        ^\n  87 |     const axe = await new AxeBuilder({ page })\n  88 |       .withTags([\"wcag2a\", \"wcag2aa\", \"wcag21aa\", \"wcag22aa\"])\n  89 |       .analyze();\n    at review (C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts:86:8)\n    at C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts:290:5"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-26T01:56:23.232Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "overflow-crm-view-کانبان فروش-360",
+                      "contentType": "application/json",
+                      "body": "W3sidGFnIjoiSFRNTCIsImNsYXNzIjoiX192YXJpYWJsZV9iM2NlNTkiLCJ3aWR0aCI6MzYwLCJ4IjowLCJzY3JvbGxXaWR0aCI6NjM4LCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJibG9jayIsImNvbHVtbnMiOiJub25lIiwib3ZlcmZsb3ciOiJ2aXNpYmxlIiwicG9zaXRpb24iOiJzdGF0aWMiLCJzY3JvbGxMZWZ0IjowfSx7InRhZyI6IkJPRFkiLCJjbGFzcyI6IiIsIndpZHRoIjozNjAsIngiOjAsInNjcm9sbFdpZHRoIjozNjAsIm1pbldpZHRoIjoiMHB4IiwiZGlzcGxheSI6ImJsb2NrIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiTUFJTiIsImNsYXNzIjoibXgtYXV0byBtaW4tdy0wIGFkbWluLWFwcC1tYWluIG1heC13LVsxNDQwcHhdIHAtNCB0YWJsZXQ6cC02IGRlc2t0b3A6cC04Iiwid2lkdGgiOjM2MCwieCI6MCwic2Nyb2xsV2lkdGgiOjM2MCwibWluV2lkdGgiOiIwcHgiLCJkaXNwbGF5IjoiYmxvY2siLCJjb2x1bW5zIjoibm9uZSIsIm92ZXJmbG93IjoidmlzaWJsZSIsInBvc2l0aW9uIjoic3RhdGljIiwic2Nyb2xsTGVmdCI6MH0seyJ0YWciOiJESVYiLCJjbGFzcyI6ImFkbWluLXBhZ2UiLCJ3aWR0aCI6MzI4LCJ4IjoxNiwic2Nyb2xsV2lkdGgiOjMyOCwibWluV2lkdGgiOiIwcHgiLCJkaXNwbGF5IjoiZ3JpZCIsImNvbHVtbnMiOiIzMjhweCIsIm92ZXJmbG93IjoidmlzaWJsZSIsInBvc2l0aW9uIjoic3RhdGljIiwic2Nyb2xsTGVmdCI6MH0seyJ0YWciOiJESVYiLCJjbGFzcyI6Imdyb3VwL3RhYnMgZmxleCBnYXAtMiBkYXRhLVtvcmllbnRhdGlvbj1ob3Jpem9udGFsXTpmbGV4LWNvbCIsIndpZHRoIjozMjgsIngiOjE2LCJzY3JvbGxXaWR0aCI6MzI4LCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJmbGV4IiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjMyOCwieCI6MTYsInNjcm9sbFdpZHRoIjozMjgsIm1pbldpZHRoIjoiMHB4IiwiZGlzcGxheSI6ImJsb2NrIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJjcm0tYm9hcmQiLCJ3aWR0aCI6MzI4LCJ4IjoxNiwic2Nyb2xsV2lkdGgiOjI2NDgsIm1pbldpZHRoIjoiMHB4IiwiZGlzcGxheSI6ImdyaWQiLCJjb2x1bW5zIjoiMjgwcHggMjgwcHggMjgwcHggMjgwcHggMjgwcHggMjgwcHggMjgwcHggMjgwcHggMjgwcHgiLCJvdmVyZmxvdyI6ImF1dG8iLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiU0VDVElPTiIsImNsYXNzIjoiY3JtLWxhbmUgIiwid2lkdGgiOjI4MCwieCI6NjQsInNjcm9sbFdpZHRoIjoyNzgsIm1pbldpZHRoIjoiYXV0byIsImRpc3BsYXkiOiJibG9jayIsImNvbHVtbnMiOiJub25lIiwib3ZlcmZsb3ciOiJ2aXNpYmxlIiwicG9zaXRpb24iOiJzdGF0aWMiLCJzY3JvbGxMZWZ0IjowfSx7InRhZyI6IlNFQ1RJT04iLCJjbGFzcyI6ImNybS1sYW5lICIsIndpZHRoIjoyODAsIngiOi0yMzIsInNjcm9sbFdpZHRoIjoyNzgsIm1pbldpZHRoIjoiYXV0byIsImRpc3BsYXkiOiJibG9jayIsImNvbHVtbnMiOiJub25lIiwib3ZlcmZsb3ciOiJ2aXNpYmxlIiwicG9zaXRpb24iOiJzdGF0aWMiLCJzY3JvbGxMZWZ0IjowfSx7InRhZyI6IlNFQ1RJT04iLCJjbGFzcyI6ImNybS1sYW5lICIsIndpZHRoIjoyODAsIngiOi01MjgsInNjcm9sbFdpZHRoIjoyNzgsIm1pbldpZHRoIjoiYXV0byIsImRpc3BsYXkiOiJibG9jayIsImNvbHVtbnMiOiJub25lIiwib3ZlcmZsb3ciOiJ2aXNpYmxlIiwicG9zaXRpb24iOiJzdGF0aWMiLCJzY3JvbGxMZWZ0IjowfSx7InRhZyI6IlNFQ1RJT04iLCJjbGFzcyI6ImNybS1sYW5lICIsIndpZHRoIjoyODAsIngiOi04MjQsInNjcm9sbFdpZHRoIjoyNzgsIm1pbldpZHRoIjoiYXV0byIsImRpc3BsYXkiOiJibG9jayIsImNvbHVtbnMiOiJub25lIiwib3ZlcmZsb3ciOiJ2aXNpYmxlIiwicG9zaXRpb24iOiJzdGF0aWMiLCJzY3JvbGxMZWZ0IjowfSx7InRhZyI6IlNFQ1RJT04iLCJjbGFzcyI6ImNybS1sYW5lICIsIndpZHRoIjoyODAsIngiOi0xMTIwLCJzY3JvbGxXaWR0aCI6Mjc4LCJtaW5XaWR0aCI6ImF1dG8iLCJkaXNwbGF5IjoiYmxvY2siLCJjb2x1bW5zIjoibm9uZSIsIm92ZXJmbG93IjoidmlzaWJsZSIsInBvc2l0aW9uIjoic3RhdGljIiwic2Nyb2xsTGVmdCI6MH0seyJ0YWciOiJTRUNUSU9OIiwiY2xhc3MiOiJjcm0tbGFuZSAiLCJ3aWR0aCI6MjgwLCJ4IjotMTQxNiwic2Nyb2xsV2lkdGgiOjI3OCwibWluV2lkdGgiOiJhdXRvIiwiZGlzcGxheSI6ImJsb2NrIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiU0VDVElPTiIsImNsYXNzIjoiY3JtLWxhbmUgIiwid2lkdGgiOjI4MCwieCI6LTE3MTIsInNjcm9sbFdpZHRoIjoyNzgsIm1pbldpZHRoIjoiYXV0byIsImRpc3BsYXkiOiJibG9jayIsImNvbHVtbnMiOiJub25lIiwib3ZlcmZsb3ciOiJ2aXNpYmxlIiwicG9zaXRpb24iOiJzdGF0aWMiLCJzY3JvbGxMZWZ0IjowfSx7InRhZyI6IlNFQ1RJT04iLCJjbGFzcyI6ImNybS1sYW5lICIsIndpZHRoIjoyODAsIngiOi0yMDA4LCJzY3JvbGxXaWR0aCI6Mjc4LCJtaW5XaWR0aCI6ImF1dG8iLCJkaXNwbGF5IjoiYmxvY2siLCJjb2x1bW5zIjoibm9uZSIsIm92ZXJmbG93IjoidmlzaWJsZSIsInBvc2l0aW9uIjoic3RhdGljIiwic2Nyb2xsTGVmdCI6MH0seyJ0YWciOiJTRUNUSU9OIiwiY2xhc3MiOiJjcm0tbGFuZSAiLCJ3aWR0aCI6MjgwLCJ4IjotMjMwNCwic2Nyb2xsV2lkdGgiOjI3OCwibWluV2lkdGgiOiJhdXRvIiwiZGlzcGxheSI6ImJsb2NrIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9LHsidGFnIjoiRElWIiwiY2xhc3MiOiJmbGV4LTEgb3V0bGluZS1ub25lIiwid2lkdGgiOjAsIngiOjAsInNjcm9sbFdpZHRoIjowLCJtaW5XaWR0aCI6IjBweCIsImRpc3BsYXkiOiJub25lIiwiY29sdW1ucyI6Im5vbmUiLCJvdmVyZmxvdyI6InZpc2libGUiLCJwb3NpdGlvbiI6InN0YXRpYyIsInNjcm9sbExlZnQiOjB9XQ=="
+                    },
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\admin-unified-CRM-views-fi-f2baf-og-retain-the-shared-layout-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\admin-unified-CRM-views-fi-f2baf-og-retain-the-shared-layout-chromium\\error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\test-results\\admin-unified-CRM-views-fi-f2baf-og-retain-the-shared-layout-chromium\\trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\OmidrezaBagheriyan\\Desktop\\MakanWebsite\\apps\\web\\tests\\v2\\admin-unified.spec.ts",
+                    "column": 8,
+                    "line": 86
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "b82e4e5cdd3b9a85dda3-e21fd360534edb25f93f",
+          "file": "admin-unified.spec.ts",
+          "line": 241,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-26T01:55:08.965Z",
+    "duration": 105023.09599999999,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

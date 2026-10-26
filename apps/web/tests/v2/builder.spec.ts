@@ -4,7 +4,7 @@ import path from "node:path";
 import { mkdir } from "node:fs/promises";
 import type { AdminContent } from "../../src/features/cms/types";
 
-import { login, drag } from "./helpers";
+import { login, drag, selectElement } from "./helpers";
 
 test("visual canvas creates nested content, changes mobile style, saves refreshes publishes real demo and restores", async ({
   page,
@@ -14,6 +14,7 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   await login(page);
   // Upload through the existing real media UI; no file or API fixture replaces storage.
   await page.goto("/admin/media");
+  await page.getByRole("button", { name: "افزودن تصویر", exact: true }).click();
   const labels = await page.locator("label").allTextContents();
   test.info().annotations.push({
     type: "media labels",
@@ -28,6 +29,7 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   await page.getByRole("button", { name: /بارگذاری/ }).click();
   await expect(page.getByRole("status")).toContainText(/بارگذاری|ذخیره|ثبت/);
   await page.goto("/admin/content");
+  await page.getByRole("button", { name: "افزودن محتوا", exact: true }).click();
   const slug = `builder-${info.project.name}-${randomUUID().slice(0, 8)}`;
   await page
     .getByLabel("عنوان محتوای جدید", { exact: true })
@@ -36,14 +38,11 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
   await page
     .getByRole("button", { name: "ایجاد پیش‌نویس", exact: true })
     .click();
-  await expect(page).toHaveURL(/\/admin\/content\/[0-9a-f-]{36}$/);
-  const identifier = page.url().split("/").pop()!;
+  await expect(page).toHaveURL(/\/admin\/content\/[0-9a-f-]{36}\/builder$/);
+  const identifier = page.url().split("/").at(-2)!;
   const initial: AdminContent = await (
     await page.request.get(`/api/v1/admin/content/${identifier}`)
   ).json();
-  await page
-    .getByRole("link", { name: "باز کردن صفحه‌ساز بصری", exact: true })
-    .click();
   await expect(
     page.getByRole("heading", { name: "صفحه‌ساز ماکان", exact: true }),
   ).toBeVisible();
@@ -68,13 +67,12 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
     .selectOption({ label: "رسانهٔ آزمون پذیرش صفحه‌ساز · makan-logo.png" });
   await drag(page, "فرم درخواست دمو", slot);
   await expect(canvas.locator('[data-widget="DemoForm"]')).toHaveCount(1);
-  await page
-    .getByLabel("انتخاب عنصر صفحه", { exact: true })
-    .selectOption(
-      (await slot
-        .locator('[data-widget="Heading"]')
-        .getAttribute("data-node-id")) || "",
-    );
+  await selectElement(
+    page,
+    (await slot
+      .locator('[data-widget="Heading"]')
+      .getAttribute("data-node-id")) || "",
+  );
   await expect(
     page.getByLabel("عنوان", { exact: true }).filter({ visible: true }),
   ).toHaveValue("تیتر زندهٔ مدرسه");
@@ -130,12 +128,12 @@ test("visual canvas creates nested content, changes mobile style, saves refreshe
     .getByLabel("اندازه متن mobile", { exact: true })
     .filter({ visible: true })
     .fill("20");
-  await page.getByLabel("نمای صفحه‌ساز", { exact: true }).selectOption("390");
+  await page.getByRole("button", { name: "نمای موبایل", exact: true }).click();
   await expect(slot.locator('[data-widget="Heading"]')).toHaveCSS(
     "font-size",
     "20px",
   );
-  await page.getByLabel("نمای صفحه‌ساز", { exact: true }).selectOption("1440");
+  await page.getByRole("button", { name: "نمای دسکتاپ", exact: true }).click();
   await expect(slot.locator('[data-widget="Heading"]')).toHaveCSS(
     "font-size",
     "40px",

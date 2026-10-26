@@ -1,0 +1,390 @@
+/* Shared admin language, taken from the approved content manager. Public pages
+   and the document inside the visual canvas keep their own presentation. */
+.admin-app-main,
+.admin-auth,
+.admin-drawer,
+.admin-dialog {
+  --input: #dce5f3;
+  --admin-surface-radius: 1.75rem;
+  color: #1e293b;
+}
+.admin-app-main .admin-page > *,
+.admin-app-main .grid > *,
+.admin-app-main
+  :is([data-slot="tabs"], [data-slot="tabs-content"], [role="tabpanel"]) {
+  min-width: 0;
+}
+.admin-app-main .admin-page {
+  grid-template-columns: minmax(0, 1fr);
+}
+.admin-app-main
+  :is(
+    [data-slot="tabs"],
+    [data-slot="tabs-content"],
+    .crm-board,
+    .crm-table-scroll
+  ) {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+.admin-app-main :focus-visible,
+.admin-auth :focus-visible,
+.admin-drawer :focus-visible,
+.admin-dialog :focus-visible {
+  outline-color: var(--ring);
+}
+.admin-app-main :is(input, select, textarea),
+.admin-auth :is(input, select, textarea),
+.admin-drawer :is(input, select, textarea),
+.admin-dialog :is(input, select, textarea) {
+  max-width: 100%;
+  min-width: 0;
+  border-radius: 0.5rem;
+}
+.admin-app-main :is(label, legend),
+.admin-auth label,
+.admin-drawer label,
+.admin-dialog label {
+  font-size: 0.75rem;
+  line-height: 1.8;
+}
+.admin-app-main :is(input, textarea)::placeholder,
+.admin-auth input::placeholder {
+  color: #586981;
+  opacity: 1;
+}
+.admin-app-main [data-slot="button"],
+.admin-auth [data-slot="button"],
+.admin-drawer [data-slot="button"],
+.admin-dialog [data-slot="button"] {
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+}
+.admin-app-main .admin-page-heading {
+  min-width: 0;
+}
+.admin-page-heading h1 {
+  overflow-wrap: anywhere;
+}
+.admin-page-heading [data-slot="button"] {
+  border-radius: 1.25rem;
+  padding-inline: 1.25rem;
+}
+.admin-page-heading > nav {
+  margin-bottom: 1.5rem;
+}
+.admin-page-heading > div > div:last-child:has(button, a) {
+  flex-shrink: 0;
+}
+.admin-page .admin-surface {
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.admin-page .admin-surface-heading {
+  padding: 0 0 1rem;
+  border: 0;
+  align-items: center;
+  min-height: 2.5rem;
+}
+.admin-page .admin-surface-heading > div {
+  min-width: 0;
+}
+.admin-page .admin-surface-heading p {
+  margin-top: 0.25rem;
+}
+.admin-app-main .admin-page fieldset.bg-white {
+  border-radius: var(--admin-surface-radius);
+}
+.admin-page .admin-surface-body {
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: var(--admin-surface-radius);
+  background: white;
+  padding: 1.25rem;
+}
+.admin-page .admin-page-symbol {
+  background: #f7faff;
+  color: #586981;
+  border-color: var(--border);
+}
+.admin-page .admin-record {
+  padding-block: 1.125rem;
+}
+.admin-page .admin-record-list {
+  margin: -1.25rem;
+}
+.admin-page .admin-help,
+.admin-page .admin-notice {
+  border-radius: 1.25rem;
+}
+.admin-page :is(.admin-help, .admin-notice) {
+  font-size: 0.75rem;
+}
+.admin-app-main
+  :is(.admin-toolbar, .admin-editor-surface, .admin-section-surface) {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--admin-surface-radius);
+  background: white;
+  padding: 1.25rem;
+}
+.admin-app-main .admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+.admin-app-main .admin-toolbar > a {
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+}
+.admin-app-main fieldset > legend:not(.sr-only) {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.admin-app-main .admin-section-title {
+  margin-block: 0 1rem;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.admin-app-main :is(section, fieldset, form).bg-card {
+  border-radius: var(--admin-surface-radius);
+  box-shadow: none;
+}
+.admin-app-main .admin-section-surface h2,
+.admin-app-main .admin-editor-surface legend {
+  font-size: 1rem;
+}
+.admin-app-main .admin-editor-surface > legend {
+  padding-inline: 0.5rem;
+  font-weight: 600;
+}
+.admin-app-main .admin-page .admin-security-section {
+  border-radius: var(--admin-surface-radius);
+}
+.admin-app-main .admin-stat {
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--admin-surface-radius);
+  padding: 1.25rem;
+  background: white;
+}
+.admin-stat dt {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.admin-stat dd {
+  margin-top: 0.75rem;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+.admin-app-main .admin-tabs,
+.admin-app-main [role="tablist"] {
+  display: flex;
+  height: auto;
+  max-width: 100%;
+  flex-wrap: wrap;
+  justify-content: start;
+  gap: 0.375rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.admin-app-main [role="tab"] {
+  min-height: 2.75rem;
+  flex: 0 1 auto;
+  white-space: normal;
+  border: 1px solid transparent;
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.875rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  font-size: 0.75rem;
+  box-shadow: none;
+}
+.admin-app-main [role="tab"][data-state="active"] {
+  border-color: var(--border);
+  color: var(--primary-hover);
+  background: white;
+  font-weight: 600;
+}
+.admin-app-main :is(.crm-surface, .crm-table-scroll, .crm-metric) {
+  border-radius: var(--admin-surface-radius);
+  box-shadow: none;
+}
+.admin-app-main .crm-control {
+  min-height: 2.75rem;
+}
+.admin-app-main .crm-table th {
+  background: #f8fafc;
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+.admin-app-main .crm-table td {
+  font-size: 0.8125rem;
+}
+.admin-app-main .crm-table :is(td, th) {
+  padding: 1rem 1.25rem;
+}
+.admin-app-main .crm-table tbody tr:hover {
+  background: #fafcff;
+}
+.admin-app-main .crm-chip {
+  font-size: 0.6875rem;
+}
+.admin-app-main .crm-empty {
+  border: 1px solid var(--border);
+  border-radius: var(--admin-surface-radius);
+  background: white;
+  color: var(--muted-foreground);
+}
+.admin-app-main .crm-metric h2 {
+  font-size: 0.75rem;
+}
+.admin-app-main .crm-metric strong {
+  font-size: 1.75rem;
+}
+.admin-app-main .crm-board {
+  /* Keep absolutely positioned screen-reader labels inside this scrollport. */
+  position: relative;
+  border-radius: 1rem;
+}
+.admin-app-main .crm-lane {
+  background: #edf2f9;
+  border-radius: 1.25rem;
+}
+.admin-app-main .crm-opportunity {
+  border-radius: 1rem;
+  box-shadow: none;
+}
+.admin-app-main .admin-revision-list {
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: var(--admin-surface-radius);
+  background: white;
+}
+.admin-revision-list > li {
+  padding: 1.25rem;
+  border-bottom: 1px solid #edf1f7;
+}
+.admin-revision-list > li:last-child {
+  border-bottom: 0;
+}
+.admin-app-main .admin-revision-list h2 {
+  font-size: 0.875rem;
+}
+.admin-app-main .admin-revision-list p {
+  font-size: 0.75rem;
+  line-height: 1.9;
+}
+.admin-app-main .admin-request-list {
+  overflow: clip;
+  border: 1px solid var(--border);
+  border-radius: var(--admin-surface-radius);
+  background: white;
+}
+.admin-request-list > article {
+  padding: 1.25rem;
+  border-bottom: 1px solid #edf1f7;
+}
+.admin-request-list > article:last-child {
+  border-bottom: 0;
+}
+.admin-request-list > article:hover {
+  background: #fafcff;
+}
+.admin-app-main .admin-request-list h2 {
+  font-size: 0.875rem;
+}
+.admin-app-main .admin-request-list dl {
+  font-size: 0.75rem;
+}
+.admin-auth {
+  min-height: 100vh;
+  background: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+}
+.admin-auth-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.5rem;
+  padding: 0.5rem 1.5rem;
+  background: #0f172a;
+  color: white;
+  font-size: 0.75rem;
+}
+.admin-auth-topbar :focus-visible {
+  outline-color: white;
+}
+.admin-auth-card {
+  width: min(100%, 28rem);
+  border: 1px solid var(--border);
+  border-radius: 1.75rem;
+  background: white;
+  padding: 1.5rem;
+}
+.admin-dialog {
+  border-radius: 1.75rem;
+}
+.admin-preview-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid #dce5f3;
+  border-radius: 1.25rem;
+  background: #eff6ff;
+  color: #105bc6;
+  padding: 1rem 1.25rem;
+  font-size: 0.75rem;
+  line-height: 1.9;
+}
+.admin-workspace .admin-preview-toolbar :focus-visible {
+  outline-color: var(--ring);
+}
+/* Editor chrome shares the admin palette. The iframe keeps authored styles. */
+.builder-studio {
+  background: #f1f5f9;
+  color: #172a4b;
+  --input: #dce5f3;
+}
+.builder-studio .studio-topbar {
+  border-color: #dce5f3;
+}
+.builder-studio .studio-rail {
+  background: #1e293b;
+}
+.builder-studio .studio-rail > button[aria-pressed="true"] {
+  background: var(--primary);
+}
+.builder-studio .studio-sidebar {
+  background: #f8fafc;
+  border-color: #dce5f3;
+}
+.builder-studio .studio-publish-button {
+  background: var(--primary);
+  border-radius: 0.75rem;
+  box-shadow: none;
+}
+.builder-studio .studio-save-button {
+  border-radius: 0.75rem;
+}
+@media (min-width: 480px) {
+  .admin-auth-card {
+    padding: 2.25rem;
+  }
+}
+@media (min-width: 1200px) {
+  .admin-dashboard-actions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

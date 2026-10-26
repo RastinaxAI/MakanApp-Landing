@@ -8,7 +8,7 @@ import {
 } from "@/features/learning/public";
 import type { CmsPage } from "@/features/cms/types";
 import type { LearningContent } from "@/features/learning/types";
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 export async function generateMetadata() {
   const content = await getPage("learn");
   return pageMetadata(

@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { backendUrl, permittedCookies, requireAdmin } from "@/lib/admin-api";
 import type { CmsPage, MediaAsset } from "./types";
+import { AdminPageHeader } from "@/features/admin/page-kit";
 
 export async function requireContentAdmin(ownerOnly = false) {
   const profile = await requireAdmin();
@@ -40,6 +41,12 @@ export async function cmsAll<T>(resource: string) {
 export const cmsAssets = () => cmsAll<MediaAsset>("media");
 export function CmsDenied() {
   return (
-    <h1 className="text-2xl font-semibold">برای این بخش دسترسی ندارید.</h1>
+    <div className="admin-page">
+      <AdminPageHeader
+        title="برای این بخش دسترسی ندارید."
+        eyebrow="دسترسی حساب"
+        description="برای استفاده از این بخش، حساب باید نقش مجاز داشته باشد. از منوی مدیریت یکی از بخش‌های در دسترس را انتخاب کنید."
+      />
+    </div>
   );
 }

@@ -112,7 +112,7 @@ export function MediaChooser({
         <Dialog.Overlay className="fixed inset-0 z-50 bg-slate-950/50" />
         <Dialog.Content
           dir="rtl"
-          className="fixed inset-x-3 top-1/2 z-50 mx-auto flex max-h-[90dvh] max-w-4xl -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-2xl"
+          className="admin-dialog fixed inset-x-3 top-1/2 z-50 mx-auto flex max-h-[90dvh] max-w-4xl -translate-y-1/2 flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-2xl"
         >
           <div className="flex items-start justify-between border-b border-border p-5">
             <div>

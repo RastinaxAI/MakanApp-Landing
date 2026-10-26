@@ -1,0 +1,88 @@
+.admin-workspace .content-manager :focus-visible {
+  outline-color: var(--ring);
+}
+.content-manager .content-status-tab {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.875rem;
+  border: 1px solid transparent;
+  border-radius: 0.625rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+.content-manager .content-status-tab:hover {
+  color: var(--primary-hover);
+  background: white;
+}
+.content-manager .content-status-tab[aria-pressed="true"] {
+  border-color: var(--border);
+  color: var(--primary-hover);
+  background: white;
+  font-weight: 600;
+}
+.content-manager .content-row {
+  border-bottom: 1px solid #edf1f7;
+}
+.content-manager .content-row:last-child {
+  border-bottom: 0;
+}
+.content-manager .content-row-grid > div:first-child > span {
+  border-radius: 0.75rem;
+}
+.content-manager .content-row-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.125rem;
+}
+.content-manager .content-row-grid > :first-child {
+  grid-column: 1 / -1;
+}
+.content-manager .content-row-state {
+  grid-column: 1;
+}
+.content-manager .content-row-date {
+  grid-column: 2;
+  text-align: end;
+  font-size: 0.6875rem;
+}
+.content-manager .content-row-actions {
+  grid-column: 1 / -1;
+  justify-content: end;
+  padding-top: 0.375rem;
+  border-top: 1px solid #f1f5f9;
+}
+.content-manager .content-list-head {
+  display: none;
+}
+@media (min-width: 1200px) {
+  .content-manager .content-row-grid {
+    grid-template-columns: minmax(0, 1fr) 120px 120px 164px;
+    gap: 1rem;
+    padding-inline: 1.25rem;
+  }
+  .content-manager .content-row-grid > :first-child {
+    grid-column: 1;
+  }
+  .content-manager .content-row-state {
+    grid-column: 2;
+  }
+  .content-manager .content-row-date {
+    grid-column: 3;
+    text-align: start;
+  }
+  .content-manager .content-row-actions {
+    grid-column: 4;
+    border: 0;
+    padding-top: 0;
+  }
+  .content-manager .content-list-head {
+    display: grid;
+    padding-block: 0.875rem;
+  }
+}
+@media (hover: hover) {
+  .content-manager .content-row:hover {
+    background: #fafcff;
+  }
+}

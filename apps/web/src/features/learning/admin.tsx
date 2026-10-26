@@ -1,5 +1,20 @@
 "use client";
 import { useState } from "react";
+import {
+  BookOpen,
+  FileText,
+  Film,
+  Layers3,
+  Plus,
+  Search,
+  ArrowLeft,
+  Tags,
+} from "lucide-react";
+import {
+  AdminPageHeader,
+  AdminPanel,
+  AdminEmpty,
+} from "@/features/admin/page-kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import * as z from "@/lib/validation";
@@ -36,106 +51,188 @@ const stateLabels = {
 export function LearningList({
   kind,
   data,
+  query = "",
+  status = "",
 }: {
   kind: LearningPayload["kind"];
   data: CmsPage<LearningAdmin>;
+  query?: string;
+  status?: string;
 }) {
+  const icons = {
+    article: BookOpen,
+    video: Film,
+    series: Layers3,
+    blog: FileText,
+  };
+  const Icon = icons[kind];
+  const link = (page: number) => {
+    const q = new URLSearchParams({ kind, page: String(page) });
+    if (query) q.set("q", query);
+    if (status) q.set("status", status);
+    return `/admin/learn?${q}`;
+  };
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-semibold">آموزش و وبلاگ</h1>
-      <nav className="flex flex-wrap gap-3" aria-label="نوع محتوای مدیریت">
-        {Object.entries(kindLabels).map(([key, value]) => (
-          <Link
-            key={key}
-            className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-primary-hover"
-            aria-current={kind === key ? "page" : undefined}
-            href={`/admin/learn?kind=${key}`}
-          >
-            {value}
-          </Link>
-        ))}
-      </nav>
-      <div className="flex flex-wrap gap-4">
+    <div className="admin-page">
+      <AdminPageHeader
+        title="آموزش و وبلاگ"
+        eyebrow="مرکز محتوای آموزشی"
+        icon={BookOpen}
+        description="مقاله‌ها، ویدیوها و مجموعه‌ها را برای یادگیری بهتر مخاطبان آماده و منتشر کنید."
+        actions={
+          <Button asChild>
+            <Link href={`/admin/learn/new?kind=${kind}`}>
+              <Plus aria-hidden="true" />
+              ایجاد {kindLabels[kind]}
+            </Link>
+          </Button>
+        }
+      />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <nav className="admin-tabs" aria-label="نوع محتوای مدیریت">
+          {Object.entries(kindLabels).map(([key, value]) => {
+            const TabIcon = icons[key as keyof typeof icons];
+            return (
+              <Link
+                key={key}
+                className="admin-tab"
+                aria-current={kind === key ? "page" : undefined}
+                href={`/admin/learn?kind=${key}`}
+              >
+                <TabIcon className="size-4" aria-hidden="true" />
+                {value}
+              </Link>
+            );
+          })}
+        </nav>
         <Link
-          className="inline-flex min-h-11 items-center rounded-lg bg-primary px-4 text-primary-foreground"
-          href={`/admin/learn/new?kind=${kind}`}
-        >
-          ایجاد {kindLabels[kind]}
-        </Link>
-        <Link
-          className="inline-flex min-h-11 items-center text-primary-hover"
           href="/admin/learn/taxonomy"
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg text-xs text-primary-hover"
         >
+          <Tags className="size-4" aria-hidden="true" />
           مدیریت دسته‌ها و برچسب‌ها
         </Link>
       </div>
-      <form action="/admin/learn" className="flex flex-wrap items-end gap-3">
-        <input type="hidden" name="kind" value={kind} />
-        <label>
-          جست‌وجوی عنوان
-          <input
-            name="q"
-            maxLength={100}
-            className="ms-3 min-h-11 rounded-lg border border-input bg-card px-3"
-          />
-        </label>
-        <label>
-          وضعیت
-          <select
-            className="ms-3 min-h-11 rounded-lg border border-input bg-card px-3"
-            name="status"
-          >
-            <option value="">فعال</option>
-            {Object.entries(stateLabels).map(([k, v]) => (
-              <option key={k} value={k}>
-                {v}
-              </option>
-            ))}
-          </select>
-        </label>
-        <Button type="submit" variant="outline">
-          جست‌وجو
-        </Button>
-      </form>
-      <p className="text-muted-foreground">
-        {data.pagination.total.toLocaleString("fa-IR")} محتوا
-      </p>
-      <ul className="space-y-4">
-        {data.items.map((item) => (
-          <li
-            className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-5"
-            key={item.id}
-          >
-            <div>
-              <h2 className="text-xl font-semibold">{item.title}</h2>
-              <p className="mt-2 text-muted-foreground">
-                {stateLabels[item.publication_state]}
-              </p>
+      <AdminPanel
+        title={`${kindLabels[kind]}‌ها`}
+        count={data.pagination.total}
+      >
+        <form
+          action="/admin/learn"
+          className="mb-5 grid items-end gap-3 tablet:grid-cols-[minmax(0,1fr)_160px_auto]"
+        >
+          <input type="hidden" name="kind" value={kind} />
+          <label className="grid min-w-0 gap-2 text-xs text-muted-foreground">
+            جست‌وجوی عنوان
+            <div className="relative">
+              <Search
+                className="pointer-events-none absolute start-3 top-3.5 size-4"
+                aria-hidden="true"
+              />
+              <input
+                name="q"
+                defaultValue={query}
+                maxLength={100}
+                placeholder="عنوان آموزش را جست‌وجو کنید…"
+                className="min-h-11 w-full rounded-lg border border-slate-200 bg-white ps-10 pe-3 text-sm text-foreground"
+              />
             </div>
-            <Link
-              className="inline-flex min-h-11 items-center text-primary-hover underline"
-              href={`/admin/learn/${item.id}?kind=${item.kind}`}
+          </label>
+          <label className="grid min-w-0 gap-2 text-xs text-muted-foreground">
+            وضعیت
+            <select
+              name="status"
+              aria-label="وضعیت"
+              defaultValue={status}
+              className="min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-foreground"
             >
-              ویرایش {item.title}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      {data.pagination.pages > 1 && (
-        <nav aria-label="صفحه‌بندی مدیریت" className="flex gap-4">
+              <option value="">فعال</option>
+              {Object.entries(stateLabels).map(([k, v]) => (
+                <option key={k} value={k}>
+                  {v}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Button type="submit" variant="secondary">
+            جست‌وجو
+          </Button>
+        </form>
+        {data.items.length ? (
+          <ul className="admin-record-list" aria-label="محتواهای آموزشی">
+            {data.items.map((item) => (
+              <li className="admin-record" key={item.id}>
+                <div className="flex min-w-0 items-start gap-3">
+                  <span className="admin-page-symbol">
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0">
+                    <h2 className="break-words text-sm font-semibold leading-7">
+                      {item.title}
+                    </h2>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      نسخهٔ {item.revision_no.toLocaleString("fa-IR")} ·{" "}
+                      <time dateTime={item.updated_at}>
+                        {new Date(item.updated_at).toLocaleDateString("fa-IR", {
+                          timeZone: "Asia/Tehran",
+                        })}
+                      </time>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span
+                    className={`admin-pill ${item.publication_state === "published" ? "bg-success-soft text-success" : "bg-slate-100 text-slate-600"}`}
+                  >
+                    {stateLabels[item.publication_state]}
+                  </span>
+                  <Link
+                    className="inline-flex min-h-11 items-center gap-2 rounded-lg text-xs font-semibold text-primary-hover"
+                    href={`/admin/learn/${item.id}?kind=${item.kind}`}
+                  >
+                    ویرایش {item.title}
+                    <ArrowLeft className="size-3.5" aria-hidden="true" />
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <AdminEmpty
+            title="هنوز محتوایی در این فهرست نیست"
+            description="آموزش تازه‌ای بسازید یا فیلترهای جست‌وجو را تغییر دهید."
+            icon={Icon}
+          >
+            <Button asChild variant="secondary">
+              <Link href={`/admin/learn/new?kind=${kind}`}>
+                ایجاد {kindLabels[kind]}
+              </Link>
+            </Button>
+          </AdminEmpty>
+        )}
+      </AdminPanel>
+      <nav
+        aria-label="صفحه‌بندی مدیریت"
+        className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground"
+      >
+        <span>
+          صفحه {data.pagination.page.toLocaleString("fa-IR")} از{" "}
+          {Math.max(1, data.pagination.pages).toLocaleString("fa-IR")}
+        </span>
+        <div className="flex gap-3">
           {[data.pagination.page - 1, data.pagination.page + 1]
             .filter((p) => p > 0 && p <= data.pagination.pages)
             .map((p) => (
               <Link
-                className="inline-flex min-h-11 items-center text-primary-hover"
                 key={p}
-                href={`/admin/learn?kind=${kind}&page=${p}`}
+                href={link(p)}
+                className="inline-flex min-h-11 items-center rounded-lg border border-border bg-white px-4 text-primary-hover"
               >
                 صفحه {p.toLocaleString("fa-IR")}
               </Link>
             ))}
-        </nav>
-      )}
+        </div>
+      </nav>
     </div>
   );
 }
@@ -329,16 +426,13 @@ export function LearningEditor({
   }
   return (
     <CmsReady disabled={busy || navigating}>
-      <div className="space-y-6">
-        <h1 className="text-3xl font-semibold">
-          {initial ? "ویرایش" : "ایجاد"} {kindLabels[kind]}
-        </h1>
-        <Link
-          className="inline-flex min-h-11 items-center text-primary-hover"
-          href={`/admin/learn?kind=${kind}`}
-        >
-          بازگشت به فهرست
-        </Link>
+      <div className="admin-page">
+        <AdminPageHeader
+          title={`${initial ? "ویرایش" : "ایجاد"} ${kindLabels[kind]}`}
+          eyebrow="مرکز محتوای آموزشی"
+          description="محتوا، رسانه و مشخصات انتشار را آماده کنید؛ پیش‌نویس و نسخهٔ عمومی جداگانه نگه‌داری می‌شوند."
+          back={{ href: `/admin/learn?kind=${kind}`, label: "بازگشت به فهرست" }}
+        />
         {message && (
           <p role="status" className="rounded-xl bg-secondary p-4 leading-8">
             {message}
@@ -351,7 +445,10 @@ export function LearningEditor({
             {dirty ? " · تغییرات ذخیره‌نشده" : ""}
           </p>
         )}
-        <fieldset disabled={readonly} className="space-y-6">
+        <fieldset
+          disabled={readonly}
+          className="admin-editor-surface space-y-6"
+        >
           <legend className="sr-only">اطلاعات محتوا</legend>
           <div className="grid gap-5 tablet:grid-cols-2">
             <TextField

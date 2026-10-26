@@ -9,6 +9,18 @@ export async function login(page: Page, phone = "09120000001") {
   await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
   await expect(page).toHaveURL(/\/admin$/);
 }
+export async function selectElement(page: Page, id: string) {
+  const node = page
+    .frameLocator("iframe")
+    .first()
+    .locator(`[data-node-id="${id}"]`);
+  await node.scrollIntoViewIfNeeded();
+  // Click the real canvas; the editor overlay receives pointer events for selection.
+  await node.click({ position: { x: 12, y: 12 }, force: true });
+  await expect(
+    page.getByRole("button", { name: "ویرایش عنصر", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+}
 export async function drag(page: Page, name: string, target: Locator) {
   const point = async (box: {
     x: number;
@@ -30,18 +42,10 @@ export async function drag(page: Page, name: string, target: Locator) {
     // Aim at the insertion boundary, not the centre of a tall image inside it.
     return { x: box.x + box.width / 2, y: Math.min(top + 16, bottom) };
   };
-  const candidate = page
-    .getByText(name, { exact: true })
-    .filter({ visible: true })
-    .first();
-  if (!(await candidate.isVisible())) {
-    await page.getByRole("button", { name: "عناصر", exact: true }).click();
-  }
+  await page.getByRole("button", { name: "عناصر", exact: true }).click();
   const source = page
-    .getByText(name, { exact: true })
-    .filter({ visible: true })
-    .first()
-    .locator("..");
+    .getByRole("complementary", { name: "پنل کناری صفحه‌ساز", exact: true })
+    .getByRole("button", { name, exact: true });
   await target.scrollIntoViewIfNeeded();
   await source.scrollIntoViewIfNeeded();
   const sourceBox = await source.boundingBox();

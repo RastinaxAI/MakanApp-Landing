@@ -11,5 +11,5 @@ const Editor = dynamic(
   },
 );
 export function InlineRichEditor(props: ComponentProps<typeof RichEditor>) {
-  return <Editor {...props} />;
+  return <Editor {...props} inline />;
 }

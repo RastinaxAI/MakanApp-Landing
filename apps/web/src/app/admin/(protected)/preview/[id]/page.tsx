@@ -31,7 +31,7 @@ export default async function PreviewPage({
   ]);
   return (
     <>
-      <aside className="mb-6 space-y-3 rounded-xl bg-secondary p-5">
+      <aside className="admin-preview-toolbar mb-6">
         <p>
           پیش‌نمایش خصوصی نسخه {content.revision_no.toLocaleString("fa-IR")}؛
           نمایش این مسیر فقط برای مدیران مجاز است.

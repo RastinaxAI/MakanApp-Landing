@@ -8,6 +8,9 @@ test("global colors and fonts participate in undo redo and durable document revi
   await login(page);
   await page.goto("/admin/builder");
   await page
+    .getByRole("button", { name: "ساخت طرح جدید", exact: true })
+    .click();
+  await page
     .getByLabel("نام قالب تازه", { exact: true })
     .fill("آزمون رنگ و فونت " + randomUUID().slice(0, 8));
   await page
@@ -18,9 +21,8 @@ test("global colors and fonts participate in undo redo and durable document revi
   const canvas = page.frameLocator("iframe").first();
   const root = canvas.locator("[data-builder-scope]");
   await expect(root).toHaveCSS("font-family", /vazirmatn/i);
-  await page
-    .getByRole("button", { name: "رنگ و فونت برگه", exact: true })
-    .click();
+  await page.getByRole("button", { name: "تنظیمات برگه", exact: true }).click();
+  await page.getByText("رنگ و فونت برگه", { exact: true }).click();
   await page
     .getByLabel("فونت سراسری", { exact: true })
     .filter({ visible: true })

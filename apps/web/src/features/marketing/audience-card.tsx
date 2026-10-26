@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import {
   ArrowLeft,
   BookOpen,

@@ -1,5 +1,5 @@
 import type { ContentBlock } from "@/features/marketing/content";
-import Link from "next/link";
+import { SourceLink as Link } from "@/features/leads/source-link";
 import type { CmsImageRef } from "@/features/cms/types";
 import { MediaImage } from "@/features/cms/media-image";
 export function ContentGrid({

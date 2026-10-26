@@ -11,13 +11,20 @@ import type { AdminContent, CmsPage } from "@/features/cms/types";
 export default async function LibraryPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; purpose?: string }>;
 }) {
   if (!(await requireContentAdmin())) return <CmsDenied />;
   const params = await searchParams;
   const page = Math.max(1, Math.min(10000, Number(params.page) || 1));
+  const purpose = ["template", "section", "header", "footer"].includes(
+    params.purpose || "",
+  )
+    ? params.purpose!
+    : "";
   const [library, settings, profile, headers, footers] = await Promise.all([
-    cmsGet<CmsPage<AdminContent>>(`builder/library?page_size=50&page=${page}`),
+    cmsGet<CmsPage<AdminContent>>(
+      `builder/library?page_size=50&page=${page}${purpose ? `&purpose=${purpose}` : ""}`,
+    ),
     cmsGet<BuilderSettings>("builder/settings"),
     requireAdmin(),
     cmsAll<AdminContent>("builder/library?purpose=header"),
@@ -25,6 +32,8 @@ export default async function LibraryPage({
   ]);
   return (
     <BuilderLibrary
+      key={purpose}
+      activePurpose={purpose}
       initial={library}
       settings={settings}
       canManageSettings={profile.capabilities.includes("settings")}
