@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { backendUrl } from "./admin-api";
 import { backendRead } from "./backend-read";
+import { coalescePublicRead } from "./public-read-coalescer";
 import type {
   CmsContent,
   CmsPage,
@@ -12,13 +13,27 @@ import type {
 } from "@/features/cms/types";
 
 export const publicGet = cache(async <T>(path: string): Promise<T> => {
-  const result = await backendRead(backendUrl(path), {
-    cache: "no-store",
-    redirect: "manual",
+  const url = backendUrl(path);
+  return coalescePublicRead(url.href, async () => {
+    const started = Date.now();
+    let result: Response;
+    try {
+      result = await backendRead(url, {
+        cache: "no-store",
+        redirect: "manual",
+      });
+    } catch (error) {
+      console.error("public_content_read_failed", {
+        path: url.pathname,
+        duration_ms: Date.now() - started,
+        reason: error instanceof Error ? error.name : "unknown",
+      });
+      throw error;
+    }
+    if (result.status === 404) notFound();
+    if (!result.ok) throw new Error("Published content service unavailable");
+    return result.json() as Promise<T>;
   });
-  if (result.status === 404) notFound();
-  if (!result.ok) throw new Error("Published content service unavailable");
-  return result.json() as Promise<T>;
 });
 export const getPage = (slug: string) =>
   publicGet<CmsContent>(`pages/${encodeURIComponent(slug)}`);
@@ -44,7 +59,7 @@ export async function pageMetadata(
   path: string,
   options: { noindex?: boolean } = {},
 ): Promise<Metadata> {
-  const settings = await getSettings();
+  const [settings, status] = await Promise.all([getSettings(), getSeoStatus()]);
   const title =
     content.seo.title ||
     (content.kind === "home" ? settings.seo.default_title : content.title);
@@ -52,7 +67,6 @@ export async function pageMetadata(
     content.seo.description ||
     ("summary" in content.payload ? content.payload.summary : content.title) ||
     settings.seo.default_description;
-  const status = await getSeoStatus();
   const url = status.origin ? new URL(path, status.origin).href : undefined;
   const imageId = content.seo.og_media_id || settings.seo.og_media_id;
   const image =

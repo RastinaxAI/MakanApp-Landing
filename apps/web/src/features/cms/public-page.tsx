@@ -19,6 +19,21 @@ import type { CmsContent } from "./types";
 import { FeaturedLearning } from "@/features/learning/public";
 import { JsonLd } from "@/features/seo/structured-data";
 import { getSeoStatus } from "@/lib/public-api";
+import { contentRequirements } from "./content-requirements";
+
+async function relatedContent(
+  content: CmsContent,
+  extra?: "features" | "audiences",
+) {
+  const required = contentRequirements(content.payload);
+  if (extra) required[extra] = true;
+  const [features, audiences, faqs] = await Promise.all([
+    required.features ? getFeatures() : null,
+    required.audiences ? getAudiences() : null,
+    required.faqs ? getFaqs() : null,
+  ]);
+  return { features, audiences, faqs };
+}
 
 export async function PublicPage({
   slug,
@@ -31,39 +46,20 @@ export async function PublicPage({
 }) {
   const content = await getPage(slug);
   if (content.kind === "home") {
-    const [features, audiences, faqs] = await Promise.all([
-      getFeatures(),
-      getAudiences(),
-      getFaqs(),
-    ]);
+    const { features, audiences, faqs } = await relatedContent(content);
     return (
       <>
         <CmsRenderer
           content={content}
-          features={asFeatures(features.items)}
-          audiences={asAudiences(audiences.items)}
-          faqs={asFaqs(faqs.items)}
+          features={asFeatures(features?.items || [])}
+          audiences={asAudiences(audiences?.items || [])}
+          faqs={asFaqs(faqs?.items || [])}
           learning={<FeaturedLearning />}
         />
       </>
     );
   }
   if (content.kind !== "page") notFound();
-  const dynamicSections =
-    content.payload.kind === "page" &&
-    (content.payload.document ||
-      content.payload.sections.some((section) =>
-        [
-          "faq",
-          "trust",
-          "audiences",
-          "experience",
-          "product-experience",
-        ].includes(section.type),
-      ));
-  const dynamicData = dynamicSections
-    ? await Promise.all([getFeatures(), getAudiences(), getFaqs()])
-    : null;
   const hasCatalogue =
     content.payload.kind === "page" &&
     content.payload.document &&
@@ -71,12 +67,14 @@ export async function PublicPage({
       (node) =>
         node.type === (slug === "features" ? "FeatureIndex" : "AudienceIndex"),
     );
-  const extra =
+  const catalogue =
     slug === "features" && !hasCatalogue
-      ? await getFeatures()
+      ? "features"
       : slug === "solutions" && !hasCatalogue
-        ? await getAudiences()
-        : null;
+        ? "audiences"
+        : undefined;
+  const related = await relatedContent(content, catalogue);
+  const extra = catalogue ? related[catalogue] : null;
   return (
     <>
       <div
@@ -84,14 +82,16 @@ export async function PublicPage({
         className={
           ["privacy", "terms"].includes(slug)
             ? "public-reading-page"
-            : slug === "solutions" ? "public-index-header" : undefined
+            : ["features", "solutions"].includes(slug)
+              ? "public-index-header"
+              : undefined
         }
       >
         <CmsRenderer
           content={content}
-          features={dynamicData ? asFeatures(dynamicData[0].items) : []}
-          audiences={dynamicData ? asAudiences(dynamicData[1].items) : []}
-          faqs={dynamicData ? asFaqs(dynamicData[2].items) : []}
+          features={asFeatures(related.features?.items || [])}
+          audiences={asAudiences(related.audiences?.items || [])}
+          faqs={asFaqs(related.faqs?.items || [])}
         />
       </div>
       {extra && (
@@ -224,18 +224,16 @@ async function PublicMarketingDetail(
   kind: "features" | "audiences",
   slug: string,
 ) {
-  const [content, features, audiences, faqs] = await Promise.all([
-    publicGet<CmsContent>(`${kind}/${encodeURIComponent(slug)}`),
-    getFeatures(),
-    getAudiences(),
-    getFaqs(),
-  ]);
+  const content = await publicGet<CmsContent>(
+    `${kind}/${encodeURIComponent(slug)}`,
+  );
+  const { features, audiences, faqs } = await relatedContent(content);
   return (
     <CmsRenderer
       content={content}
-      features={asFeatures(features.items)}
-      audiences={asAudiences(audiences.items)}
-      faqs={asFaqs(faqs.items)}
+      features={asFeatures(features?.items || [])}
+      audiences={asAudiences(audiences?.items || [])}
+      faqs={asFaqs(faqs?.items || [])}
     />
   );
 }

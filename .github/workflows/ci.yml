@@ -26,7 +26,7 @@ jobs:
       - run: npm ci
       - run: uv sync --locked --project apps/api
       - run: npm run lint
-      - run: node --test apps/web/tests/unit/backend-read.test.mjs
+      - run: node --test apps/web/tests/unit/*.test.mjs
       - run: python -m unittest discover -s scripts/tests -p 'test_*.py' -v
       - run: npm run build
       - run: npm run typecheck

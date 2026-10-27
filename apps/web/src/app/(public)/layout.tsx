@@ -16,8 +16,15 @@ export default async function PublicLayout({
 }: {
   children: ReactNode;
 }) {
-  const settings = await getSettings();
-  const builder = await publicGet<BuilderSite>("site/builder");
+  const [settings, builder, analytics] = await Promise.all([
+    getSettings(),
+    publicGet<BuilderSite>("site/builder"),
+    publicGet<{
+      enabled: boolean;
+      policy_version: string;
+      retention_days: number;
+    }>("analytics/config"),
+  ]);
   const sitePart = (part: BuilderSite["header"]) =>
     part?.payload.kind === "page" && part.payload.document ? (
       <BuilderRenderer
@@ -34,13 +41,7 @@ export default async function PublicLayout({
   const logo = settings.general.logo_media_id
     ? await publicGet<CmsImageRef>(`media/${settings.general.logo_media_id}`)
     : undefined;
-  const analytics = await publicGet<{
-    enabled: boolean;
-    policy_version: string;
-    retention_days: number;
-  }>("analytics/config");
-  const jar = await cookies();
-  const incoming = await headers();
+  const [jar, incoming] = await Promise.all([cookies(), headers()]);
   const initialBlocked =
     incoming.get("dnt") === "1" || incoming.get("sec-gpc") === "1";
   const initialChoice = initialBlocked
