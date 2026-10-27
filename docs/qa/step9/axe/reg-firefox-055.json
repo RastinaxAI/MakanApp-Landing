@@ -1,9 +1,0 @@
-{
-  "url": "http://127.0.0.1:3100/privacy",
-  "timestamp": "2026-10-13T10:56:14.542Z",
-  "testEngine": {
-    "name": "axe-core",
-    "version": "4.13.0"
-  },
-  "violations": []
-}

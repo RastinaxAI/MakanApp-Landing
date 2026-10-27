@@ -54,6 +54,8 @@ class RateLimitBucket(Base):
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 
 
+# Retired MFA tables are retained only for non-destructive schema compatibility.
+# Authentication and administration never read or write them.
 class AdminMfa(Timestamps, Base):
     __tablename__ = "admin_mfa"
     admin_id: Mapped[UUID] = mapped_column(

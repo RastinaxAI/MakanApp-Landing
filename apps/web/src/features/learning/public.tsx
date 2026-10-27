@@ -13,6 +13,8 @@ import { AparatPlayer } from "./player";
 import { LibrarySearch, type LibraryFilter } from "./library-search";
 import { QualifiedView, type ViewPolicy } from "./view";
 import { LearningSeo } from "@/features/seo/structured-data";
+import { LearningStartGuide } from "@/features/help/learning-guide";
+import { GuideImages, ReadingSteps } from "@/features/help/reading-tools";
 import {
   audiences,
   levels,
@@ -219,6 +221,12 @@ export async function Library({
       </div>
       <section className="section-space">
         <Container>
+          {domain === "learn" && !category && (
+            <LearningStartGuide
+              audience={query.get("audience") || undefined}
+              topic={query.get("topic") || undefined}
+            />
+          )}
           <LibrarySearch
             key={`${path}?${query}`}
             path={path}
@@ -419,25 +427,42 @@ export function LearningArticle({
         ) : (
           cover && <MediaImage image={cover} privatePreview={privatePreview} />
         )}
-        {!!p.toc?.length && (
-          <nav
-            className="my-8 rounded-xl border border-border bg-card p-5"
-            aria-label="فهرست مطالب"
-          >
-            <h2 className="mb-3 text-xl font-semibold">فهرست مطالب</h2>
-            <ul className="space-y-2">
-              {p.toc.map((h) => (
-                <li key={h.id}>
-                  <a
-                    className="inline-flex min-h-11 items-center text-primary-hover underline"
-                    href={`#${h.id}`}
-                  >
-                    {h.text}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+        {!!p.toc?.length &&
+          (content.kind !== "blog" ? (
+            <ReadingSteps toc={p.toc} />
+          ) : (
+            <nav
+              className="my-8 rounded-xl border border-border bg-card p-5"
+              aria-label="فهرست مطالب"
+            >
+              <h2 className="mb-3 text-xl font-semibold">فهرست مطالب</h2>
+              <ul className="space-y-2">
+                {p.toc.map((h) => (
+                  <li key={h.id}>
+                    <a
+                      className="inline-flex min-h-11 items-center text-primary-hover underline"
+                      href={`#${h.id}`}
+                    >
+                      {h.text}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+        {content.kind !== "blog" && (
+          <GuideImages
+            images={content.media
+              .filter((image) =>
+                p.body_html.includes(`/api/v1/media/${image.id}/file`),
+              )
+              .map((image) => ({
+                src: `/api/v1/${privatePreview ? "admin/" : ""}media/${image.id}/file`,
+                alt: image.alt_text,
+                width: image.width,
+                height: image.height,
+              }))}
+          />
         )}
         <article className="my-8">
           <RichText html={p.body_html} privatePreview={privatePreview} />

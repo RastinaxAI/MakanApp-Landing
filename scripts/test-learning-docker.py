@@ -19,6 +19,8 @@ from psycopg import sql
 from sqlalchemy.engine import make_url
 
 ROOT = Path(__file__).resolve().parents[1]
+(ROOT / ".preview").mkdir(exist_ok=True)
+(ROOT / "docs/qa/step7").mkdir(parents=True, exist_ok=True)
 values = {}
 for line in (ROOT / ".env.test").read_text().splitlines():
     match = re.fullmatch(r"([A-Z_]+)=([a-f0-9]{64})", line)

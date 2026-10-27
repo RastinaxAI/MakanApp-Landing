@@ -1,7 +1,0 @@
-{
-  "passed": true,
-  "initial_token_request": "deliberately aborted in browser",
-  "retry": "real local API",
-  "retry_http_status": 200,
-  "form_submissions": 0
-}

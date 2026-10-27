@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { randomUUID, createHmac } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { login } from "./helpers";
@@ -46,23 +46,6 @@ async function mutate(page: Page, endpoint: string, data: unknown) {
     },
     data,
   });
-}
-function totp(secret: string) {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  let bits = "";
-  for (const char of secret)
-    bits += alphabet.indexOf(char).toString(2).padStart(5, "0");
-  const key = Buffer.from(
-    bits.match(/.{8}/g)!.map((value) => parseInt(value, 2)),
-  );
-  const message = Buffer.alloc(8);
-  message.writeBigUInt64BE(BigInt(Math.floor(Date.now() / 30000)));
-  const digest = createHmac("sha1", key).update(message).digest();
-  const offset = digest[digest.length - 1]! & 15;
-  return String((digest.readUInt32BE(offset) & 0x7fffffff) % 1000000).padStart(
-    6,
-    "0",
-  );
 }
 
 test("all nine workspaces are responsive accessible and show real configured state", async ({
@@ -406,7 +389,7 @@ test("owner account changes keep reauthentication authorization and audit loggin
   }
 });
 
-test("OTP security keeps real session revocation MFA enrollment and recovery", async ({
+test("OTP security keeps real session revocation without authenticator enrollment", async ({
   page,
   browser,
 }, info) => {
@@ -441,50 +424,11 @@ test("OTP security keeps real session revocation MFA enrollment and recovery", a
   } finally {
     await context.close();
   }
-  await confirmation(page);
-  await page
-    .getByRole("button", { name: "شروع فعال‌سازی MFA", exact: true })
-    .click();
-  const secret = await page
-    .getByLabel("کلید راه‌اندازی", { exact: true })
-    .inputValue();
-  expect(secret).toHaveLength(32);
-  await page.getByLabel("کد تأیید برنامه", { exact: true }).fill(totp(secret));
-  await page
-    .getByRole("button", { name: "تأیید و فعال‌سازی MFA", exact: true })
-    .click();
   await expect(
-    page.getByRole("heading", {
-      name: "کدهای بازیابی؛ فقط همین بار نمایش داده می‌شوند",
-      exact: true,
-    }),
+    page.getByText(/MFA|Authenticator|دومرحله‌ای|کدهای بازیابی/),
+  ).toHaveCount(0);
+  await expect(
+    page.getByText("شماره همراه و کد پیامکی", { exact: true }),
   ).toBeVisible();
-  const codes = await page.locator('ul[dir="ltr"] li').allTextContents();
-  expect(codes).toHaveLength(8);
-  await page
-    .getByRole("button", {
-      name: "کدها را ذخیره کردم؛ ورود دوباره",
-      exact: true,
-    })
-    .click();
-  await page.getByLabel("شماره همراه", { exact: true }).fill(phone);
-  await page
-    .getByRole("button", { name: "دریافت کد ورود", exact: true })
-    .click();
-  await page.getByLabel("کد ورود", { exact: true }).fill("111111");
-  await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
-  await page
-    .getByLabel("کد برنامه تأییدکننده یا بازیابی", { exact: true })
-    .fill(codes[0]!);
-  await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
-  await expect(page).toHaveURL(/\/admin$/);
-  await page.goto("/admin/security");
-  await confirmation(page);
-  await page
-    .getByLabel("کد MFA یا بازیابی، اگر فعال است", { exact: true })
-    .fill(codes[1]!);
-  await page
-    .getByRole("button", { name: "غیرفعال‌سازی MFA", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  expect((await mutate(page, "auth/mfa/enroll", {})).status()).toBe(404);
 });

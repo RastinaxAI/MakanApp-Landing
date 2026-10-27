@@ -66,7 +66,7 @@ def save(data: SmsSettingsInput, request: Request, session: SessionDep):
     with session.begin():
         admin, _, _ = principal(request, session, True)
         require_capability(admin, "settings")
-        reauthenticate(request, session, admin, data.confirmation_code, data.mfa_code)
+        reauthenticate(request, session, admin, data.confirmation_code)
         session.execute(text("SELECT pg_advisory_xact_lock(74120800)"))
         current = sms.read_settings(session, request.app.state.settings)
         expected_version(request, current.row_version)

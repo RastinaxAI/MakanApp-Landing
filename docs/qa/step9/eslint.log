@@ -1,7 +1,0 @@
-
-> makan-landing@0.2.0 lint
-> npm run lint --workspace @makan/web
-
-
-> @makan/web@0.2.0 lint
-> eslint . --max-warnings 0

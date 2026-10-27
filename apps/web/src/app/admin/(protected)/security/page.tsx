@@ -15,7 +15,6 @@ export default async function SecurityPage() {
   return (
     <SecurityPanel
       legacy={profile.login_method === "password"}
-      enabled={profile.mfa_enabled}
       initialSessions={sessions ?? []}
     />
   );

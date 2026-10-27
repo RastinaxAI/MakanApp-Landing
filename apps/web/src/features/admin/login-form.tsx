@@ -40,14 +40,12 @@ const schema = z.object({
     .transform(normalizePhone)
     .pipe(z.string().regex(/^09[0-9]{9}$/, "شماره همراه معتبر وارد کنید.")),
   code: z.string().optional(),
-  mfa_code: z.string().max(48).optional(),
 });
 type Values = z.input<typeof schema>;
 export function LoginForm({ debug = false }: { debug?: boolean }) {
   const [sent, setSent] = useState(false);
   const [number, setNumber] = useState("");
   const [error, setError] = useState("");
-  const [needsMfa, setNeedsMfa] = useState(false);
   const [remaining, setRemaining] = useState(0);
   const [resending, setResending] = useState(false);
   const {
@@ -66,9 +64,8 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
     return () => clearTimeout(timer);
   }, [remaining]);
   useEffect(() => {
-    if (sent && !isSubmitting && !resending)
-      setFocus(needsMfa ? "mfa_code" : "code");
-  }, [sent, setFocus, isSubmitting, resending, needsMfa]);
+    if (sent && !isSubmitting && !resending) setFocus("code");
+  }, [sent, setFocus, isSubmitting, resending]);
   async function send(phone: string) {
     const result = await adminRequest<{ retry_after: number }>(
       "auth/otp/request",
@@ -77,7 +74,6 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
     );
     setNumber(phone);
     setSent(true);
-    setNeedsMfa(false);
     setValue("code", "");
     setRemaining(result.retry_after);
   }
@@ -96,12 +92,9 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
       await adminRequest("auth/otp/verify", "POST", {
         phone: number,
         code,
-        mfa_code: values.mfa_code?.trim() || null,
       });
       resetAdminNavigation("/admin");
     } catch (error) {
-      if (error instanceof AdminRequestError && error.code === "MFA_REQUIRED")
-        setNeedsMfa(true);
       if (error instanceof AdminRequestError && error.retryAfter)
         setRemaining(error.retryAfter);
       setError(error instanceof Error ? error.message : "ورود انجام نشد.");
@@ -176,20 +169,6 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
                 {...register("code")}
               />
             </div>
-            {needsMfa && (
-              <div className="login-field">
-                <Label htmlFor="admin-second-factor">
-                  کد برنامه تأییدکننده یا بازیابی
-                </Label>
-                <Input
-                  id="admin-second-factor"
-                  dir="ltr"
-                  autoComplete="one-time-code"
-                  maxLength={48}
-                  {...register("mfa_code")}
-                />
-              </div>
-            )}
           </div>
         )}
         {debug && (
@@ -228,7 +207,6 @@ export function LoginForm({ debug = false }: { debug?: boolean }) {
               disabled={busy}
               onClick={() => {
                 setSent(false);
-                setNeedsMfa(false);
                 setError("");
                 setFocus("phone");
               }}

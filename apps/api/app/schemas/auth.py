@@ -17,7 +17,6 @@ class Role(StrEnum):
 class LoginInput(StrictSchema):
     email: EmailStr = Field(max_length=254)
     password: str = Field(min_length=1, max_length=128)
-    mfa_code: str | None = Field(default=None, max_length=48)
 
     @field_validator("email", mode="before")
     @classmethod
@@ -31,7 +30,6 @@ class Reauthentication(StrictSchema):
         max_length=128,
         validation_alias=AliasChoices("confirmation_code", "current_password"),
     )
-    mfa_code: str | None = Field(default=None, max_length=48)
 
 
 class AccountCreate(Reauthentication):
@@ -68,10 +66,6 @@ class PasswordUpdate(Reauthentication):
     new_password: str = Field(min_length=15, max_length=128)
 
 
-class MfaConfirm(StrictSchema):
-    code: str = Field(pattern=r"^\d{6}$")
-
-
 class Profile(StrictSchema):
     id: UUID
     email: str | None
@@ -79,7 +73,6 @@ class Profile(StrictSchema):
     login_method: Literal["otp", "password"] = "otp"
     role: Role
     capabilities: list[str]
-    mfa_enabled: bool
 
 
 class Account(StrictSchema):
@@ -106,15 +99,6 @@ class SessionInfo(StrictSchema):
 
 class SessionQuery(StrictSchema):
     admin_id: UUID | None = None
-
-
-class MfaEnrollment(StrictSchema):
-    secret: str
-    otpauth_url: str
-
-
-class RecoveryCodes(StrictSchema):
-    recovery_codes: list[str]
 
 
 class AuditEvent(StrictSchema):

@@ -16,6 +16,7 @@ const groups = [
     title: "همراه شما",
     items: [
       { label: "آموزش ماکان", href: "/learn" },
+      { label: "راهنمای شروع کار", href: "/learn?topic=getting-started" },
       { label: "وبلاگ", href: "/blog" },
       { label: "پرسش‌های متداول", href: "/faq" },
       { label: "تماس با ما", href: "/contact" },

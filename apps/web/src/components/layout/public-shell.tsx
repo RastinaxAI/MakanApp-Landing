@@ -4,6 +4,7 @@ import { fontFamilies } from "@/features/builder/styles";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import type { CmsSettings, CmsImageRef } from "@/features/cms/types";
+import { PublicHelp } from "@/features/help/public-help";
 
 export function PublicShell({
   children,
@@ -46,6 +47,7 @@ export function PublicShell({
         />
       )}
       <main id="main-content" tabIndex={-1}>
+        <PublicHelp />
         {children}
       </main>
       {footer || <SiteFooter settings={settings} logo={logo} />}

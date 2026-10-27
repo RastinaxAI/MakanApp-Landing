@@ -7,6 +7,7 @@ import {
   Settings,
   ShieldCheck,
   ArrowLeft,
+  BookOpen,
 } from "lucide-react";
 import { AdminPageHeader, AdminPanel } from "@/features/admin/page-kit";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,12 @@ export default async function DashboardPage() {
     leads: "درخواست ثبت‌شده",
   };
   const actions = [
+    {
+      href: "/admin/help",
+      label: "راهنمای تصویری پنل",
+      description: "از کجا شروع کنم؟ تصویر و مراحل هر بخش",
+      icon: BookOpen,
+    },
     ...(profile.capabilities.includes("content")
       ? [
           {
@@ -68,7 +75,7 @@ export default async function DashboardPage() {
     {
       href: "/admin/security",
       label: "امنیت حساب",
-      description: "نشست‌ها و ورود دومرحله‌ای",
+      description: "ورود پیامکی و نشست‌های فعال",
       icon: ShieldCheck,
     },
   ];

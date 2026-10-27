@@ -1,10 +1,7 @@
-import base64
 import hashlib
 import hmac
 import re
 import secrets
-import struct
-from urllib.parse import quote
 
 from argon2 import PasswordHasher, Type
 from argon2.exceptions import InvalidHashError, VerificationError
@@ -46,33 +43,3 @@ def opaque_token() -> str:
 
 def valid_token(value: str | None) -> bool:
     return bool(value and re.fullmatch(r"[A-Za-z0-9_-]{43}", value))
-
-
-def totp_code(secret: str, step: int) -> str:
-    key = base64.b32decode(secret + "=" * ((8 - len(secret) % 8) % 8))
-    digest = hmac.new(key, struct.pack(">Q", step), hashlib.sha1).digest()
-    offset = digest[-1] & 15
-    value = struct.unpack(">I", digest[offset : offset + 4])[0] & 0x7FFFFFFF
-    return str(value % 1000000).zfill(6)
-
-
-def matching_totp_step(secret: str, code: str, now: float, last_used: int) -> int | None:
-    code = code.translate(str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")).strip()
-    if not re.fullmatch(r"[0-9]{6}", code):
-        return None
-    step = int(now // 30)
-    for candidate in (step, step - 1, step + 1):
-        if (
-            candidate >= 0
-            and candidate > last_used
-            and hmac.compare_digest(totp_code(secret, candidate), code)
-        ):
-            return candidate
-    return None
-
-
-def enrollment_uri(email: str, secret: str) -> str:
-    return (
-        f"otpauth://totp/{quote('MakanApp:' + email, safe='')}?secret={secret}"
-        "&issuer=MakanApp&algorithm=SHA1&digits=6&period=30"
-    )

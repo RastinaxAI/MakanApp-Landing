@@ -23,6 +23,8 @@ ROOT = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument("--phase", choices=("step8", "step9"), default="step9")
 phase = parser.parse_args().phase
+(ROOT / ".preview").mkdir(exist_ok=True)
+(ROOT / f"docs/qa/{phase}").mkdir(parents=True, exist_ok=True)
 values = {}
 for line in (ROOT / ".env.test").read_text().splitlines():
     match = re.fullmatch(r"([A-Z_]+)=([a-f0-9]{64})", line)

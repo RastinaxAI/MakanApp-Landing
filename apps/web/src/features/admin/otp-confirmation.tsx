@@ -8,14 +8,10 @@ import { normalizeDigits } from "./login-form";
 export function OtpConfirmation({
   value,
   onChange,
-  mfa,
-  onMfaChange,
   prefix = "confirm",
 }: {
   value: string;
   onChange: (value: string) => void;
-  mfa: string;
-  onMfaChange: (value: string) => void;
   prefix?: string;
 }) {
   const [busy, setBusy] = useState(false);
@@ -78,19 +74,6 @@ export function OtpConfirmation({
             maxLength={6}
             value={value}
             onChange={(e) => onChange(normalizeDigits(e.target.value))}
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor={prefix + "-mfa"}>
-            کد MFA یا بازیابی، اگر فعال است
-          </Label>
-          <Input
-            id={prefix + "-mfa"}
-            dir="ltr"
-            autoComplete="one-time-code"
-            maxLength={48}
-            value={mfa}
-            onChange={(e) => onMfaChange(e.target.value)}
           />
         </div>
       </div>

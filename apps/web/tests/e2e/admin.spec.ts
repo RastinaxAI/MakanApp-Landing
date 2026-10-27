@@ -1,6 +1,5 @@
 import { test, expect as baseExpect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
-import { createHmac } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 
@@ -35,23 +34,6 @@ async function mutation(
     },
     data: body,
   });
-}
-function totp(secret: string) {
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-  let bits = "";
-  for (const character of secret)
-    bits += alphabet.indexOf(character).toString(2).padStart(5, "0");
-  const key = Buffer.from(
-    bits.match(/.{8}/g)!.map((value) => parseInt(value, 2)),
-  );
-  const message = Buffer.alloc(8);
-  message.writeBigUInt64BE(BigInt(Math.floor(Date.now() / 30000)));
-  const digest = createHmac("sha1", key).update(message).digest();
-  const offset = digest[digest.length - 1]! & 15;
-  return String((digest.readUInt32BE(offset) & 0x7fffffff) % 1000000).padStart(
-    6,
-    "0",
-  );
 }
 
 test.beforeEach(() => {
@@ -200,11 +182,18 @@ test("owner creates and deactivates an account with a real audit event", async (
     .getByRole("button", { name: "ایجاد حساب مدیر", exact: true })
     .click();
   await expect(page.getByRole("status")).toContainText("حساب مدیر ذخیره شد.");
-  // The real fixture has more than one page; new accounts are ordered last.
-  await expect(
-    page.getByRole("button", { name: "صفحه بعد", exact: true }),
-  ).toBeEnabled();
-  await page.getByRole("button", { name: "صفحه بعد", exact: true }).click();
+  // New accounts are ordered last; derive the page count from the real API.
+  const listing = await page.request.get("/api/v1/admin/accounts?page_size=20");
+  expect(listing.status()).toBe(200);
+  const pages = (await listing.json()).pagination.pages;
+  for (let target = 2; target <= pages; target++) {
+    await Promise.all([
+      page.waitForResponse((response) =>
+        response.url().includes(`/accounts?page=${target}&`),
+      ),
+      page.getByRole("button", { name: "صفحه بعد", exact: true }).click(),
+    ]);
+  }
   await expect(page.getByText(email, { exact: true })).toBeVisible();
   await page.getByLabel("رمز فعلی شما", { exact: true }).fill(password!);
   const card = page
@@ -236,57 +225,20 @@ test("owner creates and deactivates an account with a real audit event", async (
   ).toBe(true);
 });
 
-test("MFA enrollment, recovery login and disabling are real", async ({
+test("security has sessions and no authenticator enrollment", async ({
   page,
-}, testInfo) => {
-  const email = `editor-mfa-${testInfo.project.name}@example.com`;
-  await login(page, email);
-  await page.getByRole("link", { name: "امنیت حساب", exact: true }).click();
-  await page.getByLabel("رمز فعلی", { exact: true }).fill(password!);
-  await page
-    .getByRole("button", { name: "شروع فعال‌سازی MFA", exact: true })
-    .click();
-  const secret = await page
-    .getByLabel("کلید راه‌اندازی", { exact: true })
-    .inputValue();
-  expect(secret).toHaveLength(32);
-  await page.getByLabel("کد تأیید برنامه", { exact: true }).fill(totp(secret));
-  const confirmation = page.waitForResponse(
-    (response) =>
-      response.url().endsWith("/auth/mfa/confirm") &&
-      response.request().method() === "POST",
-  );
-  await page
-    .getByRole("button", { name: "تأیید و فعال‌سازی MFA", exact: true })
-    .click();
-  expect((await confirmation).status()).toBe(200);
+}) => {
+  await login(page);
+  await page.goto("/admin/security");
   await expect(
-    page.getByRole("heading", {
-      name: "کدهای بازیابی؛ فقط همین بار نمایش داده می‌شوند",
-    }),
+    page.getByRole("heading", { name: "نشست‌های فعال", exact: true }),
   ).toBeVisible();
-  const codes = await page.locator("ul[dir=ltr] li").allTextContents();
-  expect(codes).toHaveLength(8);
-  await page
-    .getByRole("button", {
-      name: "کدها را ذخیره کردم؛ ورود دوباره",
-      exact: true,
-    })
-    .click();
-  await page.getByLabel("ایمیل مدیر", { exact: true }).fill(email);
-  await page.getByLabel("رمز عبور", { exact: true }).fill(password!);
-  await page
-    .getByLabel("کد دومرحله‌ای یا کد بازیابی", { exact: true })
-    .fill(codes[0]!);
-  await page.getByRole("button", { name: "ورود به پنل", exact: true }).click();
-  await expect(page).toHaveURL(/\/admin$/);
-  await page.getByRole("link", { name: "امنیت حساب", exact: true }).click();
-  await page.getByLabel("رمز فعلی", { exact: true }).fill(password!);
-  await page.getByLabel("کد MFA یا بازیابی", { exact: true }).fill(codes[1]!);
-  await page
-    .getByRole("button", { name: "غیرفعال‌سازی MFA", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/admin\/login$/);
+  await expect(
+    page.getByText(/MFA|Authenticator|دومرحله‌ای|کدهای بازیابی/),
+  ).toHaveCount(0);
+  expect((await mutation(page, "auth/mfa/enroll", "POST", {})).status()).toBe(
+    404,
+  );
 });
 
 test("password change closes sessions and accepts the new password", async ({

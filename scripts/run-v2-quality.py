@@ -128,10 +128,10 @@ def build():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("gate", choices=["build", "backend", "browser"])
+    parser.add_argument("gate", choices=["build", "backend", "browser", "guide-assets"])
     parser.add_argument(
         "--phase",
-        choices=["v2-step5", "v2-step6", "builder-elementor", "builder-studio", "builder-library", "content-manager", "admin-refresh", "admin-unified", "public-polish", "public-library-search", "admin-login"],
+        choices=["v2-step5", "v2-step6", "builder-elementor", "builder-studio", "builder-library", "content-manager", "admin-refresh", "admin-unified", "public-polish", "public-library-search", "admin-login", "remove-mfa", "illustrated-help"],
         default="v2-step6",
     )
     parser.add_argument(
@@ -156,6 +156,8 @@ def main():
             "public-polish",
             "public-library-search",
             "admin-login",
+            "remove-mfa",
+            "illustrated-help",
             "visual-regression",
             "admin",
             "cms",
@@ -171,7 +173,8 @@ def main():
         default="all",
     )
     parser.add_argument("--dev", action="store_true")
-    parser.add_argument("--max-failures", type=int, choices=range(0, 101), default=1)
+    parser.add_argument("--grep", help="Run only matching browser scenarios")
+    parser.add_argument("--max-failures", type=int, choices=range(101), default=1)
     parser.add_argument("--update-snapshots", action="store_true")
     parser.add_argument(
         "--suite", choices=["v2", "legacy", "legacy-seo", "legacy-otp"], default="v2"
@@ -275,13 +278,17 @@ def main():
                 else "--config=playwright.v2-legacy.config.ts",
                 f"--max-failures={args.max_failures}",
             )
-            if args.project != "all":
+            if args.gate == "guide-assets":
+                argv = node_command(str(ROOT / "scripts/capture-admin-guides.cjs"))
+            elif args.project != "all":
                 argv.append(f"--project={args.project}")
-            if args.update_snapshots:
+            if args.gate != "guide-assets" and args.update_snapshots:
                 argv.append("--update-snapshots=all")
-            if args.spec != "all":
+            if args.gate != "guide-assets" and args.spec != "all":
                 argv.append(args.spec + ".spec.ts")
-            run(argv, env, ROOT / "apps/web")
+            if args.gate == "browser" and args.grep:
+                argv.extend(["--grep", args.grep])
+            run(argv, env, ROOT if args.gate == "guide-assets" else ROOT / "apps/web")
     finally:
         stop(web)
         stop(api)
@@ -297,6 +304,8 @@ def main():
                 qa / report_name,
             )
         run([str(quality.PYTHON), "tests/e2e_cleanup.py"], env, ROOT / "apps/api")
+    if args.gate == "guide-assets":
+        return
     report = json.loads((qa / report_name).read_text(encoding="utf-8"))
     print("V2 browser gate passed; tests:", report.get("stats", {}).get("expected"))
 

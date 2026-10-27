@@ -1,9 +1,0 @@
-{
-  "diff_check": "passed",
-  "compose_config": "passed",
-  "eslint": "passed",
-  "eslint_version": "10.12.0",
-  "typescript": "passed",
-  "typescript_version": "5.9.3",
-  "node": "24"
-}

@@ -22,7 +22,6 @@ export function SmsPanel({ initial }: { initial: SmsSettings }) {
   const [password, setPassword] = useState("");
   const [bodyId, setBodyId] = useState(String(initial.body_id || ""));
   const [confirmation, setConfirmation] = useState("");
-  const [mfa, setMfa] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   async function save(event: React.FormEvent) {
@@ -40,7 +39,6 @@ export function SmsPanel({ initial }: { initial: SmsSettings }) {
           password: password || null,
           body_id: bodyId ? Number(bodyId) : null,
           confirmation_code: confirmation,
-          mfa_code: mfa || null,
         },
         data.row_version,
       );
@@ -48,7 +46,6 @@ export function SmsPanel({ initial }: { initial: SmsSettings }) {
       setUsername("");
       setPassword("");
       setConfirmation("");
-      setMfa("");
       setMessage("تنظیمات پنل پیامکی ذخیره شد.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "ذخیره انجام نشد.");
@@ -227,8 +224,6 @@ export function SmsPanel({ initial }: { initial: SmsSettings }) {
               <OtpConfirmation
                 value={confirmation}
                 onChange={setConfirmation}
-                mfa={mfa}
-                onMfaChange={setMfa}
                 prefix="sms"
               />
               {data.debug_mode && (

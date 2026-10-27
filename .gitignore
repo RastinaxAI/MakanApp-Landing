@@ -23,3 +23,7 @@ __pycache__/
 .coverage
 htmlcov/
 .media/
+tmp/
+output/
+release/
+docs/qa/

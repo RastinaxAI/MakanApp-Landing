@@ -13,12 +13,8 @@ from app.schemas.auth import (
     CsrfResponse,
     Dashboard,
     LoginInput,
-    MfaConfirm,
-    MfaEnrollment,
     PasswordUpdate,
     Profile,
-    Reauthentication,
-    RecoveryCodes,
     SessionInfo,
     SessionQuery,
 )
@@ -137,32 +133,3 @@ def audit_logs(request: Request, query: PaginationDep, session: SessionDep):
 @router.get("/dashboard", response_model=Dashboard)
 def dashboard(request: Request, session: SessionDep):
     return operations.dashboard(request, session)
-
-
-@router.post("/auth/mfa/enroll", response_model=MfaEnrollment)
-def enroll(data: Reauthentication, request: Request, session: SessionDep):
-    return operations.enroll(data, request, session)
-
-
-@router.post("/auth/mfa/confirm", response_model=RecoveryCodes)
-def confirm(data: MfaConfirm, request: Request, response: Response, session: SessionDep):
-    result = operations.confirm(data, request, session)
-    clear_session(response, request)
-    return result
-
-
-@router.post("/auth/mfa/disable", status_code=204)
-def disable(
-    data: Reauthentication,
-    request: Request,
-    response: Response,
-    session: SessionDep,
-):
-    result = operations.disable(data, request, session)
-    clear_session(response, request)
-    return result
-
-
-@router.post("/auth/mfa/recovery-codes", response_model=RecoveryCodes)
-def recovery(data: Reauthentication, request: Request, session: SessionDep):
-    return operations.recovery(data, request, session)

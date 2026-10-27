@@ -1,8 +1,0 @@
-{
-  "null_command_line_guard": true,
-  "api_port_closed": true,
-  "web_port_closed": true,
-  "dedicated_e2e_databases_remaining": 0,
-  "cleanup_exit_code": 0,
-  "legacy_third_run_fixture_removed": true
-}

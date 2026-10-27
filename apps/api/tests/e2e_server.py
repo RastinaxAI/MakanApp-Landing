@@ -85,7 +85,7 @@ try:
                 "",
                 *(
                     f"-{kind}-{browser}"
-                    for kind in ("mfa", "password")
+                    for kind in ("password",)
                     for browser in ("chromium", "firefox", "webkit")
                 ),
             ):

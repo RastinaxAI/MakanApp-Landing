@@ -9,7 +9,7 @@ from sqlalchemy import delete, func, select, text, update
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
-from app.core.security import Security, totp_code
+from app.core.security import Security
 from app.main import create_app
 from app.models import (
     Admin,
@@ -185,33 +185,38 @@ async def test_concurrent_verify_creates_one_session(phone_context):
         assert session.scalar(select(func.count()).select_from(AdminSession)) == 1
 
 
-async def test_enabled_mfa_cannot_be_bypassed_by_sms_or_debug(phone_context):
-    config, engine, security, ids = phone_context
-    secret = "JBSWY3DPEHPK3PXP"
+async def test_retired_mfa_account_uses_sms_only_and_sensitive_actions_still_require_otp(
+    phone_context,
+):
+    config, engine, _, ids = phone_context
     with Session(engine) as session, session.begin():
+        # Deliberately undecryptable: retired secrets must never be consulted.
         session.add(
             AdminMfa(
                 admin_id=ids["owner"],
-                encrypted_totp_secret=security.encrypt(secret, str(ids["owner"])),
+                encrypted_totp_secret=b"retired",
                 enabled_at=now_utc(),
                 last_used_step=-1,
             )
         )
     async with api_client(create_app(config)) as client:
-        await action(client, "auth/otp/request", {"phone": PHONE})
-        response = await action(client, "auth/otp/verify", {"phone": PHONE, "code": "111111"})
-        assert response.status_code == 401 and response.json()["error"]["code"] == "MFA_REQUIRED"
-        assert (
-            await action(
-                client,
-                "auth/otp/verify",
-                {
-                    "phone": PHONE,
-                    "code": "111111",
-                    "mfa_code": totp_code(secret, int(now_utc().timestamp() // 30)),
-                },
+        response = await enter(client)
+        assert "mfa_enabled" not in response.json()
+        body = {"phone": "09120000003", "role": "editor", "confirmation_code": "111111"}
+        assert (await action(client, "accounts", body)).status_code == 401
+        assert (await action(client, "auth/otp/reauth")).status_code == 200
+        assert (await action(client, "accounts", body)).status_code == 201
+        for suffix in ("enroll", "confirm", "disable", "recovery-codes"):
+            assert (await action(client, "auth/mfa/" + suffix, {})).status_code == 404
+        assert "mfa_enabled" not in (await client.get("/api/v1/admin/auth/me")).json()
+        schema = create_app(config).openapi()
+        assert not any("/auth/mfa/" in path for path in schema["paths"])
+        for name in ("OtpVerify", "SmsSettingsInput", "AccountCreate", "LoginInput", "Profile"):
+            assert not {"mfa_code", "mfa_enabled"} & set(
+                schema["components"]["schemas"][name]["properties"]
             )
-        ).status_code == 200
+    with Session(engine) as session:
+        assert session.get(AdminMfa, ids["owner"]).encrypted_totp_secret == b"retired"
 
 
 async def test_sensitive_actions_require_one_time_session_bound_confirmation(phone_context):

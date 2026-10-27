@@ -20,3 +20,13 @@ node_modules
 **/playwright-report
 **/*.tsbuildinfo
 **/.media
+tmp
+output
+release
+.next
+.ruff_cache
+**/dist
+**/coverage
+**/htmlcov
+**/*.pyc
+apps/web/tests

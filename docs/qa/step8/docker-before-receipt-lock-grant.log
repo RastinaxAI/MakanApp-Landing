@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-leads-docker.py", line 465, in <module>
-    docker("exec", container, "python", "-m", "app.commands.leads_cleanup")
-    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\test-leads-docker.py", line 70, in docker
-    raise RuntimeError(
-        "Docker CMS acceptance failed; inspect private .preview diagnostics"
-    )
-RuntimeError: Docker CMS acceptance failed; inspect private .preview diagnostics

@@ -1,9 +1,0 @@
-{
-  "url": "http://127.0.0.1:3100/blog",
-  "timestamp": "2026-10-13T08:56:22.797Z",
-  "testEngine": {
-    "name": "axe-core",
-    "version": "4.13.0"
-  },
-  "violations": []
-}

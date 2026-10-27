@@ -196,7 +196,7 @@ test("learning article UI creates rich text, taxonomy, inline images, preview an
     /noindex/,
   );
   await expect(
-    page.locator(`img[src='/api/v1/admin/media/${media}/file']`),
+    page.locator(`.cms-rich-text img[src='/api/v1/admin/media/${media}/file']`),
   ).toHaveAttribute("width", /\d+/);
   await page.goto(`/admin/learn/${id}?kind=article`);
   await publish(page);
@@ -209,7 +209,7 @@ test("learning article UI creates rich text, taxonomy, inline images, preview an
     page.getByRole("navigation", { name: "فهرست مطالب" }),
   ).toContainText("گام نخست");
   await expect(
-    page.locator(`img[src='/api/v1/media/${media}/file']`),
+    page.locator(`.cms-rich-text img[src='/api/v1/media/${media}/file']`),
   ).toHaveAttribute("loading", "lazy");
   const axe = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])

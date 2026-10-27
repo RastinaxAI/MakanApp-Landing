@@ -35,7 +35,6 @@ export function LegacyAccountsPanel({
 }) {
   const [data, setData] = useState(initial);
   const [password, setPassword] = useState("");
-  const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [selected, setSelected] = useState<Account | null>(null);
@@ -51,7 +50,6 @@ export function LegacyAccountsPanel({
   });
   const reauth = () => ({
     current_password: password,
-    mfa_code: code.trim() || null,
   });
   async function refresh(page = data.pagination.page) {
     setData(await adminRequest<Result>(`accounts?page=${page}&page_size=20`));
@@ -62,7 +60,6 @@ export function LegacyAccountsPanel({
       await adminRequest("accounts", "POST", { ...values, ...reauth() });
       reset();
       setPassword("");
-      setCode("");
       await refresh();
       setMessage("حساب مدیر ذخیره شد.");
     } catch (error) {
@@ -161,17 +158,6 @@ export function LegacyAccountsPanel({
               maxLength={128}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="owner-code">کد MFA یا بازیابی، اگر فعال است</Label>
-            <Input
-              id="owner-code"
-              dir="ltr"
-              autoComplete="one-time-code"
-              maxLength={48}
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
             />
           </div>
         </div>

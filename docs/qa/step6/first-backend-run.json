@@ -1,6 +1,0 @@
-{
-  "tests": 61,
-  "errors": 10,
-  "failures": 0,
-  "note": "CMS fixture import was removed as unused by Ruff; corrected with an explicit fixture re-export. Prior 51 tests passed."
-}

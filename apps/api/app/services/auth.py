@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.core.problems import ApiProblem, unauthorized
 from app.core.security import Security, opaque_token, valid_token
-from app.models import Admin, AdminMfa, AdminSession, AuditLog, AuthChallenge, RateLimitBucket
+from app.models import Admin, AdminSession, AuditLog, AuthChallenge, RateLimitBucket
 from app.schemas.auth import LoginInput, Profile
 
 CAPABILITIES = {
@@ -127,7 +127,6 @@ def principal(
 
 
 def profile(session: Session, admin: Admin, legacy: bool = False) -> Profile:
-    mfa = session.get(AdminMfa, admin.id)
     return Profile(
         id=admin.id,
         email=admin.email,
@@ -135,7 +134,6 @@ def profile(session: Session, admin: Admin, legacy: bool = False) -> Profile:
         login_method="password" if legacy else "otp",
         role=admin.role,
         capabilities=CAPABILITIES[admin.role],
-        mfa_enabled=bool(mfa and mfa.enabled_at),
     )
 
 
@@ -217,8 +215,6 @@ def verify_challenge(request: Request, session: Session, consume: bool = True) -
 
 
 def login(request: Request, session: Session, data: LoginInput) -> tuple[Profile, str]:
-    from app.services.mfa import verify_second_factor
-
     origin_guard(request)
     if (
         not request.app.state.settings.auth_legacy_password_login
@@ -255,12 +251,7 @@ def login(request: Request, session: Session, data: LoginInput) -> tuple[Profile
             matched = security.password_matches(
                 admin.password_hash if admin else security.dummy_hash, data.password
             )
-            if (
-                not admin
-                or not matched
-                or not admin.is_active
-                or not verify_second_factor(session, security, admin, data.mfa_code)
-            ):
+            if not admin or not matched or not admin.is_active:
                 audit(session, request, "auth.login_failed", admin.id if admin else None)
                 problem = unauthorized()
             else:
@@ -303,11 +294,7 @@ def reauthenticate(
     session: Session,
     admin: Admin,
     password: str,
-    code: str | None,
-    verify_mfa: bool = True,
 ) -> None:
-    from app.services.mfa import verify_second_factor
-
     security, config = request.app.state.security, request.app.state.settings
     # A failed mutation rolls back its data, but must retain the throttle charge.
     with request.app.state.limiter_session_factory() as limiter, limiter.begin():
@@ -320,12 +307,8 @@ def reauthenticate(
         from app.services.otp import verify_reauthentication
 
         verify_reauthentication(request, admin, password)
-        if verify_mfa and not verify_second_factor(session, security, admin, code):
-            raise unauthorized()
         return
-    if not security.password_matches(admin.password_hash or "", password) or (
-        verify_mfa and not verify_second_factor(session, security, admin, code)
-    ):
+    if not security.password_matches(admin.password_hash or "", password):
         raise unauthorized()
 
 
@@ -335,17 +318,3 @@ def revoke_all(session: Session, admin_id: UUID) -> None:
         .where(AdminSession.admin_id == admin_id, AdminSession.revoked_at.is_(None))
         .values(revoked_at=now_utc())
     )
-
-
-def charge_sensitive_attempt(request: Request, scope: str, admin_id: UUID) -> None:
-    with request.app.state.limiter_session_factory() as limiter, limiter.begin():
-        retry = throttle(
-            limiter,
-            request.app.state.security,
-            scope,
-            str(admin_id),
-            request.app.state.settings.auth_login_account_limit,
-            300,
-        )
-    if retry:
-        raise ApiProblem(429, "RATE_LIMITED", "کمی بعد دوباره تلاش کنید.", retry)

@@ -1,9 +1,0 @@
-{
-  "url": "http://127.0.0.1:3100/learn/series/detail-series-chromium-1440",
-  "timestamp": "2026-10-13T08:56:58.765Z",
-  "testEngine": {
-    "name": "axe-core",
-    "version": "4.13.0"
-  },
-  "violations": []
-}

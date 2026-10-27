@@ -10,7 +10,6 @@ export type AdminProfile = {
   login_method: "otp" | "password";
   role: "owner" | "editor" | "sales";
   capabilities: string[];
-  mfa_enabled: boolean;
 };
 export function backendUrl(path: string) {
   const base = new URL(process.env.API_INTERNAL_URL ?? "http://127.0.0.1:8000");

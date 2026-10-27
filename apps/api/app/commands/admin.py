@@ -4,13 +4,13 @@ import argparse
 from getpass import getpass
 
 from pydantic import EmailStr, TypeAdapter
-from sqlalchemy import delete, select, text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.core.security import Security
 from app.db.session import build_engine
-from app.models import Admin, AdminMfa, AdminRecoveryCode
+from app.models import Admin
 from app.services.auth import audit, revoke_all
 
 
@@ -57,11 +57,6 @@ def main():
                         raise SystemExit("The phone already belongs to another account.")
                     row.phone = phone
                     revoke_all(session, row.id)
-                    if args.action == "recover":
-                        session.execute(
-                            delete(AdminRecoveryCode).where(AdminRecoveryCode.admin_id == row.id)
-                        )
-                        session.execute(delete(AdminMfa).where(AdminMfa.admin_id == row.id))
                     audit(session, None, "admin.phone_" + args.action, None, row.id)
             print("Administrator phone operation completed and audited.")
         finally:
@@ -92,10 +87,6 @@ def main():
                 if not row or not row.is_active:
                     raise SystemExit("An active administrator is required for operator recovery.")
                 row.password_hash = security.hasher.hash(password)
-                session.execute(
-                    delete(AdminRecoveryCode).where(AdminRecoveryCode.admin_id == row.id)
-                )
-                session.execute(delete(AdminMfa).where(AdminMfa.admin_id == row.id))
                 revoke_all(session, row.id)
                 audit(session, None, "admin.operator_recovery", None, row.id)
         print("Administrator operation completed and audited; credentials were not printed.")

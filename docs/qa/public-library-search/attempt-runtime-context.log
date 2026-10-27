@@ -1,4 +1,0 @@
-Error: Please use browser.newContext()
- Please check out https://github.com/dequelabs/axe-core-npm/blob/develop/packages/playwright/error-handling.md
-    at AxeBuilder.analyze (C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\node_modules\@axe-core\playwright\dist\index.js:253:13)
-    at async main (C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite\scripts\check-library-runtime.cjs:63:17)

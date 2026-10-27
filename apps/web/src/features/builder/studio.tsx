@@ -36,6 +36,7 @@ import type { EditorConfig, EditorData } from "./adapter";
 import { AdvancedTools } from "./advanced-tools";
 import { GlobalFields } from "./theme";
 import { LibraryItem } from "./library-item";
+import { CanvasHelpButton } from "@/features/help/admin-help";
 import { widgetLabels, type DocumentGlobals, type WidgetType } from "./types";
 
 const panels = [
@@ -465,6 +466,7 @@ export function BuilderStudio({
       )}
       <div className="studio-workarea">
         <nav className="studio-rail" aria-label="ابزارهای صفحه‌ساز">
+          <CanvasHelpButton />
           {panels.map(([name, label, Icon]) => (
             <button
               type="button"

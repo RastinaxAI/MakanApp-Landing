@@ -20,7 +20,6 @@ from app.services.auth import (
     throttle,
     verify_challenge,
 )
-from app.services.mfa import verify_second_factor
 from app.services.sms import configured, local_debug, send_code
 
 
@@ -219,10 +218,6 @@ def verify_login(request, session, data):
         ):
             problem = ApiProblem(
                 401, "OTP_INVALID", "کد نادرست یا منقضی است؛ دوباره درخواست کد کنید."
-            )
-        elif not verify_second_factor(session, request.app.state.security, admin, data.mfa_code):
-            problem = ApiProblem(
-                401, "MFA_REQUIRED", "کد برنامه تأییدکننده یا کد بازیابی را وارد کنید."
             )
         else:
             row.used_at = now_utc()

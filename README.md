@@ -6,14 +6,14 @@
 
 ## اجرای سریع همین نسخهٔ آماده
 
-روی این کامپیوتر، برنامه‌ها ساخته شده‌اند و حساب مالک به شمارهٔ همراه تأییدشده متصل است. برای استفاده، نصب اولیه یا ساخت دوبارهٔ مدیر لازم نیست.
+اگر پروژه قبلاً راه‌اندازی شده است، سرویس‌های موجود را روشن کنید. برای نصب تازه، مراحل بخش «نصب اولیه روی سیستم جدید» را انجام دهید.
 
 ۱. **Docker Desktop** را باز کنید و صبر کنید تا آماده شود.
 
 ۲. **PowerShell 7** را باز کنید و این دستورها را اجرا کنید:
 
 ```powershell
-cd C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite
+# دستور را از ریشهٔ پروژه اجرا کنید
 docker compose --profile website up -d --wait db api web maintenance
 ```
 
@@ -27,9 +27,15 @@ docker compose --profile website up -d --wait db api web maintenance
 
 ۴. در صفحهٔ ورود، شمارهٔ مدیر ثبت‌شده را وارد کنید، **«دریافت کد ورود»** را بزنید و در حالت توسعه، کد **111111** را وارد کنید.
 
-ورود با ایمیل و رمز جایگزین شده است. در حالت توسعه پیامکی ارسال نمی‌شود؛ شماره‌ای که به حساب مدیر فعال متصل نیست، اجازهٔ ورود ندارد. اگر MFA را فعال کرده‌اید، کد برنامهٔ تأییدکننده یا کد بازیابی هم لازم است.
+ورود پنل با شمارهٔ همراه مدیر و کد یک‌بارمصرف انجام می‌شود. در حالت توسعه پیامکی ارسال نمی‌شود؛ فقط شمارهٔ متصل به حساب مدیر فعال اجازهٔ ورود دارد. در محیط عملیاتی، ارسال واقعی کد به تنظیمات معتبر ملی‌پیامک نیاز دارد.
 
 ## بعد از ورود چه کار کنیم؟
+
+از منوی **«راهنمای تصویری پنل»** در [مرکز راهنما](http://127.0.0.1:3100/admin/help) شروع کنید. بالای هر صفحه، **«راهنمای این صفحه»** تصویر ابزار و مراحل کوتاه همان کار را نشان می‌دهد. داخل صفحه‌ساز، دکمهٔ راهنما در ابزارهای کناری آن است.
+
+در بخش عمومی سایت، زیر منوی اصلی **«شما اینجا هستید»** موقعیت شما را نشان می‌دهد. **«راهنمای صفحه»** را بزنید تا تصویر واقعی صفحه، مراحل کار و مسیر بعدی باز شود. این راهنما در صفحهٔ اصلی، امکانات، راهکارها، آموزش، وبلاگ، پرسش‌ها، درخواست دمو و تماس در دسترس است. برای خواندن جزئیات تصویر، **بزرگنمایی** و سپس **اندازهٔ اصلی** را بزنید.
+
+در [آموزش ماکان](http://127.0.0.1:3100/learn)، از **«از کجا شروع کنم؟»** نقش خود را انتخاب کنید. داخل آموزش، فهرست بخش‌ها و دکمه‌های قبلی/بعدی کمک می‌کنند مسیر مطالعه را دنبال کنید. فقط محتوای منتشرشده نمایش داده می‌شود؛ اگر فهرست خالی است، مدیر باید آموزش واقعی را در پنل ایجاد و منتشر کند. روش درج تصویر و انتشار در [راهنمای نویسنده](docs/help-authoring.md) آمده است.
 
 ### فهرست محتوای سایت
 
@@ -161,7 +167,7 @@ docker compose exec -it api python -m app.commands.admin bind-phone --email $man
 docker compose exec -it api python -m app.commands.sms reset-debug
 ```
 
-این دستور در محیط Production و staging مجاز نیست و MFA فعال را حذف نمی‌کند.
+این دستور در محیط Production و staging مجاز نیست و کد پیامکی ثابت در محیط انتشار فعال نمی‌شود.
 
 ## اجرای دوباره، توقف و به‌روزرسانی
 
@@ -213,9 +219,46 @@ docker compose --profile website logs --tail 60 web api
 
 ## انتشار روی دامنهٔ واقعی
 
-دستورهای بالا برای اجرای محلی هستند. برای سرور و HTTPS از [راهنمای استقرار](docs/production-runbook.md) و [راهنمای پشتیبان‌گیری و بازیابی](docs/backup-restore-runbook.md) استفاده کنید. دامنه و سرور عمومی هنوز مشخص نشده‌اند.
+### انتقال پروژه
 
-پیش از انتشار عمومی، [یافته‌های امنیتی و موارد باقی‌مانده](docs/v2-security-findings.md) را بررسی کنید؛ اسکن imageها چند هشدار High بسته‌های پایه ثبت کرده است.
+سورس برنامه در `apps/`، تنظیمات زیرساخت در `infrastructure/` و ابزارهای اجرا و نگهداری در `scripts/` قرار دارند. فایل‌های Compose، Dockerfile، فایل‌های قفل وابستگی و دو قالب تنظیمات محیط را همراه سورس نگه دارید.
+
+برای ساخت بستهٔ انتقال، در صورت نیاز از ریشهٔ پروژه اجرا کنید؛ کتابخانهٔ اضافی لازم نیست:
+
+```bash
+python scripts/package-release.py
+```
+
+ZIP و فایل SHA256 در `release/` ساخته می‌شوند. این پوشه خروجی تولیدشده است و وارد Git یا Build نمی‌شود. ابزار بسته‌بندی، فایل‌های خصوصی، کش‌ها، بکاپ‌ها و اطلاعات دیتابیس را وارد ZIP نمی‌کند.
+
+**اطلاعات فعلی جدا از سورس هستند.** مطالب منتشرشده، مدیران و درخواست‌ها داخل دیتابیس‌اند و تصاویر بارگذاری‌شده در Volume رسانه نگهداری می‌شوند. برای انتقال همین اطلاعات به سرور از [راهنمای پشتیبان‌گیری و بازیابی](docs/backup-restore-runbook.md) استفاده کنید؛ نصب تازه جای انتقال داده را نمی‌گیرد. `.env` و `.backups` خصوصی‌اند و نباید همراه سورس عمومی آپلود شوند.
+
+### نصب تازه روی سرور
+
+Docker Engine، Compose v2، Python 3.13 و `uv` باید نصب باشند؛ دامنه به IP سرور اشاره کند و پورت‌های ۸۰ و ۴۴۳ باز باشند. از داخل `/opt/makan-landing`:
+
+```bash
+uv sync --locked --project apps/api
+apps/api/.venv/bin/python scripts/production.py --env-file /etc/makan-landing/production.env init --domain YOUR_DOMAIN
+apps/api/.venv/bin/python scripts/production.py --env-file /etc/makan-landing/production.env build
+```
+
+`YOUR_DOMAIN` را با دامنهٔ خودتان عوض کنید. دستور `init` تنظیمات و کلیدهای مستقل می‌سازد و فایل موجود را بازنویسی نمی‌کند. در فایل `/etc/makan-landing/production.env`، پس از تأیید محتوای تماس و سیاست‌های انتشار، `PUBLIC_POLICY_APPROVED=true` را تنظیم کنید؛ سپس **فقط برای نصب تازه**:
+
+```bash
+apps/api/.venv/bin/python scripts/production.py --env-file /etc/makan-landing/production.env deploy --import-approved-marketing
+docker compose -f compose.production.yaml --env-file /etc/makan-landing/production.env exec -it api python -m app.commands.admin bootstrap
+docker compose -f compose.production.yaml --env-file /etc/makan-landing/production.env exec -it api python -m app.commands.sms configure
+apps/api/.venv/bin/python scripts/production.py --env-file /etc/makan-landing/production.env status
+```
+
+در `bootstrap` شمارهٔ مالک و در `sms configure` مشخصات واقعی ملی‌پیامک را وارد کنید. سپس سایت را روی `https://YOUR_DOMAIN` و پنل را روی `https://YOUR_DOMAIN/admin/login` باز کنید. تنظیمات پیامکی و کلیدهای موجود را هنگام انتقال دیتابیس حفظ کنید؛ `init` و ساخت مالک تازه، برای جایگزین‌کردن اطلاعات محیط موجود نیستند.
+
+بستهٔ سرور به وابستگی‌های نصب‌شدهٔ محلی نیاز ندارد. برای توسعهٔ مجدد، وابستگی‌های وب با `npm ci` و وابستگی‌های API با `uv sync --locked --project apps/api` نصب می‌شوند.
+
+جزئیات تنظیم سرور و HTTPS در [راهنمای استقرار](docs/production-runbook.md) و روش حفاظت از داده‌ها در [راهنمای پشتیبان‌گیری و بازیابی](docs/backup-restore-runbook.md) آمده است. برای نصب عملیاتی، دامنه و تنظیمات همان سرور را وارد کنید.
+
+پیش از انتشار عمومی، [یافته‌های امنیتی و موارد باقی‌مانده](docs/security-findings.md) را بررسی کنید؛ اسکن imageها چند هشدار High بسته‌های پایه ثبت کرده است.
 
 در محیط انتشار، کد ثابت **111111** غیرفعال است. قبل از اولین ورود مدیر، اپراتور با فایل تنظیمات همان محیط، اتصال پیامکی را آماده می‌کند؛ نمونهٔ مسیر مطابق راهنمای استقرار:
 
@@ -225,23 +268,26 @@ docker compose -f compose.production.yaml --env-file /etc/makan-landing/producti
 
 این دستور مشخصات ملی‌پیامک را به‌صورت تعاملی می‌گیرد؛ اطلاعات واقعی را در دستور، سورس یا Git ننویسید. ساخت مالک هم باید در همان محیط تولید انجام شود، نه با Compose محلی.
 
-## رنگ، لوگو و مستندات
+## ساختار و مستندات
 
-لوگوی اصلی در `apps/web/public/brand/makan-logo.png` حفظ شده است. لوگو و فاوآیکون مربع با گوشه‌های گرد هستند. رنگ برند **#156FEE** است و رنگ‌های رابط در `apps/web/src/styles/tokens.css` قرار دارند. لوگوی محتوای سایت از تنظیمات پنل نیز قابل تغییر است.
+| مسیر | کاربرد |
+| --- | --- |
+| `apps/web` | سایت عمومی، پنل مدیریت و صفحه‌ساز |
+| `apps/api` | FastAPI، مدل‌ها، Migrationها و تست‌های Backend |
+| `infrastructure` | Caddy، PostgreSQL و سرویس‌های نگهداری سرور |
+| `scripts` | نصب، بررسی کیفیت، پشتیبان‌گیری و عملیات |
+| `docs` | مستندات فنی و راهنماهای استفاده |
 
-- [گزارش ورود پیامکی و پیشخوان](docs/admin-refresh-report.md)
-- [بازطراحی ۹ صفحهٔ مدیریت و راهنمای استفاده](docs/admin-workspaces-redesign.md)
-- [یکدست‌سازی تمام پنل با الگوی مدیریت محتوا](docs/admin-unified-design.md)
-- [بهبود ظاهر سایت عمومی، موبایل و تبلت](docs/public-website-polish.md)
-- [راهنمای صفحه‌ساز و ابزارهای آن](docs/v2-advanced-editor.md)
-- [راهنمای CRM و محدودیت Integrationها](docs/v2-demo-crm.md)
-- [گزارش نهایی V2 و تست‌ها](docs/v2-integration-quality.md)
-- [وضعیت قابلیت‌های حفظ‌شده و ارتقایافته](docs/v2-delivery-matrix.md)
-- [معماری](docs/architecture.md)
-- [قرارداد API](docs/api-contract.md)
-- [طراحی دیتابیس](docs/database-design.md)
-- [راهنمای CMS](docs/cms-runbook.md)
-- [راهنمای مرکز آموزش](docs/learning-runbook.md)
+لوگوی برند در `apps/web/public/brand/makan-logo.png` و تنظیمات رنگ و تایپوگرافی در `apps/web/src/styles/tokens.css` قرار دارد. رنگ اصلی برند `#156FEE` است.
+
+- [معماری](docs/architecture.md)، [قرارداد API](docs/api-contract.md) و [دیتابیس](docs/database-design.md)
+- [پنل و حساب‌های مدیران](docs/admin-runbook.md)
+- [مدیریت محتوا](docs/cms-runbook.md) و [صفحه‌ساز](docs/page-builder.md)
+- [مرکز آموزش](docs/learning-runbook.md) و [راهنمای نویسنده](docs/help-authoring.md)
+- [CRM](docs/crm-runbook.md) و [مدل دادهٔ CRM](docs/crm-database.md)
+- [استقرار](docs/production-runbook.md)، [بکاپ و بازیابی](docs/backup-restore-runbook.md) و [امنیت](docs/security-runbook.md)
+
+پوشه‌های وابستگی، کش و خروجی تست در نصب و اجرای ابزارها دوباره ساخته می‌شوند و جزو سورس نیستند. برای توسعه، `npm ci` و `uv sync --locked --project apps/api` را اجرا کنید. اجرای نسخهٔ Docker به این پوشه‌های محلی نیاز ندارد.
 
 ## اجرای وب برای توسعه‌دهنده
 

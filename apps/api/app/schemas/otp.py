@@ -29,7 +29,6 @@ class OtpRequest(StrictSchema):
 
 class OtpVerify(OtpRequest):
     code: str = Field(pattern=r"^[0-9]{6}$")
-    mfa_code: str | None = Field(default=None, max_length=48)
 
     @field_validator("code", mode="before")
     @classmethod
@@ -71,4 +70,3 @@ class SmsSettingsInput(StrictSchema):
     password: SecretStr | None = Field(default=None, min_length=1, max_length=256)
     body_id: int | None = Field(default=None, ge=1, le=2147483647)
     confirmation_code: str = Field(pattern=r"^[0-9]{6}$")
-    mfa_code: str | None = Field(default=None, max_length=48)

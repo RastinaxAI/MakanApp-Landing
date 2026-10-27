@@ -1,9 +1,0 @@
-{
-  "url": "http://127.0.0.1:3100/learn/articles/ui-article-firefox",
-  "timestamp": "2026-10-13T16:06:38.472Z",
-  "testEngine": {
-    "name": "axe-core",
-    "version": "4.13.0"
-  },
-  "violations": []
-}

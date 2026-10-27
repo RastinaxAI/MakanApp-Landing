@@ -18,6 +18,7 @@ import {
   GraduationCap,
   MessageSquare,
   BarChart3,
+  CircleHelp,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +32,7 @@ import {
 } from "@/components/ui/sheet";
 import type { AdminProfile } from "@/lib/admin-api";
 import { adminRequest, resetAdminNavigation } from "./client";
+import { AdminHelpButton } from "@/features/help/admin-help";
 
 export const roleLabels = { owner: "مالک", editor: "ویرایشگر", sales: "فروش" };
 export function AdminShell({
@@ -47,6 +49,12 @@ export function AdminShell({
   const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const items = [
+    {
+      href: "/admin/help",
+      label: "راهنمای تصویری پنل",
+      icon: CircleHelp,
+      group: "پیشخوان",
+    },
     {
       href: "/admin",
       label: "داشبورد",
@@ -254,7 +262,7 @@ export function AdminShell({
               sizes="32px"
               className="rounded-[7px]"
             />
-            <span className="text-sm font-semibold tablet:text-base">
+            <span className="hidden text-sm font-semibold min-[360px]:inline tablet:text-base">
               پیشخوان ماکان
             </span>
           </Link>
@@ -263,6 +271,7 @@ export function AdminShell({
           </span>
         </div>
         <div className="flex items-center gap-2">
+          {!canvas && <AdminHelpButton profile={profile} />}
           <Link
             href="/"
             prefetch={false}

@@ -11,6 +11,7 @@
 @import "./admin-pages.css";
 @import "./admin-unified.css";
 @import "./admin-login.css";
+@import "./illustrated-help.css";
 
 @layer base {
   * { @apply border-border; }

@@ -59,12 +59,10 @@ function PhoneAccounts({
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState<Account["role"]>("editor");
   const [code, setCode] = useState("");
-  const [mfa, setMfa] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const credentials = () => ({
     confirmation_code: code,
-    mfa_code: mfa || null,
   });
   async function refresh(page = data.pagination.page) {
     setData(await adminRequest<Result>(`accounts?page=${page}&page_size=20`));
@@ -85,7 +83,6 @@ function PhoneAccounts({
       });
       setPhone("");
       setCode("");
-      setMfa("");
       setSearch("");
       await refresh(Math.max(1, Math.ceil((data.pagination.total + 1) / 20)));
       setMessage("حساب مدیر ایجاد شد؛ مدیر با شماره همراه خود وارد می‌شود.");
@@ -319,8 +316,6 @@ function PhoneAccounts({
             <OtpConfirmation
               value={code}
               onChange={setCode}
-              mfa={mfa}
-              onMfaChange={setMfa}
               prefix="accounts"
             />
           </div>

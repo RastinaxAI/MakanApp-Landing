@@ -1,29 +1,22 @@
-from datetime import timedelta
 from uuid import UUID
 
 from fastapi import Request
-from sqlalchemy import delete, func, select, text
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
-from app.core.problems import ApiProblem, unauthorized
-from app.core.security import enrollment_uri, matching_totp_step
-from app.models import Admin, AdminMfa, AdminRecoveryCode, AdminSession, AuditLog, Page
+from app.core.problems import ApiProblem
+from app.models import Admin, AdminSession, AuditLog, Page
 from app.schemas.auth import (
     Account,
     AccountCreate,
     AccountUpdate,
-    MfaConfirm,
-    MfaEnrollment,
     PasswordUpdate,
-    Reauthentication,
-    RecoveryCodes,
     SessionInfo,
     SessionQuery,
 )
 from app.schemas.common import PaginationQuery
 from app.services.auth import (
     audit,
-    charge_sensitive_attempt,
     now_utc,
     principal,
     profile,
@@ -31,7 +24,6 @@ from app.services.auth import (
     require_capability,
     revoke_all,
 )
-from app.services.mfa import new_totp_secret, replace_recovery_codes
 
 
 def logout(request: Request, session: Session):
@@ -100,7 +92,7 @@ def password(
 ):
     with session.begin():
         admin, _, _ = principal(request, session, True)
-        reauthenticate(request, session, admin, data.current_password, data.mfa_code)
+        reauthenticate(request, session, admin, data.current_password)
         admin.password_hash = request.app.state.security.hasher.hash(data.new_password)
         revoke_all(session, admin.id)
         audit(session, request, "auth.password_changed", admin.id, admin.id)
@@ -144,7 +136,7 @@ def create_account(data: AccountCreate, request: Request, session: Session):
         session.execute(text("SELECT pg_advisory_xact_lock(74120500)"))
         admin, _, _ = principal(request, session, True)
         require_capability(admin, "accounts")
-        reauthenticate(request, session, admin, data.current_password, data.mfa_code)
+        reauthenticate(request, session, admin, data.current_password)
         if not request.app.state.settings.auth_legacy_password_login and not data.phone:
             raise ApiProblem(422, "PHONE_REQUIRED", "شماره همراه مدیر الزامی است.")
         if (data.phone and session.scalar(select(Admin.id).where(Admin.phone == data.phone))) or (
@@ -179,7 +171,7 @@ def change_account(account_id: UUID, data: AccountUpdate, request: Request, sess
         session.execute(text("SELECT pg_advisory_xact_lock(74120500)"))
         admin, _, _ = principal(request, session, True)
         require_capability(admin, "accounts")
-        reauthenticate(request, session, admin, data.current_password, data.mfa_code)
+        reauthenticate(request, session, admin, data.current_password)
         row = session.scalar(select(Admin).where(Admin.id == account_id).with_for_update())
         if not row:
             raise ApiProblem(404, "NOT_FOUND", "حساب یافت نشد.")
@@ -266,79 +258,3 @@ def dashboard(request: Request, session: Session):
 
             metrics["leads"] = session.scalar(select(func.count()).select_from(Lead))
         return {"metrics": metrics, "modules": {"content": "ready", "leads": "ready"}}
-
-
-def enroll(data: Reauthentication, request: Request, session: Session):
-    with session.begin():
-        admin, _, _ = principal(request, session, True)
-        reauthenticate(request, session, admin, data.current_password, data.mfa_code)
-        existing = session.get(AdminMfa, admin.id)
-        if existing and existing.enabled_at:
-            raise ApiProblem(409, "MFA_ACTIVE", "ورود دومرحله‌ای قبلاً فعال شده است.")
-        secret = new_totp_secret()
-        if not existing:
-            existing = AdminMfa(admin_id=admin.id)
-            session.add(existing)
-        existing.encrypted_totp_secret = request.app.state.security.encrypt(secret, str(admin.id))
-        existing.pending_expires_at = now_utc() + timedelta(minutes=5)
-        existing.last_used_step = -1
-        audit(session, request, "mfa.enrollment_started", admin.id, admin.id)
-        return MfaEnrollment(
-            secret=secret, otpauth_url=enrollment_uri(admin.phone or admin.email, secret)
-        )
-
-
-def confirm(data: MfaConfirm, request: Request, session: Session):
-    with session.begin():
-        admin, _, _ = principal(request, session, True)
-        charge_sensitive_attempt(request, "mfa-confirm", admin.id)
-        item = session.scalar(
-            select(AdminMfa).where(AdminMfa.admin_id == admin.id).with_for_update()
-        )
-        if (
-            not item
-            or item.enabled_at
-            or not item.pending_expires_at
-            or item.pending_expires_at <= now_utc()
-        ):
-            raise ApiProblem(409, "MFA_ENROLLMENT_EXPIRED", "راه‌اندازی را دوباره شروع کنید.")
-        security = request.app.state.security
-        step = matching_totp_step(
-            security.decrypt(item.encrypted_totp_secret, str(admin.id)),
-            data.code,
-            now_utc().timestamp(),
-            item.last_used_step,
-        )
-        if step is None:
-            raise unauthorized()
-        item.enabled_at, item.pending_expires_at, item.last_used_step = now_utc(), None, step
-        codes = replace_recovery_codes(session, security, admin.id)
-        revoke_all(session, admin.id)
-        audit(session, request, "mfa.enabled", admin.id, admin.id)
-    return RecoveryCodes(recovery_codes=codes)
-
-
-def disable(
-    data: Reauthentication,
-    request: Request,
-    session: Session,
-):
-    with session.begin():
-        admin, _, _ = principal(request, session, True)
-        reauthenticate(request, session, admin, data.current_password, data.mfa_code)
-        session.execute(delete(AdminRecoveryCode).where(AdminRecoveryCode.admin_id == admin.id))
-        session.execute(delete(AdminMfa).where(AdminMfa.admin_id == admin.id))
-        revoke_all(session, admin.id)
-        audit(session, request, "mfa.disabled", admin.id, admin.id)
-
-
-def recovery(data: Reauthentication, request: Request, session: Session):
-    with session.begin():
-        admin, _, _ = principal(request, session, True)
-        reauthenticate(request, session, admin, data.current_password, data.mfa_code)
-        item = session.get(AdminMfa, admin.id)
-        if not item or not item.enabled_at:
-            raise ApiProblem(409, "MFA_INACTIVE", "ابتدا ورود دومرحله‌ای را فعال کنید.")
-        codes = replace_recovery_codes(session, request.app.state.security, admin.id)
-        audit(session, request, "mfa.recovery_regenerated", admin.id, admin.id)
-        return RecoveryCodes(recovery_codes=codes)

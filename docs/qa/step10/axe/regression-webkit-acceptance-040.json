@@ -1,9 +1,0 @@
-{
-  "url": "http://127.0.0.1:3100/learn/articles/detail-article-webkit-1440?series=detail-series-webkit-1440",
-  "timestamp": "2026-10-13T16:19:40.240Z",
-  "testEngine": {
-    "name": "axe-core",
-    "version": "4.13.0"
-  },
-  "violations": []
-}

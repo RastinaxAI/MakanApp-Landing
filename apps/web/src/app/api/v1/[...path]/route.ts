@@ -45,7 +45,7 @@ async function bridge(request: Request, context: Context) {
     /^(?:admin\/(?:learn\/(?:contents|series)|blog\/articles)(?:\/[0-9a-f-]{36}(?:\/(?:preview|revisions|publish|schedule|cancel-schedule|unpublish))?)?|admin\/learn\/(?:categories|tags)(?:\/[0-9a-f-]{36})?|learn\/(?:contents|series|categories|tags)(?:\/[\p{L}\p{N}_-]+)?|blog\/articles(?:\/[\p{L}\p{N}_-]+)?|learn\/views\/[0-9a-f-]{36}(?:\/ticket)?)$/u.test(
       path,
     ) ||
-    /^admin\/(auth\/(csrf|login|logout|me|password|sessions(?:\/[0-9a-f-]{36})?|mfa\/(enroll|confirm|disable|recovery-codes))|accounts(?:\/[0-9a-f-]{36})?|dashboard|audit-logs)$/.test(
+    /^admin\/(auth\/(csrf|login|logout|me|password|sessions(?:\/[0-9a-f-]{36})?)|accounts(?:\/[0-9a-f-]{36})?|dashboard|audit-logs)$/.test(
       path,
     ) ||
     /^admin\/(?:content|pages|features|audiences|faqs|faq-categories|media|settings)(?:\/[0-9a-f-]{36}(?:\/(?:preview|revisions|publish|schedule|cancel-schedule|unpublish|file))?)?$/.test(

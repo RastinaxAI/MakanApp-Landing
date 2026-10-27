@@ -9,12 +9,11 @@ from sqlalchemy import func, select, text, update
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
-from app.core.security import Security, totp_code
+from app.core.security import Security
 from app.main import create_app
 from app.models import (
     Admin,
     AdminMfa,
-    AdminRecoveryCode,
     AdminSession,
     AuditLog,
     AuthChallenge,
@@ -56,12 +55,12 @@ def auth_context(database_factory):
         yield config, engine, password, ids
 
 
-async def sign_in(client, password, role="owner", mfa_code=None):
+async def sign_in(client, password, role="owner"):
     csrf = (await client.get("/api/v1/admin/auth/csrf")).json()["csrf_token"]
     return await client.post(
         "/api/v1/admin/auth/login",
         headers={"Origin": str(client.base_url).rstrip("/"), "X-CSRF-Token": csrf},
-        json={"email": f"{role}@example.com", "password": password, "mfa_code": mfa_code},
+        json={"email": f"{role}@example.com", "password": password},
     )
 
 
@@ -346,45 +345,33 @@ async def test_session_revoke_and_cross_account_denial(auth_context):
         assert (await client.get("/api/v1/admin/auth/me")).status_code == 401
 
 
-async def test_mfa_enable_replay_recovery_regenerate_and_disable(auth_context):
+async def test_retired_mfa_does_not_block_legacy_regression_login(auth_context):
     config, engine, password, ids = auth_context
-    async with api_client(create_app(config)) as client:
-        await sign_in(client, password)
-        enrollment = await mutation(client, "auth/mfa/enroll", body={"current_password": password})
-        assert enrollment.status_code == 200
-        secret = enrollment.json()["secret"]
-        with Session(engine) as session:
-            encrypted = session.get(AdminMfa, ids["owner"]).encrypted_totp_secret
-            assert secret.encode() not in encrypted
-        code = totp_code(secret, int(now_utc().timestamp() // 30))
-        confirmed = await mutation(client, "auth/mfa/confirm", body={"code": code})
-        assert confirmed.status_code == 200 and len(confirmed.json()["recovery_codes"]) == 8
-        codes = confirmed.json()["recovery_codes"]
-        assert (await client.get("/api/v1/admin/auth/me")).status_code == 401
-        assert (await sign_in(client, password, mfa_code=code)).status_code == 401
-        assert (await sign_in(client, password, mfa_code=codes[0])).status_code == 200
-        assert (await client.get("/api/v1/admin/auth/me")).json()["mfa_enabled"]
-        assert (await mutation(client, "auth/logout")).status_code == 204
-        assert (await sign_in(client, password, mfa_code=codes[0])).status_code == 401
-        assert (await sign_in(client, password, mfa_code=codes[1])).status_code == 200
-        regenerated = await mutation(
-            client,
-            "auth/mfa/recovery-codes",
-            body={"current_password": password, "mfa_code": codes[2]},
+    with Session(engine) as session, session.begin():
+        session.add(
+            AdminMfa(
+                admin_id=ids["owner"],
+                encrypted_totp_secret=b"retired",
+                enabled_at=now_utc(),
+                last_used_step=-1,
+            )
         )
-        assert regenerated.status_code == 200
-        fresh = regenerated.json()["recovery_codes"]
-        with Session(engine) as session:
-            digests = session.scalars(select(AdminRecoveryCode.code_digest)).all()
-            assert all(value not in digests for value in fresh)
+    async with api_client(create_app(config)) as client:
+        response = await sign_in(client, password)
+        assert response.status_code == 200
+        assert "mfa_enabled" not in response.json()
         assert (
             await mutation(
                 client,
-                "auth/mfa/disable",
-                body={"current_password": password, "mfa_code": fresh[0]},
+                "accounts",
+                body={
+                    "email": "new@example.com",
+                    "password": password,
+                    "role": "editor",
+                    "current_password": password,
+                },
             )
-        ).status_code == 204
-        assert (await sign_in(client, password)).status_code == 200
+        ).status_code == 201
 
 
 async def test_body_limit_and_no_auth_draft_routes(auth_context):
@@ -516,7 +503,6 @@ async def test_operator_bootstrap_and_recovery_are_audited(database_factory, mon
         command.main()
         with Session(engine) as session:
             row = session.scalar(select(Admin))
-            admin_id = row.id
             assert row.role == "owner" and row.password_hash.startswith("$argon2id$")
             assert session.scalar(select(AuditLog.action)) == "admin.bootstrap"
         with pytest.raises(SystemExit):
@@ -535,17 +521,6 @@ async def test_operator_bootstrap_and_recovery_are_audited(database_factory, mon
                 json={"email": "bootstrap@example.com", "password": initial},
             )
             assert response.status_code == 200
-            with Session(engine) as session, session.begin():
-                session.add(
-                    AdminMfa(
-                        admin_id=admin_id,
-                        encrypted_totp_secret=app.state.security.encrypt(
-                            "TESTSECRET", str(admin_id)
-                        ),
-                        enabled_at=now_utc(),
-                        last_used_step=0,
-                    )
-                )
             monkeypatch.setattr(
                 sys, "argv", ["admin", "recover", "--email", "bootstrap@example.com"]
             )
@@ -555,7 +530,6 @@ async def test_operator_bootstrap_and_recovery_are_audited(database_factory, mon
             command.main()
             assert (await client.get("/api/v1/admin/auth/me")).status_code == 401
         with Session(engine) as session:
-            assert session.get(AdminMfa, admin_id) is None
             assert (
                 session.scalar(
                     select(func.count())
@@ -564,23 +538,6 @@ async def test_operator_bootstrap_and_recovery_are_audited(database_factory, mon
                 )
                 == 1
             )
-
-
-async def test_expired_mfa_enrollment_is_not_activated(auth_context):
-    config, engine, password, ids = auth_context
-    async with api_client(create_app(config)) as client:
-        await sign_in(client, password)
-        result = await mutation(client, "auth/mfa/enroll", body={"current_password": password})
-        assert result.status_code == 200
-        with Session(engine) as session, session.begin():
-            session.execute(
-                update(AdminMfa)
-                .where(AdminMfa.admin_id == ids["owner"])
-                .values(pending_expires_at=now_utc() - timedelta(seconds=1))
-            )
-        assert (
-            await mutation(client, "auth/mfa/confirm", body={"code": "123456"})
-        ).status_code == 409
 
 
 async def test_cleanup_is_bounded_and_keeps_live_authentication_and_audit(auth_context):

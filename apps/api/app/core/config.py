@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     db_connect_timeout: int = Field(default=3, ge=1, le=30)
     db_statement_timeout_ms: int = Field(default=3000, ge=100, le=30000)
     auth_secret: SecretStr
+    # Legacy environment name: this key still encrypts SMS provider credentials.
     auth_mfa_key: SecretStr
     proxy_shared_secret: SecretStr | None = None
     auth_allowed_origins: list[str] = ["http://127.0.0.1:3000", "http://127.0.0.1:3100"]
@@ -59,7 +60,7 @@ class Settings(BaseSettings):
         if self.auth_legacy_password_login and self.app_env != "test":
             raise ValueError("Legacy password authentication is restricted to regression tests")
         if self.auth_secret.get_secret_value() == self.auth_mfa_key.get_secret_value():
-            raise ValueError("Authentication and MFA encryption keys must differ")
+            raise ValueError("Authentication and provider encryption keys must differ")
         if self.proxy_shared_secret is not None:
             self.require_key(self.proxy_shared_secret)
             if self.proxy_shared_secret.get_secret_value() in (

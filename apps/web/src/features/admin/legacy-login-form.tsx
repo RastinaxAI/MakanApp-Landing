@@ -14,7 +14,6 @@ const schema = z.object({
     .string()
     .min(1, "رمز را وارد کنید.")
     .max(128, "رمز بیش از حد طولانی است."),
-  mfa_code: z.string().max(48).optional(),
 });
 type Values = z.infer<typeof schema>;
 export function LegacyLoginForm() {
@@ -30,7 +29,6 @@ export function LegacyLoginForm() {
       await adminRequest("auth/login", "POST", {
         ...values,
         email: values.email.trim().toLowerCase(),
-        mfa_code: values.mfa_code?.trim() || null,
       });
       resetAdminNavigation("/admin");
     } catch (error) {
@@ -78,21 +76,6 @@ export function LegacyLoginForm() {
             {errors.password.message}
           </p>
         )}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="admin-mfa">کد دومرحله‌ای یا کد بازیابی</Label>
-        <Input
-          id="admin-mfa"
-          dir="ltr"
-          autoComplete="one-time-code"
-          maxLength={48}
-          aria-describedby="mfa-help"
-          {...register("mfa_code")}
-        />
-        <p id="mfa-help" className="text-sm leading-7 text-muted-foreground">
-          اگر ورود دومرحله‌ای را فعال کرده‌اید، کد برنامه Authenticator یا یکی
-          از کدهای بازیابی را وارد کنید.
-        </p>
       </div>
       {error && (
         <p

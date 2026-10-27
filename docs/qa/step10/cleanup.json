@@ -1,6 +1,0 @@
-{
-  "acceptance_project": "makan-landing-acceptance-474280598c3419bd",
-  "healthy_before_cleanup": true,
-  "owned_containers_and_volumes_removed": true,
-  "main_development_and_user_services_preserved": true
-}

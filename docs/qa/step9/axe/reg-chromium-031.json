@@ -1,9 +1,0 @@
-{
-  "url": "http://127.0.0.1:3100/admin/learn/new?kind=article",
-  "timestamp": "2026-10-13T10:46:52.523Z",
-  "testEngine": {
-    "name": "axe-core",
-    "version": "4.13.0"
-  },
-  "violations": []
-}
