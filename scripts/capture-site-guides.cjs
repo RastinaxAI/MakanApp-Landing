@@ -13,6 +13,7 @@ async function main() {
     home: "/",
     features: "/features",
     solutions: "/solutions",
+    about: "/about",
     learn: "/learn",
     blog: "/blog",
     faq: "/faq",

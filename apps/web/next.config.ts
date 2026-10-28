@@ -1,11 +1,15 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  output: "standalone",
+  output: process.env.NEXT_STANDALONE === "true" ? "standalone" : undefined,
   poweredByHeader: false,
+  devIndicators: false,
   images: {
     formats: ["image/avif", "image/webp"],
-    localPatterns: [{ pathname: "/api/v1/media/**", search: "" }, { pathname: "/brand/**", search: "" }],
+    localPatterns: [
+      { pathname: "/api/v1/media/**", search: "" },
+      { pathname: "/brand/**", search: "" },
+    ],
   },
   reactStrictMode: true,
   experimental: {

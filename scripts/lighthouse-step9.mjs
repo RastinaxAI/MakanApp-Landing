@@ -17,7 +17,14 @@ const output = path.join(outputRoot, runId);
 await mkdir(output, { recursive: true });
 const server = spawn(
   process.execPath,
-  ["scripts/start-production.mjs", "--port", "3100"],
+  [
+    path.join(root, "node_modules/next/dist/bin/next"),
+    "start",
+    "--hostname",
+    "127.0.0.1",
+    "--port",
+    "3100",
+  ],
   { cwd: path.join(root, "apps/web"), stdio: "ignore", windowsHide: true },
 );
 const routes = [

@@ -610,6 +610,34 @@
     max-width: 100%;
   }
 }
+/* About shares the catalogue introduction and card rhythm without replacing CMS content. */
+.public-site .public-about-page .public-page-hero nav,
+.public-site .public-about-page .public-page-hero .section-kicker {
+  display: none;
+}
+.public-site .public-about-page .section-space {
+  border: 0;
+  background: transparent;
+  padding-block: clamp(3rem, 5vw, 4.5rem);
+}
+.public-site .public-about-page .section-space :has(> .section-heading) {
+  margin-inline: auto;
+  text-align: center;
+}
+.public-site .public-about-page .cms-rich-text {
+  max-width: 45rem;
+  margin-inline: auto;
+  font-size: 1rem;
+  line-height: 2.1;
+}
+.public-site .public-about-page [data-section="cards"] .grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 768px) {
+  .public-site .public-about-page [data-section="cards"] .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 .public-site .public-library-toolbar {
   display: flex;
   align-items: stretch;

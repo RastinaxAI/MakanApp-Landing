@@ -2,7 +2,7 @@ param([ValidateSet('step6', 'step7', 'step8', 'step9', 'step10', 'admin-refresh'
 $ErrorActionPreference = 'Stop'
 $taskRoot = Split-Path -Parent $PSScriptRoot
 $taskEnvironment = Join-Path $taskRoot '.env.test'
-if (-not (Test-Path -LiteralPath $taskEnvironment)) { throw 'Run setup-development.ps1 first.' }
+if (-not (Test-Path -LiteralPath $taskEnvironment)) { throw 'Prepare local environment files using the README instructions first.' }
 $taskValues = @{}
 foreach ($line in [IO.File]::ReadAllLines($taskEnvironment)) {
     if ($line -match '^([A-Z_]+)=([a-f0-9]{64})$') { $taskValues[$matches[1]] = $matches[2] }

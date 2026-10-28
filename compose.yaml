@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_DB: makan_landing
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/setup-development.ps1}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?See README environment setup}
       MIGRATION_DB_PASSWORD: ${MIGRATION_DB_PASSWORD:?Set migration credential}
       API_DB_PASSWORD: ${API_DB_PASSWORD:?Set runtime credential}
     volumes:
@@ -25,8 +25,8 @@ services:
     environment:
       APP_ENV: development
       AUTH_OTP_DEBUG: ${AUTH_OTP_DEBUG:-true}
-      AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
-      AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Run setup-development.ps1}
+      AUTH_SECRET: ${AUTH_SECRET:?See README environment setup}
+      AUTH_MFA_KEY: ${AUTH_MFA_KEY:?See README environment setup}
       DATABASE_URL: postgresql+psycopg://makan_migrator:${MIGRATION_DB_PASSWORD:?Set migration credential}@db:5432/makan_landing
     networks: [database]
     depends_on:
@@ -37,8 +37,8 @@ services:
     environment: &api_environment
       APP_ENV: development
       AUTH_OTP_DEBUG: ${AUTH_OTP_DEBUG:-true}
-      AUTH_SECRET: ${AUTH_SECRET:?Run setup-development.ps1}
-      AUTH_MFA_KEY: ${AUTH_MFA_KEY:?Run setup-development.ps1}
+      AUTH_SECRET: ${AUTH_SECRET:?See README environment setup}
+      AUTH_MFA_KEY: ${AUTH_MFA_KEY:?See README environment setup}
       AUTH_ALLOWED_ORIGINS: '${AUTH_ALLOWED_ORIGINS:-["http://127.0.0.1:3000","http://127.0.0.1:3100"]}'
       MEDIA_ROOT: /srv/media
       FORMS_TOKEN_LIMIT: ${FORMS_TOKEN_LIMIT:-40}

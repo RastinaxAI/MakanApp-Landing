@@ -7,7 +7,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 
 FROM dependencies AS builder
 COPY apps/web ./apps/web
-ENV API_INTERNAL_URL=http://127.0.0.1:9
+ENV API_INTERNAL_URL=http://127.0.0.1:9 NEXT_STANDALONE=true
 ENV NODE_OPTIONS=--max-old-space-size=1536 RAYON_NUM_THREADS=2
 RUN npm run build --workspace @makan/web
 

@@ -82,9 +82,11 @@ export async function PublicPage({
         className={
           ["privacy", "terms"].includes(slug)
             ? "public-reading-page"
-            : ["features", "solutions"].includes(slug)
-              ? "public-index-header"
-              : undefined
+            : slug === "about"
+              ? "public-index-header public-about-page"
+              : ["features", "solutions"].includes(slug)
+                ? "public-index-header"
+                : undefined
         }
       >
         <CmsRenderer

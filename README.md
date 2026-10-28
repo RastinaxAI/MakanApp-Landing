@@ -6,6 +6,12 @@
 
 ## اجرای سریع همین نسخهٔ آماده
 
+فایل‌های کمکی راه‌اندازی حذف شده‌اند؛ اجرا با دستورهای همین سند انجام می‌شود. برای رفتن به پوشه پروژه در PowerShell:
+
+```powershell
+Set-Location 'C:\Users\OmidrezaBagheriyan\Desktop\MakanWebsite'
+```
+
 اگر پروژه قبلاً راه‌اندازی شده است، سرویس‌های موجود را روشن کنید. برای نصب تازه، مراحل بخش «نصب اولیه روی سیستم جدید» را انجام دهید.
 
 ۱. **Docker Desktop** را باز کنید و صبر کنید تا آماده شود.
@@ -28,6 +34,24 @@ docker compose --profile website up -d --wait db api web maintenance
 ۴. در صفحهٔ ورود، شمارهٔ مدیر ثبت‌شده را وارد کنید، **«دریافت کد ورود»** را بزنید و در حالت توسعه، کد **111111** را وارد کنید.
 
 ورود پنل با شمارهٔ همراه مدیر و کد یک‌بارمصرف انجام می‌شود. در حالت توسعه پیامکی ارسال نمی‌شود؛ فقط شمارهٔ متصل به حساب مدیر فعال اجازهٔ ورود دارد. در محیط عملیاتی، ارسال واقعی کد به تنظیمات معتبر ملی‌پیامک نیاز دارد.
+
+## اعمال تغییرات سایت
+
+برای ساخت و اجرای نسخه تازه فرانت‌اند، بدون ایجاد مجدد دیتابیس:
+
+```powershell
+docker compose --profile website build web
+docker compose --profile website up -d --no-deps --force-recreate --wait web
+```
+
+سپس صفحه را با Ctrl+F5 تازه کنید. وضعیت و لاگ‌ها:
+
+```powershell
+docker compose --profile website ps
+docker compose --profile website logs -f --tail 100 web api
+```
+
+Ctrl+C مشاهده لاگ را می‌بندد و سرویس‌ها را متوقف نمی‌کند.
 
 ## بعد از ورود چه کار کنیم؟
 
@@ -92,10 +116,25 @@ PowerShell را در پوشهٔ پروژه باز کنید. دستورها را 
 ### ۱. ساخت تنظیمات خصوصی
 
 ```powershell
-pwsh -NoProfile -File .\scripts\setup-development.ps1
+$panelRoot = (Get-Location).Path
+foreach ($panelEnvName in @('.env', '.env.test')) {
+    $panelEnvPath = Join-Path $panelRoot $panelEnvName
+    $panelExisting = if (Test-Path -LiteralPath $panelEnvPath) { [IO.File]::ReadAllText($panelEnvPath) } else { '' }
+    $panelLines = @()
+    foreach ($panelKey in @('POSTGRES_PASSWORD', 'MIGRATION_DB_PASSWORD', 'API_DB_PASSWORD', 'AUTH_SECRET', 'AUTH_MFA_KEY')) {
+        if ($panelExisting -notmatch "(?m)^$panelKey=") {
+            $panelSecret = [Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).ToLowerInvariant()
+            $panelLines += "$panelKey=$panelSecret"
+        }
+    }
+    if ($panelLines.Count -gt 0) {
+        $panelText = $panelExisting.TrimEnd() + [Environment]::NewLine + ($panelLines -join [Environment]::NewLine) + [Environment]::NewLine
+        [IO.File]::WriteAllText($panelEnvPath, $panelText, [Text.UTF8Encoding]::new($false))
+    }
+}
 ```
 
-این دستور فایل‌های خصوصی `.env` و `.env.test` و کلیدهای لازم را آماده می‌کند؛ مقدارهای موجود را حفظ می‌کند. این فایل‌ها را داخل Git یا پیام عمومی قرار ندهید.
+این دستورها فایل‌های خصوصی `.env` و `.env.test` و کلیدهای لازم را آماده می‌کند؛ مقدارهای موجود را حفظ می‌کند. این فایل‌ها را داخل Git یا پیام عمومی قرار ندهید.
 
 ### ۲. ساخت برنامه‌ها
 
@@ -207,7 +246,7 @@ docker compose --profile website logs --tail 60 web api
 | مشکل | کار لازم |
 | --- | --- |
 | Docker در دسترس نیست | Docker Desktop را باز کنید و تا آماده‌شدن آن صبر کنید. |
-| خطای تنظیمات یا متغیر محیطی | `setup-development.ps1` را اجرا کنید؛ فایل `.env` موجود را حفظ کنید. |
+| خطای تنظیمات یا متغیر محیطی | دستورهای «ساخت تنظیمات خصوصی» را اجرا کنید؛ فایل `.env` موجود را حفظ کنید. |
 | پورت۳۱۰۰ اشغال است | اجرای دیگر همین سایت روی۳۱۰۰ را متوقف کنید و دوباره تلاش کنید. |
 | Backend آماده نیست یا سلامت۵۰۳ است | وضعیت DB/API و خروجی `migrate` را بررسی کنید؛ لاگ‌ها را بخوانید. |
 | شماره اجازهٔ ورود ندارد | شماره باید برای حساب مدیر فعال ثبت شده باشد؛ بخش ساخت یا اتصال مدیر را ببینید. |
@@ -302,6 +341,16 @@ npm run dev -- --port 3100
 ```
 
 سایت توسعه هم روی http://127.0.0.1:3100 باز می‌شود و به Backend محلی روی۸۰۰۰ متصل است. برای پایان توسعه `Ctrl+C` را بزنید و وب Docker را دوباره با `docker compose --profile website up -d --wait web` روشن کنید.
+
+برای اجرای production محلی پس از توقف وب Docker و با روشن‌بودن API و دیتابیس:
+
+```powershell
+npm ci
+npm run build
+npm start -- --port 3100
+```
+
+فرمان start مستقیماً Next.js را اجرا می‌کند و فایل راه‌انداز جداگانه ندارد. ساخت Docker همچنان خروجی standalone مستقل دارد.
 
 بررسی کد:
 
