@@ -241,12 +241,14 @@ export function PublicHelp() {
           شما اینجا هستید: <strong>{guide.title}</strong>
         </span>
       </p>
-      <GuideDialog key={pathname} guide={guide} publicSite>
-        <Button variant="ghost" size="sm" aria-label="راهنمای تصویری این صفحه">
-          <CircleHelp size={18} aria-hidden="true" />
-          راهنمای صفحه
-        </Button>
-      </GuideDialog>
+      {pathname !== "/" && (
+        <GuideDialog key={pathname} guide={guide} publicSite>
+          <Button variant="ghost" size="sm" aria-label="راهنمای تصویری این صفحه">
+            <CircleHelp size={18} aria-hidden="true" />
+            راهنمای صفحه
+          </Button>
+        </GuideDialog>
+      )}
     </aside>
   );
 }
