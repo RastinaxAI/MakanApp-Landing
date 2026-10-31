@@ -1,0 +1,25 @@
+# Managed by makan landing
+[Unit]
+Description=Makan existing content and retention worker
+After=makan-api.service
+Wants=makan-api.service
+
+[Service]
+Type=simple
+User=makan
+Group=makan
+WorkingDirectory=/opt/makan/current/apps/api
+EnvironmentFile=/etc/makan/api.env
+Environment=PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+ExecStart=/opt/makan/current/apps/api/.venv/bin/python -m app.commands.maintenance --state-file /var/lib/makan/operations/maintenance.json
+Restart=on-failure
+RestartSec=10
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/makan/operations
+
+[Install]
+WantedBy=multi-user.target

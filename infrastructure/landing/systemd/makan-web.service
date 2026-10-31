@@ -1,0 +1,27 @@
+# Managed by makan landing
+[Unit]
+Description=Makan Next.js landing
+After=network.target makan-api.service
+Wants=makan-api.service
+
+[Service]
+Type=simple
+User=makan
+Group=makan
+WorkingDirectory=/opt/makan/current/apps/web
+EnvironmentFile=/etc/makan/web.env
+Environment=PATH=/opt/makan/runtime/node/bin:/usr/bin:/bin
+ExecStart=/opt/makan/runtime/node/bin/node /opt/makan/current/node_modules/next/dist/bin/next start --hostname 127.0.0.1 --port 3100
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/makan/current/apps/web/.next/cache
+
+[Install]
+WantedBy=multi-user.target
