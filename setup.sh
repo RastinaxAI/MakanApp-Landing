@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 set -e
+set -E
 set -u
 set -o pipefail
 umask 077
 
-echo 'MakanApp: Next.js + Docker deployment v2'
+echo 'MakanApp: Next.js + Docker deployment v3'
 
 if [ "$(id -u)" -ne 0 ]; then
     echo 'Run as root: sudo bash setup.sh' >&2
@@ -15,6 +16,22 @@ PROJECT_DIR="${PROJECT_DIR:-/var/www/makanapp/landing}"
 ENV_FILE="${ENV_FILE:-/etc/makanapp/production.env}"
 RUNTIME_DIR=/etc/makanapp
 RUNTIME_COMPOSE="$RUNTIME_DIR/compose.nginx.json"
+CURRENT_STEP=initialization
+JOB_CONTAINER=
+LOG_PID=
+PROGRESS_PID=
+
+step() {
+    CURRENT_STEP="$1"
+    printf '\n[%s] %s\n' "$(date +%H:%M:%S)" "$CURRENT_STEP"
+}
+
+# Prevent two copies from changing the schema or Nginx at the same time.
+exec 9>/var/lock/makanapp-setup.lock
+if ! flock -n 9; then
+    echo 'Another setup.sh is running. Wait for it to finish before retrying.' >&2
+    exit 1
+fi
 
 if [ ! -f "$PROJECT_DIR/compose.production.yaml" ] || [ ! -f "$PROJECT_DIR/apps/web/package.json" ]; then
     echo "Project source is missing from $PROJECT_DIR (compose.production.yaml and apps/web are required)." >&2
@@ -24,18 +41,30 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 export NEEDRESTART_MODE=a
 export COMPOSE_PARALLEL_LIMIT=1
-apt-get update
-apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
-apt-get install -y nginx ufw certbot python3-certbot-nginx python3 curl
-if ! docker compose version >/dev/null 2>&1; then
-    apt-get install -y docker.io docker-compose-v2
+step '1/9 Preparing system dependencies'
+if [ "${SKIP_SYSTEM_UPDATE:-0}" != 1 ]; then
+    apt-get update
+    apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"
+    apt-get install -y nginx ufw certbot python3-certbot-nginx python3 curl
+    if ! docker compose version >/dev/null 2>&1; then
+        apt-get install -y docker.io docker-compose-v2
+    fi
 fi
+for dependency in nginx ufw certbot python3 curl docker timeout; do
+    if ! command -v "$dependency" >/dev/null; then
+        echo "Missing $dependency. Rerun without SKIP_SYSTEM_UPDATE=1." >&2
+        exit 1
+    fi
+done
+docker compose version
 systemctl enable --now docker
 docker info >/dev/null
 ufw allow OpenSSH
 ufw allow 'Nginx Full'
 ufw --force enable
 install -d -m 700 "$RUNTIME_DIR" "$(dirname "$ENV_FILE")"
+
+step '2/9 Loading credentials and preparing Compose'
 
 # Keep existing credentials. Never reset passwords for an existing database.
 if [ ! -f "$ENV_FILE" ]; then
@@ -94,20 +123,99 @@ PY
 compose() {
     docker compose --project-directory "$PROJECT_DIR" -f "$RUNTIME_COMPOSE" "$@"
 }
-trap 'echo "Deployment stopped. Read the error above. Service status:" >&2; compose ps >&2 || true' ERR
+cleanup_job() {
+    # Stop only a temporary task created by this invocation, including on Ctrl+C.
+    if [ -n "$JOB_CONTAINER" ]; then
+        docker stop --time 10 "$JOB_CONTAINER" >/dev/null 2>&1 || true
+    fi
+    for child_pid in "$LOG_PID" "$PROGRESS_PID"; do
+        if [ -n "$child_pid" ]; then
+            kill "$child_pid" 2>/dev/null || true
+            wait "$child_pid" 2>/dev/null || true
+        fi
+    done
+    LOG_PID=
+    PROGRESS_PID=
+}
+
+report_failure() {
+    trap - ERR
+    echo "Deployment stopped at: $CURRENT_STEP" >&2
+    compose ps -a >&2 || true
+    compose logs --tail 40 db api web >&2 || true
+    # Show wait reasons and blocking PIDs, without dumping SQL or secrets.
+    compose exec -T -e PGCONNECT_TIMEOUT=5 -e 'PGOPTIONS=-c statement_timeout=5000' db sh -c 'psql -U postgres -d "$POSTGRES_DB" -c "SELECT pid, usename, state, wait_event_type, wait_event, pg_blocking_pids(pid) AS blocked_by FROM pg_stat_activity WHERE datname = current_database();"' >&2 || true
+}
+trap report_failure ERR
+trap cleanup_job EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
 compose --profile tools config --quiet
 
-# Build before changing the current Nginx site.
-compose build db api web
-compose up -d --wait --wait-timeout 180 db
-compose --profile tools run --rm migrate
-compose run --rm --no-deps api python -m app.commands.crm_backfill
-compose run --rm --no-deps api python -m app.commands.import_content
-compose up -d --no-build --wait --wait-timeout 300 api web maintenance
-curl --fail --silent --show-error http://127.0.0.1:8000/api/v1/health/ready >/dev/null
-curl --fail --silent --show-error http://127.0.0.1:3000/health/ready >/dev/null
-curl --fail --silent --show-error -H 'Host: makanapp.org' http://127.0.0.1:3000/ >/dev/null
+run_job() {
+    local label="$1" limit="$2" service="$3"
+    shift 3
+    local task_name="makan-setup-${label}-$$" exit_code wait_status=0
+    # db has already passed its health check; avoid a second implicit startup.
+    JOB_CONTAINER=$(compose --profile tools run -d --no-deps --no-build \
+        --pull never -T --name "$task_name" "$service" "$@")
+    docker logs --follow "$JOB_CONTAINER" 9>&- &
+    LOG_PID=$!
+    (
+        exec 9>&-
+        elapsed=0
+        while sleep 15; do
+            elapsed=$((elapsed + 15))
+            echo "[$label] still running: ${elapsed}s (limit ${limit}s)"
+        done
+    ) &
+    PROGRESS_PID=$!
+    if exit_code=$(timeout "${limit}s" docker wait "$JOB_CONTAINER"); then
+        wait_status=0
+    else
+        wait_status=$?
+    fi
+    if [ "$wait_status" -ne 0 ]; then
+        echo "[$label] wait failed (status $wait_status); stopping task $task_name." >&2
+        cleanup_job
+        docker logs --tail 80 "$JOB_CONTAINER" >&2 || true
+        JOB_CONTAINER=
+        return 1
+    fi
+    # Flush the final container log lines before stopping the progress reporter.
+    wait "$LOG_PID" || true
+    LOG_PID=
+    cleanup_job
+    if [ "$exit_code" != 0 ]; then
+        echo "[$label] exited with status $exit_code. Inspect with: docker logs $task_name" >&2
+        JOB_CONTAINER=
+        return 1
+    fi
+    docker rm "$JOB_CONTAINER" >/dev/null
+    JOB_CONTAINER=
+    echo "[$label] completed"
+}
 
+step '3/9 Building Docker images'
+if [ "${SKIP_BUILD:-0}" = 1 ]; then
+    echo 'Reusing previously built images (SKIP_BUILD=1).'
+else
+    compose build db api web
+fi
+step '4/9 Waiting for PostgreSQL (maximum 180 seconds)'
+compose up -d --no-build --wait --wait-timeout 180 db
+step '5/9 Applying database migrations (maximum 300 seconds)'
+run_job migrate 300 migrate python -u -c 'import logging; logging.basicConfig(level=logging.INFO); from alembic.config import main; main(argv=["upgrade", "head"])'
+step '6/9 Preparing CRM links and landing content'
+run_job crm 180 api python -u -m app.commands.crm_backfill
+run_job content 300 api python -u -m app.commands.import_content
+step '7/9 Starting API, Next.js and maintenance (maximum 300 seconds)'
+compose up -d --no-build --wait --wait-timeout 300 api web maintenance
+curl --connect-timeout 5 --max-time 30 --fail --silent --show-error http://127.0.0.1:8000/api/v1/health/ready >/dev/null
+curl --connect-timeout 5 --max-time 30 --fail --silent --show-error http://127.0.0.1:3000/health/ready >/dev/null
+curl --connect-timeout 5 --max-time 30 --fail --silent --show-error -H 'Host: makanapp.org' http://127.0.0.1:3000/ >/dev/null
+
+step '8/9 Connecting Nginx and configuring HTTPS'
 # Keep a copy of the currently working site, including existing SSL settings.
 BACKUP_DIR="$RUNTIME_DIR/nginx-backup-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$BACKUP_DIR"
@@ -137,7 +245,7 @@ config = r'''server {
     gzip_vary on;
     gzip_types text/css application/javascript application/json image/svg+xml;
 
-    location ~ /\\. {
+    location ~ /\. {
         deny all;
     }
 
@@ -202,6 +310,7 @@ if ! certbot --nginx --non-interactive --agree-tos --redirect \
 fi
 nginx -t
 systemctl reload nginx
-curl --fail --silent --show-error --resolve makanapp.org:443:127.0.0.1 https://makanapp.org/ >/dev/null
+step '9/9 Checking the public HTTPS landing page'
+curl --connect-timeout 5 --max-time 30 --fail --silent --show-error --resolve makanapp.org:443:127.0.0.1 https://makanapp.org/ >/dev/null
 compose ps
 echo 'Landing deployed: https://makanapp.org (www uses the same application).'
