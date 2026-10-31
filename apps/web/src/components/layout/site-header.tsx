@@ -19,7 +19,7 @@ import { publicNavigation } from "@/lib/site-navigation";
 import type { CmsImageRef } from "@/features/cms/types";
 
 export function SiteHeader({
-  appUrl,
+  appUrl = "https://app.makanapp.org",
   brandName,
   logo,
 }: {
@@ -52,11 +52,13 @@ export function SiteHeader({
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          {appUrl && (
-            <a href={appUrl} className="navigation-link hidden desktop:flex">
-              ورود به ماکان
-            </a>
-          )}
+          <Button
+            asChild
+            variant="outline"
+            className="hidden min-h-11 rounded-full desktop:inline-flex"
+          >
+            <a href={appUrl}>باز کردن اپلیکیشن</a>
+          </Button>
           <Button asChild className="public-header-cta min-h-11">
             <Link href="/demo">
               درخواست دمو <ArrowLeft aria-hidden="true" />
@@ -104,11 +106,11 @@ export function SiteHeader({
                     <Link href="/demo">درخواست دموی ماکان</Link>
                   </Button>
                 </SheetClose>
-                {appUrl && (
-                  <a href={appUrl} className="navigation-link">
-                    ورود به ماکان
-                  </a>
-                )}
+                <SheetClose asChild>
+                  <Button asChild variant="outline" className="min-h-11">
+                    <a href={appUrl}>باز کردن اپلیکیشن</a>
+                  </Button>
+                </SheetClose>
               </nav>
               <p className="mt-auto px-6 pb-6 text-sm text-muted-foreground">
                 ارتباط و مدیریت آموزش، در یک فضای یکپارچه.
