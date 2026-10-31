@@ -4,6 +4,8 @@ set -u
 set -o pipefail
 umask 077
 
+echo 'MakanApp: Next.js + Docker deployment v2'
+
 if [ "$(id -u)" -ne 0 ]; then
     echo 'Run as root: sudo bash setup.sh' >&2
     exit 1

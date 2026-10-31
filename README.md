@@ -42,6 +42,8 @@ chmod +x setup.sh
 sudo bash ./setup.sh
 ```
 
+در ابتدای اجرا باید پیام `MakanApp: Next.js + Docker deployment v2` را ببینید. اگر این پیام ظاهر نشد و فقط خروجی apt، Nginx و Certbot دیده شد، فایل قدیمی اجرا شده است. تغییر فایل در کامپیوتر شما، نسخهٔ روی سرور را خودکار تغییر نمی‌دهد؛ فایل جدید را در مسیر دقیق `/var/www/makanapp/landing/setup.sh` جایگزین کنید. دستور رفتن به پوشه `cd` است، نه `git cd`.
+
 اسکریپت بسته‌های لازم و Docker Compose را نصب می‌کند؛ برای نصب خودکار Compose، بستهٔ `docker-compose-v2` باید در مخازن Ubuntu موجود باشد. سپس imageهای وب، API و دیتابیس را می‌سازد، migrationها را اجرا می‌کند و محتوای اولیهٔ نوشته‌شدهٔ همین لندینگ را وارد می‌کند. واردکننده، محتوای موجود و ویرایش‌های قبلی را حفظ می‌کند.
 
 پس از آماده‌شدن برنامه، تنظیمات Nginx با reverse proxy جایگزین می‌شود. Nginx و Certbot مسئول پورت‌های عمومی ۸۰ و ۴۴۳ هستند؛ Caddy این Compose اجرا نمی‌شود. وب روی `127.0.0.1:3000` و API روی `127.0.0.1:8000` منتشر می‌شوند. دیتابیس پورت عمومی ندارد. روش reverse proxy و اتصال پورت‌ها به loopback در [مستندات Nginx](https://nginx.org/en/docs/http/ngx_http_proxy_module.html) و [Docker](https://docs.docker.com/engine/network/port-publishing/) شرح داده شده است.
