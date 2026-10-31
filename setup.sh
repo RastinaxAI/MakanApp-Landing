@@ -157,7 +157,7 @@ run_job() {
     shift 3
     local task_name="makan-setup-${label}-$$" exit_code wait_status=0
     # db has already passed its health check; avoid a second implicit startup.
-    JOB_CONTAINER=$(compose --profile tools run -d --no-deps --no-build \
+    JOB_CONTAINER=$(compose --profile tools run -d --no-deps \
         --pull never -T --name "$task_name" "$service" "$@")
     docker logs --follow "$JOB_CONTAINER" 9>&- &
     LOG_PID=$!

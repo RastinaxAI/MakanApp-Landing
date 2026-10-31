@@ -104,3 +104,12 @@ docker compose -f /etc/makanapp/compose.nginx.json --profile tools logs --tail 1
 ```
 
 کانتینر migration را هم‌زمان با نسخهٔ دیگری اجرا نکنید. قفل PostgreSQL ممکن است باعث انتظار اجرای دوم شود؛ خروجی `blocked_by` و `wait_event` برای تشخیص این وضعیت است، نه اثبات آن بدون بررسی خروجی سرور.
+
+اگر مرحلهٔ migration بلافاصله با `unknown flag: --no-build` متوقف شد، فایل اسکریپت به اصلاح زیر نیاز دارد. این گزینه برای `compose up` معتبر است و از فرمان `compose run` باید حذف شود. برای اصلاح همان نسخهٔ روی سرور و ادامه با imageهای موجود:
+
+```bash
+cd /var/www/makanapp/landing
+sed -i 's/run -d --no-deps --no-build/run -d --no-deps/' setup.sh
+set -o pipefail
+sudo env SKIP_SYSTEM_UPDATE=1 SKIP_BUILD=1 bash ./setup.sh 2>&1 | tee /root/makan-deploy.log
+```
